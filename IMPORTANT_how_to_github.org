@@ -1,10 +1,7 @@
 #+TITLE: Steps for a clean coding
 #+AUTHOR: A-TEAM
 
-<<<<<<< HEAD
 
-=======
->>>>>>> master
 * Intro
 
   In Github, you should work with branches in order to avoid errors.
@@ -14,6 +11,11 @@
   - ~develop~. Where everybody will work together and save their changes
   - ~release~. Where the tested code that works, goes
   - ~master~. The final and definitive branch. If something fails there, we are kind of fucked up.
+
+  Our repo will be at:
+
+  https://github.com/Gonaco/mtp_protocol_A
+  
 * Commands
 
 ** Create a new branch (automatically switch to using it)
