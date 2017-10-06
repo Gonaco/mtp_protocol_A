@@ -1,7 +1,10 @@
 #+TITLE: Steps for a clean coding
 #+AUTHOR: A-TEAM
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> master
 * Intro
 
   In Github, you should work with branches in order to avoid errors.
