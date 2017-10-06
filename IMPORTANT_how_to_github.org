@@ -59,3 +59,12 @@
 
    http://rogerdudler.github.io/git-guide/
 
+   *ALERT*: Note that the push you should normally use is the following
+
+   #+BEGIN_SRC bash
+
+   git push origin develop
+   
+   #+END_SRC
+
+   because our changes should go to that branch first. *Do not use* ~git push origin master~
