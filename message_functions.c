@@ -3,7 +3,7 @@
 
 #include <string.h>
 
-#include "libraries/RF24/src/RF24.h"
+#include "libraries/RF24/src/rf24.h"
 
 bool send(char message){
 
@@ -14,3 +14,6 @@ bool send(char message){
   return isSent;
 
 }
+
+
+
