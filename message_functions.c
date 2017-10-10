@@ -8,7 +8,7 @@
 bool send(char message){
 
   bool isSent;
-  int length = strlen(message);
+  int length = strlen(message); //Is this enough to know th bytes? Maybe multiply by the sizeof(unsigned char)
   isSent = rf24_write_payload(&message, length); //rf24_write or rf24_write_payload ?
 
   return isSent;
