@@ -1,0 +1,7 @@
+*.bbl
+*.tex
+_minted-IMPORTANT_how_to_github
+*~
+libraries/MySensors_[JustReferences]/*
+RadioHead-1.80.zip
+bcm2835-1.52.tar.gz
