@@ -5,13 +5,13 @@
 
 #include "libraries/RF24/src/rf24.h"
 
-bool send(char message){
+bool send(unsigned char message[]){
 
-  bool isSent;
-  int length = strlen(message); //Is this enough to know th bytes? Maybe multiply by the sizeof(unsigned char)
-  isSent = rf24_write_payload(&message, length); //rf24_write or rf24_write_payload ?
+  bool is_sent;
+  uint8_t length_bytes = strlen(message)*sizeof(unsigned char);
+  is_sent = rf24_write_payload(&message, length_bytes); //rf24_write or rf24_write_payload ?
 
-  return isSent;
+  return is_sent;
 
 }
 
