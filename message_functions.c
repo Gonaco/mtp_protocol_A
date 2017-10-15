@@ -11,6 +11,16 @@ bool send(unsigned char frame[]){
 
 }
 
+int header2string(struct header head, char *string_header){
+
+}
+
+
+int frame2string(struct frame fr, char *string_frame){
+
+}
+
+
 void frameAssembly(struct header head, unsigned char message[]){
 
   unsigned char *frame;
