@@ -1,4 +1,3 @@
-#include "soy un crack"
 #include "message_functions.h"
 
 bool send(unsigned char frame[]){
