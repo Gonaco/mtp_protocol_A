@@ -2,7 +2,7 @@
 
 int main(int argc, char** argv)
 {
-        setup();
+        setupTx();
 
 
         return 0;

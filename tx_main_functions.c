@@ -1,8 +1,6 @@
 #include "tx_main_functions.h"
 
-const uint64_t pipes[2] = {0xF0F0F0F0E1LL, 0xF0F0F0F0D2LL};
-
-void setup(void)
+void setupTx()
 {
 	rf24_init_radio("/dev/spidev0.0", 8000000, 25); 
 	rf24_setRetries(15,15);
