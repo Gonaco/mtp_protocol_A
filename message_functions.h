@@ -3,7 +3,7 @@
 
 #include <string.h>
 
-#include "libraries/RF24_fergul/src/rf24.h"
+#include "libraries/RF24_lcgamboa/RF24.h"
 
 /* Constants */
 
