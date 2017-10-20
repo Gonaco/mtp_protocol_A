@@ -3,7 +3,7 @@
 
 #include <string.h>
 
-#include "libraries/RF24/src/rf24.h"
+#include "libraries/RF24_fergul/src/rf24.h"
 
 /* Constants */
 
@@ -18,3 +18,14 @@ struct header{
   unsigned int id; // Is it enough with 4B to set the IDs of the packets (2^32) Maybe, it would be enough with an unsigned short
   unsigned char padding : 1; // The : 1 means that we are just going to use one bit of the 4 bytes reserved
 };
+
+
+bool send(unsigned char frame[]);
+
+int header2string(struct header head, char *string_header);
+
+void frameAssembly(struct header head, unsigned char message[]);
+
+bool sendData(unsigned char message[]);
+
+

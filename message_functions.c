@@ -4,7 +4,7 @@ bool send(unsigned char frame[]){
 
   bool is_sent;
   uint8_t length_bytes = strlen(frame)*sizeof(unsigned char); //Shouldn't we use a uintblablabla bigger?
-  is_sent = rf24_write_payload(&frame, length_bytes); //rf24_write or rf24_write_payload ?
+  is_sent = rf24_write(&frame, length_bytes); //rf24_write or rf24_write_payload ?
 
   return is_sent;
 
