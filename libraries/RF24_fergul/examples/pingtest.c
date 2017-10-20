@@ -18,7 +18,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "RF24.h"
+#include "../src/rf24.h"
 
 //
 // Hardware configuration
