@@ -3,6 +3,6 @@
 
 #include "libraries/RF24_lcgamboa/RF24.h"
 
-const uint64_t pipes[2] = {0xF0F0F0F0E1LL, 0xF0F0F0F0D2LL};
+//const uint8_t* pipes[2] = {0x94A1B1C1D101, 0xA1A2A3A4A511};
 
 void setupTx();
