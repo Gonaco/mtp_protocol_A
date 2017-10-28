@@ -35,7 +35,7 @@ paysize = 30 # size of payload we send at once
 run = True
 
 while run:
-    infile = open("tx_file.txt", “r”)
+    infile = open("tx_file.txt", "r")
     data = infile.read()
     infile.close()
 
