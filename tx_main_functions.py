@@ -12,7 +12,7 @@ import spidev
 pipes = [[0xe7, 0xe7, 0xe7, 0xe7, 0xe7], [0xc2, 0xc2, 0xc2, 0xc2, 0xc2]] #addresses for TX/RX channels
 
 radio = NRF24(GPIO, spidev.SpiDev())
-radio.begin(0, 17) # Set spi-cs pin0, and rf24-CE pin 17
+radio.begin(1, 27) # Set spi-cs pin0, and rf24-CE pin 17
 time.sleep(1)
 radio.setRetries(15,15)
 radio.setPayloadSize(32)
