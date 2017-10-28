@@ -39,18 +39,22 @@ run=True
 while run:
     akpl_buf = [c,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8]
     pipe = [0]
-    while not radio2.available(pipe) and num<200:
+    while not radio2.available(pipe) and num<500:
         time.sleep(10000/1000000.0)
         num=num+1
-        if num ==199:
+        if num ==499:
             run=False
     num=0
     if run==True:
         recv_buffer = []
         radio2.read(recv_buffer, radio2.getDynamicPayloadSize())
-        print ("Received:") ,
-        print (chr(recv_buffer))
-        outfile.write(chr(recv_buffer))
+        print ("Received:")
+        str = ""
+        for i in range(0,len(recv_buffer),1):
+            str = str + chr(recv_buffer[i])
+        print (str)
+        outfile.write(str)
+
         c = c + 1
         if (c&1) == 0:
             radio2.writeAckPayload(1, akpl_buf, len(akpl_buf))
