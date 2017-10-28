@@ -57,6 +57,5 @@ while run:
             print (pl_buffer)
         else:
             print ("Received: Ack only, no payload")
-        time.sleep(1)
 
 print("Done sending the file! Exiting!")
