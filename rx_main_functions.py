@@ -49,8 +49,8 @@ while run:
         recv_buffer = []
         radio2.read(recv_buffer, radio2.getDynamicPayloadSize())
         print ("Received:") ,
-        print (recv_buffer)
-        outfile.write(recv_buffer)
+        print (chr(recv_buffer))
+        outfile.write(chr(recv_buffer))
         c = c + 1
         if (c&1) == 0:
             radio2.writeAckPayload(1, akpl_buf, len(akpl_buf))
