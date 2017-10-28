@@ -3,7 +3,7 @@
 
 import RPi.GPIO as GPIO
 GPIO.setmode(GPIO.BCM)
-from lib_nrf24 import NRF24
+from libraries.NRF24L01.lib_nrf24 import NRF24
 import time
 import spidev
 
