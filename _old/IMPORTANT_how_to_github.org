@@ -1,0 +1,70 @@
+#+TITLE: Steps for a clean coding
+#+AUTHOR: A-TEAM
+
+
+* Intro
+
+  In Github, you should work with branches in order to avoid errors.
+  Our project will have 3 fixed branches, but you can create as many as you want in order to implement your own features that could, maybe, produce errors to the others.
+  Our fixed brunches will be:
+
+  - ~develop~. Where everybody will work together and save their changes
+  - ~release~. Where the tested code that works, goes
+  - ~master~. The final and definitive branch. If something fails there, we are kind of fucked up.
+
+  Our repo will be at:
+
+  https://github.com/Gonaco/mtp_protocol_A
+  
+* Commands
+
+** Create a new branch (automatically switch to using it)
+
+   Take into account that a branch is not available to others unless you push the branch to your remote repository (line 2 of the code below)
+
+   #+BEGIN_SRC bash
+
+   git checkout -b feature_DJ_JJ_Branch_This_is_the_name_of_the_Branch_and_yes_JJ_is_Jorge_Jorge
+   git push origin feature_DJ_JJ_Branch_This_is_the_name_of_the_Branch_and_yes_JJ_is_Jorge_Jorge
+   
+   #+END_SRC
+
+** Switch to another branch to work
+
+   In fact, you should *do this before starting to work the first time* 
+
+  #+BEGIN_SRC bash
+
+  git checkout develop
+  
+  #+END_SRC
+
+** Delete a branch
+
+   #+BEGIN_SRC bash
+
+   git branch -d feature_DJ_JJ_Branch_This_is_the_name_of_the_Branch_and_yes_JJ_is_Jorge_Jorge      
+   
+   #+END_SRC
+   
+** Merge another branch into your active branch
+
+   #+BEGIN_SRC bash
+
+   git merge develop
+   
+   #+END_SRC
+
+** All-commands-you-should-know-about-git guide
+
+   http://rogerdudler.github.io/git-guide/
+
+   *ALERT*: Note that the push you should normally use is the following
+
+   #+BEGIN_SRC bash
+
+   git push origin develop
+   
+   #+END_SRC
+
+   because our changes should go to that branch first. *Do not use* ~git push origin master~
