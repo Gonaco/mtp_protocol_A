@@ -13,20 +13,45 @@ def string2bits(s=''):
 def bits2string(b=None):
     return ''.join([chr(int(x, 2)) for x in b])
 
-class Header:
-    signature = 'a'                # A-Team signature predefined ## ''.join(format(ord(x), 'b') for x in 'a')
-    typ = None
-    ID = 0                      # ''.join(format(ord(x), 'b') for x in '3')[-2:] ## ID will be 3='11', 2='10', 1='01', 0='00' 
-    padding = False
+def get_bin(x, n=0):
+    """
+    Get the binary representation of x.
 
-    def header2bin(self):
+    Parameters
+    ----------
+    x : int
+    n : int
+        Minimum number of digits. If x needs less digits in binary, the rest
+        is filled with zeros.
+
+    Returns
+    -------
+    str
+    """
+    return format(x, 'b').zfill(n)
+
+class Header:
+
+    def __init__(self,signature,typ,ID,padding):
+        self.signature = signature                # A-Team signature predefined ## ''.join(format(ord(x), 'b') for x in 'a')
+        self.typ = typ # ''.join(format(ord(x), 'b') for x in '3')[-2:] ## ID will be 3='11', 2='10', 1='01', 0='00' 
+        self.ID = ID                      
+        self.padding = padding
+
+    def __str__(self):
+        head = string2bits(self.signature)[0] + string2bits(self.typ)[0][-2:] + get_bin(self.ID,32) + string2bits(self.padding)[0][-1:]
+        return bits2string(head)
+
+    # def header2bin(self):
         
     
 
 class Packet:
-    header = None
-    payload = None
 
-    def setHeader(self):
-        self.header = Header()
-        
+    def __init__(self, header, payload):
+        self.header = header
+        self.payload = header
+
+    
+
+
