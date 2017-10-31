@@ -7,11 +7,20 @@
 #   unsigned char padding : 1; // The : 1 means that we are just going to use one bit of the 4 bytes reserved
 # };
 
+def string2bits(s=''):
+    return [bin(ord(x))[2:].zfill(8) for x in s]
+
+def bits2string(b=None):
+    return ''.join([chr(int(x, 2)) for x in b])
+
 class Header:
-    signature = 'A'                # A-Team signature predefined
+    signature = 'a'                # A-Team signature predefined ## ''.join(format(ord(x), 'b') for x in 'a')
     typ = None
-    ID = None
-    padding = None
+    ID = 0                      # ''.join(format(ord(x), 'b') for x in '3')[-2:] ## ID will be 3='11', 2='10', 1='01', 0='00' 
+    padding = False
+
+    def header2bin(self):
+        
     
 
 class Packet:

@@ -2,5 +2,5 @@
 *.tex
 _minted-IMPORTANT_how_to_github
 *~
-*.tramp_history
+*tramp_history
 .idea/*
