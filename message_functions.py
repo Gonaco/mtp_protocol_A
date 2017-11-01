@@ -1,11 +1,5 @@
 
-# struct header{
-#   unsigned char signature;
-#   unsigned char type : 2; // The : 4 means that we are just going to use two bits of the 4 bytes reserved
-# // Si podemos usar el ACK de la librería y decimos que un NACK es un ack con payload podemos hacer de esta variable un bool (un bit)
-#   unsigned int id; // Is it enough with 4B to set the IDs of the packets (2^32) Maybe, it would be enough with an unsigned short
-#   unsigned char padding : 1; // The : 1 means that we are just going to use one bit of the 4 bytes reserved
-# };
+# from lib_nrf24 import NRF24
 
 byte_length = 8
 signature_length = byte_length
@@ -18,7 +12,7 @@ ACK = 1
 NACK = 2
 FRAME = 3
 
-A_TEAM_SIGN = 97                # The ASCI code of 'a'
+A_TEAM_SIGN = 97                # The ASCII code of 'a'
 
 def string2bits(s=''):
     return [bin(ord(x))[2:].zfill(8) for x in s]
@@ -92,7 +86,20 @@ class Packet:
     
     def __init__(self, header, payload):
         self.header = header
-        self.payload = header
+        self.payload = payload
+
+    def __str__(self):
+        return self.header.__str__()+self.payload.__str__()
+
+    def packet2byt(self):
+        payload_byt = string2bits(self.payload.__str__())
+        payload_bit = ''
+        for i in range(0,len(payload_byt)):
+            payload_bit = payload_bit + payload_byt[i]
+        return self.header.header2byt()+payload_bit
+
+    def send(self,transceiver):
+        transceiver.write(self.__str__())
 
     
 class ACK(Packet):
@@ -118,4 +125,4 @@ class FrameSimple(Frame):
     # Class Constructor
     
     def __init__(self, ID):
-        Frame.__init__(self,ID,1,ID)
+        Frame.__init__(self,ID,1,ID.__str__())

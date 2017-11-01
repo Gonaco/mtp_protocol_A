@@ -43,7 +43,15 @@ def main(argv):
     # print(j)
 
 
-    
+    p = m.FrameSimple(5000)
+    print(p)
+    k=p.header
+    print(k.header2byt())
+    print(p.packet2byt())
+    print(m.string2bits(p.payload))
+    h = m.Header()
+    h.extractHeader(p.__str__())
+    print(h)
 
 if __name__ == "__main__":
     main(sys.argv)
