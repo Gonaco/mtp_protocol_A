@@ -59,7 +59,8 @@ def main():
                     buf = data[i:]
                     run = False
                 frame=Frame(data_id, 0, buf)
-                radio.write(frame)
+                # radio.write(frame)
+                frame.send(radio)
                 print ("Sent:"),
                 print (frame)
                 # did it return with a payload?

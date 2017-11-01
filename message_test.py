@@ -53,5 +53,11 @@ def main(argv):
     h.extractHeader(p.__str__())
     print(h)
 
+    rcv = m.Packet()
+    rcv.strMssg2Pckt(p.__str__())
+    print(rcv)
+    print(rcv.header.ID)
+    print(rcv.payload)
+
 if __name__ == "__main__":
     main(sys.argv)

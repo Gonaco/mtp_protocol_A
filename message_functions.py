@@ -84,7 +84,7 @@ class Packet:
 
     # Class Constructor
     
-    def __init__(self, header, payload):
+    def __init__(self, header=Header(), payload=''):
         self.header = header
         self.payload = payload
 
@@ -97,6 +97,10 @@ class Packet:
         for i in range(0,len(payload_byt)):
             payload_bit = payload_bit + payload_byt[i]
         return self.header.header2byt()+payload_bit
+
+    def strMssg2Pckt(self, message_string):
+        self.header.extractHeader(message_string)
+        self.payload = message_string[6:]
 
     def send(self,transceiver):
         transceiver.write(self.__str__())
