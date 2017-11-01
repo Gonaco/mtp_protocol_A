@@ -4,8 +4,8 @@ import message_functions as m
 def main(argv):
 
     # print ("\n"+argv[1])
-    a = m.string2bits('ab')
-    print(a)
+    # a = m.string2bits('ab')
+    # print(a)
     # head = a
     # head = a[0] + m.string2bits('1')[0] + m.get_bin(50,32) # Cómo pasar de int a bin adecuadamente
     # print (m.string2bits('1')[0][-2:])
@@ -18,10 +18,32 @@ def main(argv):
     # a.append('j')
 
     # print(a)
-    
-    h = m.Header('a','00',2**31+55555,'0')
-    print (h)
 
+    # Binary to Text
+    # binary_data = b'I am text.'
+    # text = binary_data.decode('utf-8')
+    # print(text)
+
+    # binary_data = bytes([65, 66, 67])  # ASCII values for A, B, C
+    # text = binary_data.decode('utf-8')
+    # print(text)
+    
+    # h = m.Header(97,3,2**31+55554,1)
+    # print (h)
+    # a = h.__str__()
+    # print(h.header2byt())
+    # j = m.Header()
+    # j.extractHeader(a)
+    # print(j)
+    # k = m.Header(97,3,2**32-1,1)
+    # print(k)
+    # a = k.__str__()
+    # print(k.header2byt())
+    # j.extractHeader(a)
+    # print(j)
+
+
+    
 
 if __name__ == "__main__":
     main(sys.argv)

@@ -7,10 +7,21 @@
 #   unsigned char padding : 1; // The : 1 means that we are just going to use one bit of the 4 bytes reserved
 # };
 
+byte_length = 8
+signature_length = byte_length
 ID_length = 32
+typ_length = 2
+padding_length = 1
+
+SYNC = 0
+ACK = 1
+NACK = 2
+FRAME = 3
+
+A_TEAM_SIGN = 97                # The ASCI code of 'a'
 
 def string2bits(s=''):
-    return [bin(ord(x))[2:].zfill(7) for x in s]
+    return [bin(ord(x))[2:].zfill(8) for x in s]
 
 def bits2string(b=None):
     return ''.join([chr(int(x, 2)) for x in b])
@@ -34,39 +45,77 @@ def get_bin(x, n=0):
 
 class Header:
 
-    def __init__(self,signature,typ,ID,padding):
+    # Class Constructor
+    
+    def __init__(self,signature=97,typ=SYNC,ID=0,padding=0):
+
         self.signature = signature                # A-Team signature predefined ## ''.join(format(ord(x), 'b') for x in 'a')
         self.typ = typ # ''.join(format(ord(x), 'b') for x in '3')[-2:] ## ID will be 3='11', 2='10', 1='01', 0='00' 
         self.ID = ID                      
         self.padding = padding
 
-    def __str__(self):
-        h = []
-        byte_length = 8
-        
-        head = string2bits(self.signature)[0] + string2bits(self.typ)[0][-2:] + get_bin(self.ID,ID_length) + string2bits(self.padding)[0][-1:]
+    # Class2String
 
-        print(head)
+    def __str__(self):
+
+        h = []
+        
+        bin_head = get_bin(self.signature,signature_length) + get_bin(self.typ,typ_length) + get_bin(self.ID,ID_length) + get_bin(self.padding,padding_length)+'00000'
         
         for i in range(0,6):
             byte_start = byte_length*i
-            h.append(head[byte_start:byte_start+byte_length-1])
+            h.append(bin_head[byte_start:byte_start+byte_length])
 
-        print(h)
-        
         return bits2string(h)
 
-    # def header2bin(self):
-        
+
+    # Class2Binarycode split in Bytes
+
+    def header2byt(self):
+        return get_bin(self.signature,signature_length) + get_bin(self.typ,typ_length) + get_bin(self.ID,ID_length) + get_bin(self.padding,padding_length)+'00000'
+
+    # Extract the Header from a message
+
+    def extractHeader(self,rcv_str):
+
+        head = string2bits(rcv_str[0:7])
+
+        self.signature = int(head[0], 2)
+        self.typ = int(head[1][0:2], 2)
+        self.ID = int(head[1][2:8]+head[2]+head[3]+head[4]+head[5][0:2], 2)
+        self.padding = int(head[5][2], 2)
     
 
 class Packet:
 
+    # Class Constructor
+    
     def __init__(self, header, payload):
         self.header = header
         self.payload = header
 
     
-# class ACK(Packet):
+class ACK(Packet):
 
+    # Class Constructor
     
+    def __init__(self, ID, payload):
+        header = Header(97,ACK,ID,0)
+        Packet.__init__(self,header,payload)
+
+
+class Frame(Packet):
+
+    # Class Constructor
+    
+    def __init__(self, ID, padding, payload):
+        header = Header(97,FRAME,ID,padding)
+        Packet.__init__(self,header,payload)
+
+
+class FrameSimple(Frame):
+
+    # Class Constructor
+    
+    def __init__(self, ID):
+        Frame.__init__(self,ID,1,ID)
