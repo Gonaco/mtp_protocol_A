@@ -8,16 +8,26 @@ import spidev
 
 pipes = [[0xe7, 0xe7, 0xe7, 0xe7, 0xe7], [0xc2, 0xc2, 0xc2, 0xc2, 0xc2]]
 
+radio = NRF24(GPIO, spidev.SpiDev())
 radio2 = NRF24(GPIO, spidev.SpiDev())
+radio.begin(1, 27)
 radio2.begin(0, 17)
 
+radio.setRetries(15,15)
+radio.setPayloadSize(32)
+radio.setChannel(0x60)
 radio2.setRetries(15,15)
-
 radio2.setPayloadSize(32)
 radio2.setChannel(0x60)
+
+radio.setDataRate(NRF24.BR_2MBPS)
+radio.setPALevel(NRF24.PA_MAX)
 radio2.setDataRate(NRF24.BR_2MBPS)
 radio2.setPALevel(NRF24.PA_MAX)
 
+radio.setAutoAck(True)
+radio.enableDynamicPayloads() # radio.setPayloadSize(32) for setting a$
+radio.enableAckPayload()
 radio2.setAutoAck(True)
 radio2.enableDynamicPayloads()
 radio2.enableAckPayload()
