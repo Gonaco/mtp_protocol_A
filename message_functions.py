@@ -7,8 +7,10 @@
 #   unsigned char padding : 1; // The : 1 means that we are just going to use one bit of the 4 bytes reserved
 # };
 
+ID_length = 32
+
 def string2bits(s=''):
-    return [bin(ord(x))[2:].zfill(8) for x in s]
+    return [bin(ord(x))[2:].zfill(7) for x in s]
 
 def bits2string(b=None):
     return ''.join([chr(int(x, 2)) for x in b])
@@ -39,8 +41,20 @@ class Header:
         self.padding = padding
 
     def __str__(self):
-        head = string2bits(self.signature)[0] + string2bits(self.typ)[0][-2:] + get_bin(self.ID,32) + string2bits(self.padding)[0][-1:]
-        return bits2string(head)
+        h = []
+        byte_length = 8
+        
+        head = string2bits(self.signature)[0] + string2bits(self.typ)[0][-2:] + get_bin(self.ID,ID_length) + string2bits(self.padding)[0][-1:]
+
+        print(head)
+        
+        for i in range(0,6):
+            byte_start = byte_length*i
+            h.append(head[byte_start:byte_start+byte_length-1])
+
+        print(h)
+        
+        return bits2string(h)
 
     # def header2bin(self):
         
@@ -53,5 +67,6 @@ class Packet:
         self.payload = header
 
     
+# class ACK(Packet):
 
-
+    
