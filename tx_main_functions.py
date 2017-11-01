@@ -43,30 +43,55 @@ radio.printDetails()
 paysize = 30 # size of payload we send at once
 
 ##################DEBUG CODE BELOW############################
-run = True
+def main():
+    run = True
 
-while run:
-    infile = open("tx_file.txt", "r")
-    data = infile.read()
-    infile.close()
+    while run:
+        infile = open("tx_file.txt", "r")
+        data = infile.read()
+        infile.close()
+        data_id=1
+        if  synchronized():
+            for i in range(0, len(data), paysize):
+                if (i+paysize) < len(data):
+                    buf = data[i:i+paysize]
+                else:
+                    buf = data[i:]
+                    run = False
+                frame=Frame(data_id, 0, buf)
+                radio.write(frame)
+                print ("Sent:"),
+                print (frame)
+                # did it return with a payload?
+                if radio.available():
+                    pl_buffer=[]
+                    radio.read(pl_buffer, radio.getPayloadSize())
+                    print ("Received back:"),
+                    print (pl_buffer)
+                else:
+                    print ("Received: Ack only, no payload")
+                data_id += 1
 
-    for i in range(0, len(data), paysize):
-        if (i+paysize) < len(data):
-            buf = data[i:i+paysize]
-        else:
-            buf = data[i:]
-            run = False
+    fin_connection()
+    return 0
 
-        radio.write(buf)
-        print ("Sent:"),
-        print (buf)
-        # did it return with a payload?
-        if radio.isAckPayloadAvailable():
-            pl_buffer=[]
-            radio.read(pl_buffer, radio.getDynamicPayloadSize())
-            print ("Received back:"),
-            print (pl_buffer)
-        else:
-            print ("Received: Ack only, no payload")
+def synchronized():
+    done=false
+    sync=Header(97, SYNC, 1)
+    radio.write(sync)
+    radio.startListening()
+    if radio.available():
+        radio.read(buffer, radio.getPayloadSize())
+        print("Sync done")
+        done=true
+    return done;
 
-print("Done sending the file! Exiting!")
+def fin_connection():
+    ack=ACK(0, 0)
+    radio.write(ack)
+    radio.startListening()
+    if radio.available():
+        radio.read(buffer, radio.getPayloadSize())
+        print("Done sending the file! Exiting!")
+
+    return;
