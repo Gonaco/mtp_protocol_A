@@ -39,7 +39,7 @@ radio2.enableDynamicPayloads()
 radio2.enableAckPayload()
 
 radio.openWritingPipe(pipes[1])
-radio.openReadingPipe(1, pipes[0])
+radio2.openReadingPipe(1, pipes[0])
 radio.printDetails()
 
 paysize = 30 # size of payload we send at once
