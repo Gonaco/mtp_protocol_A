@@ -5,3 +5,4 @@ _minted-IMPORTANT_how_to_github
 *tramp_history
 .idea/*
 __pycache__/*
+*.pyc
