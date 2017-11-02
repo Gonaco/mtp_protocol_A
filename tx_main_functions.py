@@ -75,7 +75,8 @@ def transmit():
                     print ("Received back:"),
                     print (pl_buffer)
                 else:
-                   if(...>timeout):
+                   if(time.time() + 1/20000>timeout):
+                       #we resend packet
                        frame.send(radio)
                        timeout = time.time() + 0.1
                 data_id += 1
