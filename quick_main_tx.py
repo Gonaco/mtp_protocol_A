@@ -66,7 +66,7 @@ while run:
         #frame.send(radio)
         radio.write(buf)
         print ("Sent:"),
-        print (frame)
+        #print (frame)
         # did it return with a payload?
         num=0
         pipe = [1]
