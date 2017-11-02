@@ -77,7 +77,7 @@ while run:
         # did it return with a payload?
         num=0
         repeat = False
-        while not radio2.available(pipe) and num < 1000:
+        while not radio2.available(pipe) and num < 2000:
             time.sleep(1/10000.0)
             num = num+1
 
@@ -97,7 +97,7 @@ while run:
             print ("Sending final packet")
             radio.write(eof_delimiter)
 
-        time.sleep(30/1000.0) # wait a bit for processing
+        time.sleep(3/100.0) # wait a bit for processing
 
 
 print("Done sending the file! Exiting!")

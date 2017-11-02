@@ -57,8 +57,8 @@ while run:
         while not radio.available(pipe) and num < 50000:
             time.sleep(1/10000.0)
             num=num+1
-            if num ==499:
-                run=False
+            if num == 50000:
+                run = False
     else:
         firstRun = False
         while not radio.available(pipe):
@@ -82,7 +82,7 @@ while run:
     #ack=m.ACK(c, "")
     #ack.send(radio2)
 
-    time.sleep(30/1000.0) # wait a bit for processing
+    time.sleep(3/100.0) # wait a bit for processing
 
     radio2.write(akpl_buf)
     if cnt == 25:
