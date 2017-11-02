@@ -75,7 +75,7 @@ while run:
         pipe = [1]
         repeat = False
         while not radio2.available(pipe) and num < 100:
-            time.sleep(10000/1000000.0)
+            time.sleep(1/100.0)
             num = num+1
 
         if num == 500:
@@ -91,7 +91,7 @@ while run:
             print ("Sending final packet")
             radio.write(eof_delimiter)
 
-        time.sleep(50) # wait a bit for processing
+        time.sleep(50/1000.0) # wait a bit for processing
 
 
 print("Done sending the file! Exiting!")

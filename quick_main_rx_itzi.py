@@ -53,14 +53,14 @@ while run:
     pipe = [0]
     if firstRun == False:
         while not radio.available(pipe) and num < 500:
-            time.sleep(10000/1000000.0)
+            time.sleep(1/100.0)
             num=num+1
             if num ==499:
                 run=False
     else:
         firstRun = False
         while not radio.available(pipe):
-            time.sleep(10000/1000000.0)
+            time.sleep(1/100.0)
 
     num=0
 
@@ -80,7 +80,7 @@ while run:
         #ack=m.ACK(c, "")
         #ack.send(radio2)
 
-        time.sleep(20) # wait a bit for processing
+        time.sleep(20/1000.0) # wait a bit for processing
 
         radio2.write(akpl_buf)
         print ("ACK SENT")
