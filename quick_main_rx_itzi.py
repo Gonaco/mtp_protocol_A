@@ -14,7 +14,7 @@ radio2.begin(0, 17) # Set spi-cs pin0, and rf24-CE pin 17
 
 radio.setRetries(15,15)
 radio.setPayloadSize(32)
-radio.setChannel(0x60)
+radio.setChannel(0x65)
 radio2.setRetries(15,15)
 radio2.setPayloadSize(32)
 radio2.setChannel(0x60)
@@ -60,21 +60,17 @@ while run:
         radio.read(recv_buffer, radio.getDynamicPayloadSize())
         print ("Received:")
         #recv_packet= m.Packet()
-        for i in range(6,len(recv_buffer),1):
+        for i in range(0,len(recv_buffer),1):
             str = str + chr(recv_buffer[i])
         print (str)
         #recv_packet.strMssg2Pckt(recv_buffer)
 	    #print(recv_packet)
 	    #print(recv_packet.getPayload())
 
-        c = c + 1
-        if (c&1) == 0:
-            ack=m.ACK(c, "")
-            ack.send(radio2)
-            print ("Loaded payload reply:"),
-            print (akpl_buf)
-        else:
-            print ("(No return payload)")
+        #ack=m.ACK(c, "")
+        #ack.send(radio2)
+        radio2.write(akpl_buf)
+        print ("ACK SENT"),
     else:
         outfile.write(str)
         outfile.close()
