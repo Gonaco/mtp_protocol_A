@@ -79,6 +79,9 @@ while run:
 
         #ack=m.ACK(c, "")
         #ack.send(radio2)
+
+        time.sleep(20) # wait a bit for processing
+
         radio2.write(akpl_buf)
         print ("ACK SENT")
 

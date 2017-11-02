@@ -59,8 +59,9 @@ while run:
     for i in range(0, len(data), paysize):
         if (i+paysize) < len(data):
             buf = data[i:i+paysize]
-            print("sending full packet #")
+            print("sending full packet")
         else:
+            print("sending partial packet")
             buf = data[i:]
             run = False
         #frame=m.Frame(data_id, 0, buf)
@@ -73,18 +74,24 @@ while run:
         num=0
         pipe = [1]
         repeat = False
-        while not radio2.available(pipe) and num < 500:
+        while not radio2.available(pipe) and num < 100:
             time.sleep(10000/1000000.0)
-            num=num+1
+            num = num+1
 
         if num == 500:
-            i = i - 1 #we'll repeat the packet
+            i = i - 1 # we'll repeat the packet
 
         pl_buffer=[]
         radio2.read(pl_buffer, radio2.getDynamicPayloadSize())
         print ("Received back:"),
         print (pl_buffer)
         #data_id += 1
+
+        if run == False:
+            print ("Sending final packet")
+            radio.write(eof_delimiter)
+
+        time.sleep(50) # wait a bit for processing
 
 
 print("Done sending the file! Exiting!")
