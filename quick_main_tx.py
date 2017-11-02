@@ -54,12 +54,12 @@ repeat = False
 pipe = [1]
 cnt = 0
 while run:
-    cnt = cnt + 1;
     infile = open("tx_file.txt", "r")
     data = infile.read()
     infile.close()
     data_id=1
     for i in range(0, len(data), paysize):
+        cnt = cnt + 1;
         if (i+paysize) < len(data):
             buf = data[i:i+paysize]
             if cnt == 25:
@@ -81,6 +81,10 @@ while run:
         while not radio2.available(pipe) and num < 100:
             time.sleep(1/100.0)
             num = num+1
+
+        if run == 100
+            i = i -1
+            print("REPEATING PACKET")
 
         pl_buffer=[]
         radio2.read(pl_buffer, radio2.getDynamicPayloadSize())
