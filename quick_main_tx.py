@@ -21,7 +21,7 @@ radio2.begin(0, 17)
 time.sleep(1)
 radio.setRetries(15,15)
 radio.setPayloadSize(32)
-radio.setChannel(0x60)
+radio.setChannel(0x65)
 radio2.setRetries(15,15)
 radio2.setPayloadSize(32)
 radio2.setChannel(0x60)
@@ -42,7 +42,9 @@ radio.openWritingPipe(pipes[1])
 radio2.openReadingPipe(1, pipes[0])
 radio.printDetails()
 
-paysize = 26 # size of payload we send at once
+radio2.startListening();
+
+paysize = 30 # size of payload we send at once
 timeout = time.time() + 0.1
     
 ##################DEBUG CODE BELOW############################
@@ -59,14 +61,15 @@ while run:
         else:
             buf = data[i:]
             run = False
-        frame=m.Frame(data_id, 0, buf)
+        #frame=m.Frame(data_id, 0, buf)
         print("We'll try sending")
-        frame.send(radio)
+        #frame.send(radio)
+        radio.write(buf)
         print ("Sent:"),
         print (frame)
         # did it return with a payload?
         num=0
-        pipe = [0]
+        pipe = [1]
         while not radio2.available(pipe) and num<500:
             time.sleep(10000/1000000.0)
             num=num+1
