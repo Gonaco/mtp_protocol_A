@@ -64,32 +64,31 @@ while run:
 
     num=0
 
-    if run==True:
-        recv_buffer = []
-        radio.read(recv_buffer, radio.getDynamicPayloadSize())
-        print ("Received Packet!")
-        #recv_packet= m.Packet()
-        for i in range(0,len(recv_buffer),1):
-            tmpStr = tmpStr + chr(recv_buffer[i])
-        #print (str)
+    recv_buffer = []
+    radio.read(recv_buffer, radio.getDynamicPayloadSize())
+    print ("Received Packet!")
+    #recv_packet= m.Packet()
+    for i in range(0,len(recv_buffer),1):
+        tmpStr = tmpStr + chr(recv_buffer[i])
+    #print (str)
 
-        #recv_packet.strMssg2Pckt(recv_buffer)
-	    #print(recv_packet)
-	    #print(recv_packet.getPayload())
+    #recv_packet.strMssg2Pckt(recv_buffer)
+    #print(recv_packet)
+    #print(recv_packet.getPayload())
 
-        #ack=m.ACK(c, "")
-        #ack.send(radio2)
+    #ack=m.ACK(c, "")
+    #ack.send(radio2)
 
-        time.sleep(20/1000.0) # wait a bit for processing
+    time.sleep(20/1000.0) # wait a bit for processing
 
-        radio2.write(akpl_buf)
-        print ("ACK SENT")
+    radio2.write(akpl_buf)
+    print ("ACK SENT")
 
-        if tmpStr == "ThIs Is EnD oF FiLe...........":
-            run = False
-            print(tmpStr)
-        else:
-            str = str + tmpStr
+    if tmpStr == "ThIs Is EnD oF FiLe...........":
+        run = False
+        print(tmpStr)
+    else:
+        str = str + tmpStr
 
 outfile=open("rx_file.txt","w")
 outfile.write(str)
