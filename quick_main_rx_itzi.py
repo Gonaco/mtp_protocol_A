@@ -9,8 +9,8 @@ pipes = [[0xe7, 0xe7, 0xe7, 0xe7, 0xe7], [0xc2, 0xc2, 0xc2, 0xc2, 0xc2]] #addres
 
 radio = NRF24(GPIO, spidev.SpiDev())
 radio2 = NRF24(GPIO, spidev.SpiDev())
-radio.begin(1, 17) # Set spi-cs pin1, and rf24-CE pin 27
-radio2.begin(0, 27) # Set spi-cs pin0, and rf24-CE pin 17
+radio.begin(1, 27) # Set spi-cs pin1, and rf24-CE pin 27
+radio2.begin(0, 17) # Set spi-cs pin0, and rf24-CE pin 17
 
 radio.setRetries(15,15)
 radio.setPayloadSize(32)
@@ -60,13 +60,13 @@ while run:
         radio.read(recv_buffer, radio.getDynamicPayloadSize())
         print ("Received:")
         recv_packet= m.Packet()
-        for i in range(0,len(recv_buffer),1):
-            str = str + chr(recv_buffer[i])
-        print (str)
-        recv_packet.strMssg2Pckt(str)
+        #for i in range(6,len(recv_buffer),1):
+        #    str = str + chr(recv_buffer[i])
+        #print (str)
+        recv_packet.strMssg2Pckt(recv_buffer)
 	print(recv_packet)
 	print(recv_packet.getPayload())
-
+    
         c = c + 1
         if (c&1) == 0:
             ack=m.ACK(c, "")

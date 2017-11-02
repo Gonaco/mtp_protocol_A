@@ -66,6 +66,7 @@ while run:
         print (frame)
         # did it return with a payload?
         num=0
+        pipe = [0]
         while not radio2.available(pipe) and num<500:
             time.sleep(10000/1000000.0)
             num=num+1

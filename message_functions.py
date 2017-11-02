@@ -92,7 +92,10 @@ class Packet:
         return self.header.__str__()+self.payload.__str__()
 
     def getPayload(self):
-        return self.payload
+        ret = ""
+        for i in range(0, length(payload), 1)
+            ret = ret + chr(payload[i])
+        return ret
     
     def packet2byt(self):
         payload_byt = string2bits(self.payload.__str__())
