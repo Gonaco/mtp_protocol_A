@@ -82,7 +82,7 @@ while run:
     #ack=m.ACK(c, "")
     #ack.send(radio2)
 
-    time.sleep(20/1000.0) # wait a bit for processing
+    time.sleep(30/1000.0) # wait a bit for processing
 
     radio2.write(akpl_buf)
     if cnt == 25:

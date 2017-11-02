@@ -77,8 +77,8 @@ while run:
         # did it return with a payload?
         num=0
         repeat = False
-        while not radio2.available(pipe) and num < 100:
-            time.sleep(1/100.0)
+        while not radio2.available(pipe) and num < 10000:
+            time.sleep(1/10000.0)
             num = num+1
 
         if run == 100:
