@@ -67,14 +67,10 @@ while run:
 	    #print(recv_packet)
 	    #print(recv_packet.getPayload())
 
-        c = c + 1
-        if (c&1) == 0:
-            ack=m.ACK(c, "")
-            ack.send(radio2)
-            print ("Loaded payload reply:"),
-            print (akpl_buf)
-        else:
-            print ("(No return payload)")
+        #ack=m.ACK(c, "")
+        #ack.send(radio2)
+        radio2.write(akpl_buf)
+        print ("ACK SENT"),
     else:
         outfile.write(str)
         outfile.close()
