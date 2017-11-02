@@ -73,7 +73,7 @@ while run:
         num=0
         pipe = [1]
         repeat = False
-        while not radio2.available(pipe): and num < 500:
+        while not radio2.available(pipe) and num < 500:
             time.sleep(10000/1000000.0)
             num=num+1
 
