@@ -1,7 +1,7 @@
-import tx_main_functions.py as f
+import tx_main_functions as f
 
 def main():
-   # f.setup()
+    f.setup()
     f.transmit()
     return 0
 

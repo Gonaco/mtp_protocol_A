@@ -49,7 +49,6 @@ def set_up():
 ##################DEBUG CODE BELOW############################
 def transmit():
     run = True
-
     while run:
         infile = open("tx_file.txt", "r")
         data = infile.read()
@@ -64,46 +63,46 @@ def transmit():
                     buf = data[i:]
                     run = False
                 frame=m.Frame(data_id, 0, buf)
-                # radio.write(frame)
+                radio.write(frame)
                 print("We'll try sending")
-                #frame.send(radio)
+                frame.send(radio)
                 print ("Sent:"),
                 print (frame)
                 # did it return with a payload?
-                #if radio.available():
-                 #   pl_buffer=[]
-                  #  radio.read(pl_buffer, radio.getDynamicPayloadSize())
-                   # print ("Received back:"),
-                   # print (pl_buffer)
-               # else:
-                   #if(...>timeout):
-                    #   frame.send(radio)
-                     #  timeout = time.time() + 0.1
+                if radio.available():
+                    pl_buffer=[]
+                    radio.read(pl_buffer, radio.getDynamicPayloadSize())
+                    print ("Received back:"),
+                    print (pl_buffer)
+                else:
+                   if(...>timeout):
+                       frame.send(radio)
+                       timeout = time.time() + 0.1
                 data_id += 1
 
     fin_connection()
     return 0
 
 def synchronized():
-    done=false
-    sync_header=m.Header(97, SYNC, 1)
+    done=False
+    sync_header=m.Header(97, 0, 1)
     print(sync_header)
     sync=m.Packet(sync_header, '')
-    #print(sync.extractHeader())
-    #sync.send(radio)
-    #radio.startListening()
-   # if radio.available():
-      #  radio.read(buffer, radio.getPayloadSize())
-    print("Sync done")
-    done=true
+    print(sync.extractHeader())
+    sync.send(radio)
+    radio.startListening()
+    if radio.available():
+        radio.read(buffer, radio.getPayloadSize())
+        print("Sync done")
+        done=True
     return done;
 
 def fin_connection():
     ack=m.ACK(0, 0) #for ending connection we send ACK with ID 0
-    #ack.send(radio)
-    #radio.startListening()
-    #if radio.available():
-      #  radio.read(buffer, radio.getPayloadSize())
+    ack.send(radio)
+    radio.startListening()
+    if radio.available():
+        radio.read(buffer, radio.getPayloadSize())
     print("Done sending the file! Exiting!")
 
     return;
