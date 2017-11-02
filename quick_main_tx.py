@@ -46,6 +46,7 @@ radio2.startListening();
 
 paysize = 30 # size of payload we send at once
 timeout = time.time() + 0.1
+eof_delimiter = "ThIs Is EnD oF FiLe..........."
     
 ##################DEBUG CODE BELOW############################
 run = True
@@ -70,9 +71,9 @@ while run:
         # did it return with a payload?
         num=0
         pipe = [1]
-        while not radio2.available(pipe) and num<500:
+        while not radio2.available(pipe):# and num<500:
             time.sleep(10000/1000000.0)
-            num=num+1
+            #num=num+1
 
         pl_buffer=[]
         radio2.read(pl_buffer, radio2.getDynamicPayloadSize())

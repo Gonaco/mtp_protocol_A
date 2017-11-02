@@ -45,24 +45,33 @@ c=1
 num=0
 outfile=open("rx_file.txt","w")
 run=True
+firstRun = True
 str = ""
 while run:
+    tmpStr = ""
     akpl_buf = [c,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8]
     pipe = [0]
-    while not radio.available(pipe) and num<500:
-        time.sleep(10000/1000000.0)
-        num=num+1
-        if num ==499:
-            run=False
+    if firstRun == True:
+        while not radio.available(pipe) and num<500:
+            time.sleep(10000/1000000.0)
+            num=num+1
+            if num ==499:
+                run=False
+    else:
+        while not radio.available(pipe):
+            time.sleep(10000/1000000.0)
+
     num=0
+
     if run==True:
         recv_buffer = []
         radio.read(recv_buffer, radio.getDynamicPayloadSize())
         print ("Received:")
         #recv_packet= m.Packet()
         for i in range(0,len(recv_buffer),1):
-            str = str + chr(recv_buffer[i])
+            tmpStr = tmpStr + chr(recv_buffer[i])
         print (str)
+
         #recv_packet.strMssg2Pckt(recv_buffer)
 	    #print(recv_packet)
 	    #print(recv_packet.getPayload())
@@ -70,7 +79,12 @@ while run:
         #ack=m.ACK(c, "")
         #ack.send(radio2)
         radio2.write(akpl_buf)
-        print ("ACK SENT"),
+        print ("ACK SENT")
+
+        if tmpStr == "ThIs Is EnD oF FiLe...........":
+            run = False
+        else:
+            str = str + tmpStr
     else:
         outfile.write(str)
         outfile.close()
