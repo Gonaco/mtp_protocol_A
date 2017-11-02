@@ -26,9 +26,9 @@ radio2.setRetries(15,15)
 radio2.setPayloadSize(32)
 radio2.setChannel(0x60)
 
-radio2.setDataRate(NRF24.BR_250KBPS)
+radio2.setDataRate(NRF24.BR_2MBPS)
 radio2.setPALevel(NRF24.PA_MAX)
-radio.setDataRate(NRF24.BR_250KBPS)
+radio.setDataRate(NRF24.BR_2MBPS)
 radio.setPALevel(NRF24.PA_MAX)
 
 radio.setAutoAck(False)
@@ -45,7 +45,6 @@ radio.printDetails()
 radio2.startListening();
 
 paysize = 30 # size of payload we send at once
-timeout = time.time() + 0.1
 eof_delimiter = "ThIs Is EnD oF FiLe..........."
     
 ##################DEBUG CODE BELOW############################
@@ -68,13 +67,9 @@ while run:
             print("sending partial packet")
             buf = data[i:]
             run = False
-        #frame=m.Frame(data_id, 0, buf)
-        #frame.send(radio)
         radio.write(buf)
         if cnt == 25:
             print ("Sent!"),
-        #print (frame)
-        # did it return with a payload?
         num=0
         repeat = False
         while not radio2.available(pipe) and num < 400:
@@ -90,8 +85,6 @@ while run:
         if cnt == 25:
             print ("Received ACK")
             cnt = 0
-        #print (pl_buffer)
-        #data_id += 1
 
         if run == False:
             print ("Sending final packet")

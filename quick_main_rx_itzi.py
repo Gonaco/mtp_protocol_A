@@ -19,9 +19,9 @@ radio2.setRetries(15,15)
 radio2.setPayloadSize(32)
 radio2.setChannel(0x60)
 
-radio.setDataRate(NRF24.BR_250KBPS)
+radio.setDataRate(NRF24.BR_2MBPS)
 radio.setPALevel(NRF24.PA_MAX)
-radio2.setDataRate(NRF24.BR_250KBPS)
+radio2.setDataRate(NRF24.BR_2MBPS)
 radio2.setPALevel(NRF24.PA_MAX)
 
 radio.setAutoAck(False)
@@ -70,21 +70,14 @@ while run:
     radio.read(recv_buffer, radio.getDynamicPayloadSize())
     if cnt == 25:
         print ("Received Packet!")
-    #recv_packet= m.Packet()
+
     for i in range(0,len(recv_buffer),1):
         tmpStr = tmpStr + chr(recv_buffer[i])
-    #print (str)
-
-    #recv_packet.strMssg2Pckt(recv_buffer)
-    #print(recv_packet)
-    #print(recv_packet.getPayload())
-
-    #ack=m.ACK(c, "")
-    #ack.send(radio2)
 
     time.sleep(3/100.0) # wait a bit for processing
 
-    radio2.write(akpl_buf)
+    radio2.write(akpl_buf) #send ACK
+
     if cnt == 25:
         print ("ACK SENT")
         cnt = 0
