@@ -115,6 +115,14 @@ class ACK(Packet):
         header = Header(97,ACK,ID,0)
         Packet.__init__(self,header,payload)
 
+class SYNC(Packet):
+
+    # Class Constructor
+    
+    def __init__(self, ID, payload):
+        header = Header(97,SYNC,ID,0)
+        Packet.__init__(self,header,payload)    
+
 
 class Frame(Packet):
 
