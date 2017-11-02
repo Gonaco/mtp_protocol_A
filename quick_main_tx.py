@@ -72,12 +72,9 @@ while run:
             num=num+1
 
         pl_buffer=[]
-        radio.read(pl_buffer, radio.getDynamicPayloadSize())
+        radio2.read(pl_buffer, radio2.getDynamicPayloadSize())
         print ("Received back:"),
         print (pl_buffer)
-        if(time.time() + 1/20000>timeout):
-            frame.send(radio)
-            timeout = time.time() + 0.1
         data_id += 1
 
 
