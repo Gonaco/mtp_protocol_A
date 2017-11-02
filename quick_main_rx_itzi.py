@@ -59,7 +59,7 @@ while run:
         recv_buffer = []
         radio.read(recv_buffer, radio.getDynamicPayloadSize())
         print ("Received:")
-        recv_packet= m.Packet()
+        #recv_packet= m.Packet()
         for i in range(6,len(recv_buffer),1):
             str = str + chr(recv_buffer[i])
         print (str)
