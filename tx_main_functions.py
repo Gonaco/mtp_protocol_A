@@ -9,7 +9,7 @@ import spidev
 import message_functions as m
 
 
-def set_up():
+def setup():
 
     pipes = [[0xe7, 0xe7, 0xe7, 0xe7, 0xe7], [0xc2, 0xc2, 0xc2, 0xc2, 0xc2]] #addresses for TX/RX channels
 
