@@ -86,10 +86,8 @@ def transmit():
 
 def synchronized():
     done=False
-    sync_header=m.Header(97, 0, 1)
-    print(sync_header)
-    sync=m.Packet(sync_header, '')
-    print(sync.extractHeader())
+    sync=m.SYNC(0, '')
+    # print(sync.extractHeader())
     sync.send(radio)
     radio.startListening()
     if radio.available():
