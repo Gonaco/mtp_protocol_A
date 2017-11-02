@@ -82,7 +82,7 @@ while run:
             time.sleep(1/100.0)
             num = num+1
 
-        if run == 100
+        if run == 100:
             i = i -1
             print("REPEATING PACKET")
 
