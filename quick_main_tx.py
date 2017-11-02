@@ -90,7 +90,7 @@ while run:
             print ("Sending final packet")
             radio.write(eof_delimiter)
 
-        time.sleep(3/100.0) # wait a bit for processing
+        time.sleep(6/100.0) # wait a bit for processing
 
 
 print("Done sending the file! Exiting!")
