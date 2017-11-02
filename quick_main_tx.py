@@ -42,7 +42,7 @@ radio.openWritingPipe(pipes[1])
 radio2.openReadingPipe(1, pipes[0])
 radio.printDetails()
 
-paysize = 30 # size of payload we send at once
+paysize = 26 # size of payload we send at once
 timeout = time.time() + 0.1
     
 ##################DEBUG CODE BELOW############################
@@ -65,15 +65,18 @@ while run:
         print ("Sent:"),
         print (frame)
         # did it return with a payload?
-        if radio.available():
-            pl_buffer=[]
-            radio.read(pl_buffer, radio.getDynamicPayloadSize())
-            print ("Received back:"),
-            print (pl_buffer)
-        else:
-            if(time.time() + 1/20000>timeout):
-                frame.send(radio)
-                timeout = time.time() + 0.1
+        num=0
+        while not radio2.available(pipe) and num<500:
+            time.sleep(10000/1000000.0)
+            num=num+1
+
+        pl_buffer=[]
+        radio.read(pl_buffer, radio.getDynamicPayloadSize())
+        print ("Received back:"),
+        print (pl_buffer)
+        if(time.time() + 1/20000>timeout):
+            frame.send(radio)
+            timeout = time.time() + 0.1
         data_id += 1
 
 
