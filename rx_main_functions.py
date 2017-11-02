@@ -4,7 +4,6 @@ from lib_nrf24 import NRF24
 import time
 import spidev
 
-
 pipes = [[0xe7, 0xe7, 0xe7, 0xe7, 0xe7], [0xc2, 0xc2, 0xc2, 0xc2, 0xc2]] #addresses for TX/RX channels
 
 radio = NRF24(GPIO, spidev.SpiDev())
