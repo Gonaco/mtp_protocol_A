@@ -52,7 +52,9 @@ eof_delimiter = "ThIs Is EnD oF FiLe..........."
 run = True
 repeat = False
 pipe = [1]
+cnt = 0
 while run:
+    cnt = cnt + 1;
     infile = open("tx_file.txt", "r")
     data = infile.read()
     infile.close()
@@ -60,16 +62,18 @@ while run:
     for i in range(0, len(data), paysize):
         if (i+paysize) < len(data):
             buf = data[i:i+paysize]
-            print("sending full packet")
+            if cnt == 25:
+                print("sending full packet")
         else:
-            print("sending partial packet")
+            if cnt == 25:
+                print("sending partial packet")
             buf = data[i:]
             run = False
         #frame=m.Frame(data_id, 0, buf)
-        print("We'll try sending")
         #frame.send(radio)
         radio.write(buf)
-        print ("Sent:"),
+        if cnt == 25:
+            print ("Sent!"),
         #print (frame)
         # did it return with a payload?
         num=0
@@ -78,13 +82,11 @@ while run:
             time.sleep(1/100.0)
             num = num+1
 
-        if num == 500:
-            print("REPEEEEEEEEEEEEEEEAAAAAAAAAAAAAAAAAAAAAAATTTTTTTTTT NOOOOOOOOOOOOOOOOOO")
-            i = i - 1 # we'll repeat the packet
-
         pl_buffer=[]
         radio2.read(pl_buffer, radio2.getDynamicPayloadSize())
-        print ("Received ACK"),
+        if cnt == 25:
+            print ("Received ACK")
+            cnt = 0
         #print (pl_buffer)
         #data_id += 1
 
@@ -92,7 +94,7 @@ while run:
             print ("Sending final packet")
             radio.write(eof_delimiter)
 
-        time.sleep(20/1000.0) # wait a bit for processing
+        time.sleep(30/1000.0) # wait a bit for processing
 
 
 print("Done sending the file! Exiting!")

@@ -48,7 +48,9 @@ firstRun = True
 str = ""
 akpl_buf = [c,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8]
 pipe = [0]
+cnt = 0
 while run:
+    cnt = cnt + 1
     tmpStr = ""
     
     if firstRun == False:
@@ -66,7 +68,8 @@ while run:
 
     recv_buffer = []
     radio.read(recv_buffer, radio.getDynamicPayloadSize())
-    print ("Received Packet!")
+    if cnt == 25:
+        print ("Received Packet!")
     #recv_packet= m.Packet()
     for i in range(0,len(recv_buffer),1):
         tmpStr = tmpStr + chr(recv_buffer[i])
@@ -82,7 +85,9 @@ while run:
     time.sleep(20/1000.0) # wait a bit for processing
 
     radio2.write(akpl_buf)
-    print ("ACK SENT")
+    if cnt == 25:
+        print ("ACK SENT")
+        cnt = 0
 
     if tmpStr == "ThIs Is EnD oF FiLe...........":
         run = False
