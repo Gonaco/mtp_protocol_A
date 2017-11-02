@@ -46,7 +46,7 @@ radio2.startListening();
 
 paysize = 30 # size of payload we send at once
 eof_delimiter = "ThIs Is EnD oF FiLe..........."
-    
+start = time.time()
 ##################DEBUG CODE BELOW############################
 run = True
 repeat = False
@@ -90,7 +90,8 @@ while run:
             print ("Sending final packet")
             radio.write(eof_delimiter)
 
-        time.sleep(12/100.0) # wait a bit for processing
+        time.sleep(20/100.0) # wait a bit for processing
 
-
-print("Done sending the file! Exiting!")
+end = time.time()
+diff = end - start
+print("Done sending the file! Exiting! It too me: " + diff + " seconds")
