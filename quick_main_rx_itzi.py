@@ -67,11 +67,11 @@ while run:
     if run==True:
         recv_buffer = []
         radio.read(recv_buffer, radio.getDynamicPayloadSize())
-        print ("Received:")
+        print ("Received Packet!")
         #recv_packet= m.Packet()
         for i in range(0,len(recv_buffer),1):
             tmpStr = tmpStr + chr(recv_buffer[i])
-        print (str)
+        #print (str)
 
         #recv_packet.strMssg2Pckt(recv_buffer)
 	    #print(recv_packet)
@@ -87,6 +87,7 @@ while run:
 
         if tmpStr == "ThIs Is EnD oF FiLe...........":
             run = False
+            print(tmpStr)
         else:
             str = str + tmpStr
     else:
