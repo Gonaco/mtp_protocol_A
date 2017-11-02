@@ -51,6 +51,7 @@ eof_delimiter = "ThIs Is EnD oF FiLe..........."
 ##################DEBUG CODE BELOW############################
 run = True
 repeat = False
+pipe = [1]
 while run:
     infile = open("tx_file.txt", "r")
     data = infile.read()
@@ -72,26 +73,26 @@ while run:
         #print (frame)
         # did it return with a payload?
         num=0
-        pipe = [1]
         repeat = False
         while not radio2.available(pipe) and num < 100:
             time.sleep(1/100.0)
             num = num+1
 
         if num == 500:
+            print("REPEEEEEEEEEEEEEEEAAAAAAAAAAAAAAAAAAAAAAATTTTTTTTTT NOOOOOOOOOOOOOOOOOO")
             i = i - 1 # we'll repeat the packet
 
         pl_buffer=[]
         radio2.read(pl_buffer, radio2.getDynamicPayloadSize())
-        print ("Received back:"),
-        print (pl_buffer)
+        print ("Received ACK"),
+        #print (pl_buffer)
         #data_id += 1
 
         if run == False:
             print ("Sending final packet")
             radio.write(eof_delimiter)
 
-        time.sleep(50/1000.0) # wait a bit for processing
+        time.sleep(20/1000.0) # wait a bit for processing
 
 
 print("Done sending the file! Exiting!")

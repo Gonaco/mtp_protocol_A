@@ -43,14 +43,14 @@ radio.startListening()
 
 c=1
 num=0
-outfile=open("rx_file.txt","w")
 run=True
 firstRun = True
 str = ""
+akpl_buf = [c,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8]
+pipe = [0]
 while run:
     tmpStr = ""
-    akpl_buf = [c,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8]
-    pipe = [0]
+    
     if firstRun == False:
         while not radio.available(pipe) and num < 500:
             time.sleep(1/100.0)
@@ -90,7 +90,8 @@ while run:
             print(tmpStr)
         else:
             str = str + tmpStr
-    else:
-        outfile.write(str)
-        outfile.close()
-        print("The message is received")
+
+outfile=open("rx_file.txt","w")
+outfile.write(str)
+outfile.close()
+print("The message is received")
