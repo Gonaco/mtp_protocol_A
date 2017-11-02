@@ -60,17 +60,17 @@ while run:
         radio.read(recv_buffer, radio.getDynamicPayloadSize())
         print ("Received:")
         recv_packet= m.Packet()
-        #for i in range(6,len(recv_buffer),1):
-        #    str = str + chr(recv_buffer[i])
-        #print (str)
-        recv_packet.strMssg2Pckt(recv_buffer)
-	print(recv_packet)
-	print(recv_packet.getPayload())
-    
+        for i in range(6,len(recv_buffer),1):
+            str = str + chr(recv_buffer[i])
+        print (str)
+        #recv_packet.strMssg2Pckt(recv_buffer)
+	    #print(recv_packet)
+	    #print(recv_packet.getPayload())
+
         c = c + 1
         if (c&1) == 0:
             ack=m.ACK(c, "")
-            ack.send(radio)
+            ack.send(radio2)
             print ("Loaded payload reply:"),
             print (akpl_buf)
         else:
