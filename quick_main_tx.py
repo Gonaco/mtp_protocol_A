@@ -60,7 +60,6 @@ while run:
             buf = data[i:]
             run = False
         frame=m.Frame(data_id, 0, buf)
-        radio.write(frame)
         print("We'll try sending")
         frame.send(radio)
         print ("Sent:"),
