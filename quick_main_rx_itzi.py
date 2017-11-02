@@ -57,8 +57,8 @@ while run:
         while not radio.available(pipe) and num < 50000:
             time.sleep(1/10000.0)
             num=num+1
-            if num == 50000:
-                run = False
+        if num == 50000:
+            run = False
     else:
         firstRun = False
         while not radio.available(pipe):

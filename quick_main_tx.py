@@ -77,11 +77,11 @@ while run:
         # did it return with a payload?
         num=0
         repeat = False
-        while not radio2.available(pipe) and num < 2000:
+        while not radio2.available(pipe) and num < 4000:
             time.sleep(1/10000.0)
             num = num+1
 
-        if run == 100:
+        if run == 4000:
             i = i -1
             print("REPEATING PACKET")
 
@@ -101,5 +101,3 @@ while run:
 
 
 print("Done sending the file! Exiting!")
-
-
