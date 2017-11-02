@@ -35,11 +35,30 @@ def setup():
     radio2.openWritingPipe(pipes[0])
     radio2.openReadingPipe(1, pipes[1])
 
+<<<<<<< HEAD
+radio.setAutoAck(False)
+radio.enableDynamicPayloads() # radio.setPayloadSize(32) for setting a$
+radio.enableAckPayload()
+radio2.setAutoAck(False)
+radio2.enableDynamicPayloads()
+radio2.enableAckPayload()
+
+radio2.openWritingPipe(pipes[0])
+radio.openReadingPipe(1, pipes[1])
+
+radio2.startListening()
+radio2.stopListening()
+
+radio2.printDetails()
+
+radio.startListening()
+=======
     radio2.startListening()
     radio2.stopListening()
     radio2.printDetails()
 
     radio2.startListening()
+>>>>>>> 5ccd512290b7bb380f6ed6d8fdbe43474e59c3eb
 
 c=1
 num=0
@@ -49,7 +68,7 @@ str = ""
 while run:
     akpl_buf = [c,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8]
     pipe = [0]
-    while not radio2.available(pipe) and num<500:
+    while not radio.available(pipe) and num<500:
         time.sleep(10000/1000000.0)
         num=num+1
         if num ==499:
@@ -57,16 +76,20 @@ while run:
     num=0
     if run==True:
         recv_buffer = []
-        radio2.read(recv_buffer, radio2.getDynamicPayloadSize())
+        radio.read(recv_buffer, radio.getDynamicPayloadSize())
         print ("Received:")
-        
-        for i in range(0,len(recv_buffer),1):
+        recv_packet= m.Packet()
+        for i in range(0,len(payload),1):
             str = str + chr(recv_buffer[i])
         print (str)
-        
+        recv_packet.strMssg2Pckt(str)
+	print(recv_packet)
+	print(recv_packet.getPayload())
+
         c = c + 1
         if (c&1) == 0:
-            radio2.writeAckPayload(1, akpl_buf, len(akpl_buf))
+            ack=m.ACK(c, "")
+            ack.send(radio)
             print ("Loaded payload reply:"),
             print (akpl_buf)
         else:
