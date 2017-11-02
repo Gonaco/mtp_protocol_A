@@ -94,4 +94,4 @@ while run:
 
 end = time.time()
 diff = end - start
-print("Done sending the file! Exiting! It too me: " + diff + " seconds")
+print("Done sending the file! Exiting! It too me: ",diff," seconds")
