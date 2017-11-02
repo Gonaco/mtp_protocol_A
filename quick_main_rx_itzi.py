@@ -52,12 +52,13 @@ while run:
     akpl_buf = [c,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8]
     pipe = [0]
     if firstRun == False:
-        while not radio.available(pipe) and num<500:
+        while not radio.available(pipe) and num < 500:
             time.sleep(10000/1000000.0)
             num=num+1
             if num ==499:
                 run=False
     else:
+        firstRun = False
         while not radio.available(pipe):
             time.sleep(10000/1000000.0)
 

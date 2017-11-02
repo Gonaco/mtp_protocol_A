@@ -50,6 +50,7 @@ eof_delimiter = "ThIs Is EnD oF FiLe..........."
     
 ##################DEBUG CODE BELOW############################
 run = True
+repeat = False
 while run:
     infile = open("tx_file.txt", "r")
     data = infile.read()
@@ -58,7 +59,7 @@ while run:
     for i in range(0, len(data), paysize):
         if (i+paysize) < len(data):
             buf = data[i:i+paysize]
-            print("sneding full packets")
+            print("sending full packet #")
         else:
             buf = data[i:]
             run = False
@@ -71,15 +72,19 @@ while run:
         # did it return with a payload?
         num=0
         pipe = [1]
-        while not radio2.available(pipe):# and num<500:
+        repeat = False
+        while not radio2.available(pipe): and num < 500:
             time.sleep(10000/1000000.0)
-            #num=num+1
+            num=num+1
+
+        if num == 500:
+            i = i - 1 #we'll repeat the packet
 
         pl_buffer=[]
         radio2.read(pl_buffer, radio2.getDynamicPayloadSize())
         print ("Received back:"),
         print (pl_buffer)
-        data_id += 1
+        #data_id += 1
 
 
 print("Done sending the file! Exiting!")
