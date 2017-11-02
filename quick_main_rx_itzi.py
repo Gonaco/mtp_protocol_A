@@ -19,9 +19,9 @@ radio2.setRetries(15,15)
 radio2.setPayloadSize(32)
 radio2.setChannel(0x60)
 
-radio.setDataRate(NRF24.BR_1MBPS)
+radio.setDataRate(NRF24.BR_2MBPS)
 radio.setPALevel(NRF24.PA_MAX)
-radio2.setDataRate(NRF24.BR_1MBPS)
+radio2.setDataRate(NRF24.BR_2MBPS)
 radio2.setPALevel(NRF24.PA_MAX)
 
 radio.setAutoAck(False)
@@ -54,8 +54,8 @@ while run:
     tmpStr = ""
     
     if firstRun == False:
-        while not radio.available(pipe) and num < 500:
-            time.sleep(1/100.0)
+        while not radio.available(pipe) and num < 50000:
+            time.sleep(1/10000.0)
             num=num+1
             if num ==499:
                 run=False
