@@ -79,7 +79,7 @@ while run:
         tmpStr = tmpStr + chr(recv_buffer[i])
 
     rcv.strMssg2Pckt(mssg)
-    print(rcv)
+    print(rcv.getPayload())
     time.sleep(3/100.0) # wait a bit for processing
 
     radio2.write(akpl_buf) #send ACK
