@@ -110,8 +110,8 @@ class Packet:
         for i in range(0,len(message_bin),1):
             mssg_string = mssg_string + chr(message_bin[i])
 
-        self.header.extractHeader(message_string)
-        self.payload = message_string[7:]
+        self.header.extractHeader(mssg_string)
+        self.payload = mssg_string[7:]
         
     # def send(self,transceiver):
     #     transceiver.write(self.__str__())
