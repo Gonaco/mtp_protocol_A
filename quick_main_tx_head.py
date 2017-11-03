@@ -92,7 +92,7 @@ while run:
 
         if run == False:
             print ("Sending final packet")
-            end = frame = m.Frame(i,0,eof_delimiter)
+            end = m.Frame(i,0,eof_delimiter)
             radio.write(end.__str__())
 
         time.sleep(20/100.0) # wait a bit for processing
