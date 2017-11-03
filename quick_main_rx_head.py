@@ -68,7 +68,7 @@ while run:
 
     recv_buffer = []
     radio.read(recv_buffer, radio.getDynamicPayloadSize())
-    
+    print(recv_buffer)
     if cnt == 25:
         print ("Received Packet!")
         

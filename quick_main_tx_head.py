@@ -67,7 +67,7 @@ while run:
         else:
             print("sending partial packet")
             buf = data[i:]
-            frame = m.Frame(i,0,buf)
+            frame = m.Frame(i,1,buf)
             run = False
 
         # print(frame.getPayload())
