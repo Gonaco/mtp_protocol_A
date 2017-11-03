@@ -105,7 +105,7 @@ class Packet:
         return self.header.header2byt()+payload_bit
 
     def strMssg2Pckt(self, message_bin):
-        mssg_string =
+        mssg_string = ""
         
         for i in range(0,len(message_bin),1):
             mssg_string = mssg_string + chr(message_bin[i])
