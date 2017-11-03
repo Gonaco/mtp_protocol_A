@@ -44,8 +44,8 @@ radio.printDetails()
 
 radio2.startListening();
 
-paysize = 30 # size of payload we send at once
-eof_delimiter = "ThIs Is EnD oF FiLe..........."
+paysize = 25 # size of payload we send at once
+eof_delimiter = "ThIs Is EnD oF FiLe......"
 start = time.time()
 ##################DEBUG CODE BELOW############################
 run = True
@@ -61,13 +61,17 @@ while run:
         cnt = cnt + 1;
         if (i+paysize) < len(data):
             buf = data[i:i+paysize]
+            frame = m.Frame(i,0,buf)
             if cnt == 25:
                 print("sending full packet")
         else:
             print("sending partial packet")
             buf = data[i:]
+            frame = m.Frame(i,1,buf)
             run = False
-        radio.write(buf)
+
+        # print(frame.getPayload())
+        radio.write(frame.__str__())
         if cnt == 25:
             print ("Sent!"),
         num=0
@@ -88,7 +92,8 @@ while run:
 
         if run == False:
             print ("Sending final packet")
-            radio.write(eof_delimiter)
+            end = m.Frame(i,0,eof_delimiter)
+            radio.write(end.__str__())
 
         time.sleep(20/100.0) # wait a bit for processing
 
