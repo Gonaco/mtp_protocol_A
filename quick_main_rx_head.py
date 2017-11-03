@@ -51,7 +51,6 @@ pipe = [0]
 cnt = 0
 while run:
     cnt = cnt + 1
-    mssg = ""
     tmpStr = ""
     
     if firstRun == False:
@@ -75,10 +74,9 @@ while run:
         print ("Received Packet!")
         
     for i in range(0,len(recv_buffer),1):
-        mssg = mssg + chr(recv_buffer[i])
         tmpStr = tmpStr + chr(recv_buffer[i])
 
-    rcv.strMssg2Pckt(mssg)
+    rcv.strMssg2Pckt(recv_buffer)
     print(rcv.getPayload())
     time.sleep(3/100.0) # wait a bit for processing
 
