@@ -72,6 +72,8 @@ class Header:
 
     def extractHeader(self,rcv_str):
 
+        print(rcv_str)
+
         head = string2bits(rcv_str[0:8])
 
         self.signature = int(head[0], 2)

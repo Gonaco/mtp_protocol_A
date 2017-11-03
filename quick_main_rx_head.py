@@ -77,7 +77,7 @@ while run:
 
     rcv = m.Packet()
     rcv.strMssg2Pckt(recv_buffer)
-    print(rcv.getPayload())
+    # print(rcv.getPayload())
     
     time.sleep(3/100.0) # wait a bit for processing
 
