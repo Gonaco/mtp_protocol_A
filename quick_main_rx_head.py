@@ -77,16 +77,17 @@ while run:
 
     rcv = m.Packet()
     rcv.strMssg2Pckt(recv_buffer)
-    # print(rcv.getPayload())
     
     time.sleep(3/100.0) # wait a bit for processing
 
     radio2.write(akpl_buf) #send ACK
 
+    tmpStr = rcv.getPayload()
+    
     if cnt == 25:
         print ("ACK SENT")
         cnt = 0
-
+    
     if tmpStr == "ThIs Is EnD oF FiLe...........":
         run = False
         print(tmpStr)
