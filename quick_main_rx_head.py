@@ -69,15 +69,16 @@ while run:
     recv_buffer = []
     radio.read(recv_buffer, radio.getDynamicPayloadSize())
     rcv = m.Packet()
-    print(recv_buffer)
-    rcv.strMssg2Pckt(recv_buffer)
-    print(rcv)
+    
     if cnt == 25:
         print ("Received Packet!")
         
     for i in range(0,len(recv_buffer),1):
+        mssg = mssg + chr(recv_buffer[i])
         tmpStr = tmpStr + chr(recv_buffer[i])
-        
+
+    rcv.strMssg2Pckt(mssg)
+    print(rcv)
     time.sleep(3/100.0) # wait a bit for processing
 
     radio2.write(akpl_buf) #send ACK
