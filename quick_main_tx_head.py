@@ -70,7 +70,7 @@ while run:
             frame = m.Frame(i,0,buf)
             run = False
 
-        print(frame)
+        print(frame.getPayload())
         radio.write(frame.__str__())
         if cnt == 25:
             print ("Sent!"),
