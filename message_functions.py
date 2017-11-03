@@ -72,7 +72,7 @@ class Header:
 
     def extractHeader(self,rcv_str):
 
-        head = string2bits(rcv_str[0:7])
+        head = string2bits(rcv_str[0:8])
 
         self.signature = int(head[0], 2)
         self.typ = int(head[1][0:2], 2)
@@ -111,7 +111,7 @@ class Packet:
             mssg_string = mssg_string + chr(message_bin[i])
 
         self.header.extractHeader(mssg_string)
-        self.payload = mssg_string[7:]
+        self.payload = mssg_string[8:]
         
     # def send(self,transceiver):
     #     transceiver.write(self.__str__())

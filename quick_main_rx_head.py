@@ -68,7 +68,6 @@ while run:
 
     recv_buffer = []
     radio.read(recv_buffer, radio.getDynamicPayloadSize())
-    rcv = m.Packet()
     
     if cnt == 25:
         print ("Received Packet!")
@@ -76,7 +75,7 @@ while run:
     for i in range(0,len(recv_buffer),1):
         tmpStr = tmpStr + chr(recv_buffer[i])
 
-    rcv.strMssg2Pckt(recv_buffer)
+    rcv = m.Packet().strMssg2Pckt(recv_buffer)
     print(rcv.getPayload())
     time.sleep(3/100.0) # wait a bit for processing
 
