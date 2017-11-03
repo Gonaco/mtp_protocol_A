@@ -108,8 +108,9 @@ class Packet:
         self.header.extractHeader(message_string)
         self.payload = message_string[6:]
 
-    def send(self,transceiver):
-        transceiver.write(self.__str__())
+    # def send(self,transceiver):
+    #     transceiver.write(self.__str__())
+    # Simple things, please
 
     
 class ACK(Packet):
