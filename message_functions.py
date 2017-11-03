@@ -94,7 +94,7 @@ class Packet:
     def getPayload(self):
         ret = ""
         for i in range(0, len(self.payload), 1):
-            ret = ret + chr(self.payload[i])
+            ret = ret + self.payload[i]
         return ret
     
     def packet2byt(self):
