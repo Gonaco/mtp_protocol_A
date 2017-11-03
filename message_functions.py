@@ -85,6 +85,7 @@ class Header:
         self.ID = int(head[0]+head[1]+head[2]+head[3],2)
         self.typ = int(head[4][:2], 2)
         self.padding = int(head[4][2:],2)
+        print(self.ID)
     
 
 class Packet:
@@ -118,7 +119,7 @@ class Packet:
             mssg_string = mssg_string + chr(message_bin[i])
 
         self.header.extractHeader(mssg_string)
-        self.payload = mssg_string[HEADER_BYTES_LENGTH+1:]
+        self.payload = mssg_string[HEADER_BYTES_LENGTH:]
         
     # def send(self,transceiver):
     #     transceiver.write(self.__str__())
