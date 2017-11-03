@@ -69,6 +69,7 @@ while run:
     recv_buffer = []
     radio.read(recv_buffer, radio.getDynamicPayloadSize())
     rcv = m.Packet()
+    print(recv_buffer)
     rcv.strMssg2Pckt(recv_buffer)
     print(rcv)
     if cnt == 25:
