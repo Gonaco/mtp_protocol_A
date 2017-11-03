@@ -88,7 +88,7 @@ while run:
         print ("ACK SENT")
         cnt = 0
     
-    if tmpStr == "ThIs Is EnD oF FiLe...........":
+    if tmpStr == "ThIs Is EnD oF FiLe......":
         run = False
         print(tmpStr)
     else:
