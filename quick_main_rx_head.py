@@ -51,6 +51,7 @@ pipe = [0]
 cnt = 0
 while run:
     cnt = cnt + 1
+    msg = ""
     tmpStr = ""
     
     if firstRun == False:
