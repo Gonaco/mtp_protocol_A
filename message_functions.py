@@ -129,9 +129,18 @@ class ACK(Packet):
 
     # Class Constructor
     
-    def __init__(self, ID, payload):
+    def __init__(self, ID, payload): # TO Change No Payload and Test if it sends with no payload
         header = Header(ACK,ID,0)
         Packet.__init__(self,header,payload)
+
+class NACK(Packet):
+
+    # Class Constructor
+    
+    def __init__(self, ID, payload):
+        header = Header(NACK,ID,0)
+        Packet.__init__(self,header,payload)
+
 
 class SYNC(Packet):
 
