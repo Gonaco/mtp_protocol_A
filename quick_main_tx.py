@@ -44,43 +44,59 @@ radio.printDetails()
 
 radio2.startListening();
 
-paysize = 30 # size of payload we send at once
-timeout = time.time() + 0.1
-    
+paysize = 25 # size of payload we send at once
+eof_delimiter = "ThIs Is EnD oF FiLe......"
+start = time.time()
 ##################DEBUG CODE BELOW############################
 run = True
+repeat = False
+pipe = [1]
+cnt = 0
 while run:
     infile = open("tx_file.txt", "r")
     data = infile.read()
     infile.close()
     data_id=1
     for i in range(0, len(data), paysize):
+        cnt = cnt + 1;
         if (i+paysize) < len(data):
             buf = data[i:i+paysize]
-            print("sneding full packets")
+            frame = m.Frame(i,0,buf)
+            if cnt == 25:
+                print("sending full packet")
         else:
+            print("sending partial packet")
             buf = data[i:]
+            frame = m.Frame(i,1,buf)
             run = False
-        #frame=m.Frame(data_id, 0, buf)
-        print("We'll try sending")
-        #frame.send(radio)
-        radio.write(buf)
-        print ("Sent:"),
-        #print (frame)
-        # did it return with a payload?
+
+        # print(frame.getPayload())
+        radio.write(frame.__str__())
+        if cnt == 25:
+            print ("Sent!"),
         num=0
-        pipe = [1]
-        while not radio2.available(pipe) and num<500:
-            time.sleep(10000/1000000.0)
-            num=num+1
+        repeat = False
+        while not radio2.available(pipe) and num < 400:
+            time.sleep(1/1000.0)
+            num = num+1
+
+        if run == 400:
+            i = i -1
+            print("REPEATING PACKET")
 
         pl_buffer=[]
         radio2.read(pl_buffer, radio2.getDynamicPayloadSize())
-        print ("Received back:"),
-        print (pl_buffer)
-        data_id += 1
+        if cnt == 25:
+            print ("Received ACK")
+            cnt = 0
 
+        if run == False:
+            print ("Sending final packet")
+            end = m.Frame(i,0,eof_delimiter)
+            radio.write(end.__str__())
 
-print("Done sending the file! Exiting!")
+        time.sleep(20/100.0) # wait a bit for processing
 
-
+end = time.time()
+diff = end - start
+print("Done sending the file! Exiting! It took: ",diff," seconds")
