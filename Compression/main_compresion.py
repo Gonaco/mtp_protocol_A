@@ -1,8 +1,7 @@
-# coding=utf-8
-
 import zlib
 import io
 import numpy as np
+import sys
 
 # file_input = io.open("input.txt", mode="r", encoding="utf-16")
 # file_output_c = io.open("output_compressed.txt", mode="wb")
@@ -14,6 +13,12 @@ import numpy as np
 #     file_output_c.write(compressed_line)
 # file_output_c.close()
 # file_input.close()
+
+def compressTextLZW( text ):
+    "This compresses the text file using LZW"
+    compressed_text = zlib.compress(text.encode("utf-16"))
+    # print(compressed_text)
+    return compressed_text
 
 file_input = io.open("input.txt", mode="r", encoding="utf-16")
 file_output_c = io.open("output_compressed.txt", mode="wb")
@@ -55,11 +60,17 @@ for line in lines:
         str_send = str_send + elem
     str_send = str_send + '¬'
 
-to_tx = lines[1] + '&' + str_indices + '&' + str_send
+compressed_text_diff = lines[1] + '&' + str_indices + '&' + str_send
 
-for line in file_input:
-    print(line)
-    compressed_line = zlib.compress(line.encode("utf-16"))
-    file_output_c.write(compressed_line)
-file_output_c.close()
-file_input.close()
+
+
+
+
+text = file_input.read()
+
+
+compressed_text_LZW = compressTextLZW(text)
+
+size_raw = sys.getsizeof(text)
+size_compressed_LZW  = sys.getsizeof(compressed_text_LZW)
+size_compressed_diff = sys.getsizeof(compressed_text_diff)
