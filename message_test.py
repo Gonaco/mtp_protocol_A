@@ -43,21 +43,42 @@ def main(argv):
     # print(j)
 
 
-    p = m.FrameSimple(5000)
-    print(p)
-    k=p.header
-    print(k.header2byt())
-    print(p.packet2byt())
-    print(m.string2bits(p.payload))
-    h = m.Header()
-    h.extractHeader(p.__str__())
-    print(h)
+    # p = m.FrameSimple(5000)
+    # print(p)
+    # k=p.header
+    # print(k.header2byt())
+    # print(p.packet2byt())
+    # print(m.string2bits(p.payload))
+    # h = m.Header()
+    # h.extractHeader(p.__str__())
+    # print(h)
 
-    rcv = m.Packet()
-    rcv.strMssg2Pckt(p.__str__())
-    print(rcv)
-    print(rcv.header.ID)
-    print(rcv.payload)
+    # rcv = m.Packet()
+    # rcv.strMssg2Pckt(p.__str__())
+    # print(rcv)
+    # print(rcv.header.ID)
+    # print(rcv.payload)
+
+    control = m.ControlFrame(m.C_TEAM)
+    print(control)
+    rcv = []
+    rcv.append(int(control.c2byt(),2))
+    rcvc = m.ControlFrame()
+    rcvc.strMssg2Pckt(rcv)
+    print(rcvc)
+
+    data = m.DataFrame(m.B_TEAM, 0, "Hola peña")
+    print(data)
+    print(data.getPayload())
+    print(data.d2byt())
+    rcvd = m.DataFrame()
+    n = []
+    for i in range(0,len(data.d2byt())):
+        n.append(int(data.d2byt()[i],2))
+    rcvd.strMssg2Pckt(n)
+    print(rcvd)
+    print(rcvd.getPayload())
+    
 
 if __name__ == "__main__":
     main(sys.argv)

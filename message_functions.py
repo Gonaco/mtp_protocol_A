@@ -62,7 +62,7 @@ class Header:
             byte_start = byte_length*i
             h.append(bin_head[byte_start:byte_start+byte_length])
 
-        return bits2string(h)
+        return bits2string(h) 
 
 
     # Class2Binarycode split in Bytes
@@ -74,7 +74,7 @@ class Header:
 
     def extractHeader(self,rcv_str):
 
-        print(rcv_str)
+        # print(rcv_str)
 
         head = string2bits(rcv_str[:HEADER_BYTES_LENGTH])
 
@@ -85,9 +85,9 @@ class Header:
         self.ID = int(head[0]+head[1]+head[2]+head[3],2)
         self.typ = int(head[4][:2], 2)
         self.padding = int(head[4][2:],2)
-        print(self.ID)
-    
+        # print(self.ID)
 
+        
 class Packet:
 
     # Class Constructor
@@ -160,9 +160,114 @@ class Frame(Packet):
         Packet.__init__(self,header,payload)
 
 
-# class FrameSimple(Frame):
 
-#     # Class Constructor
+# NETWORK MODE
+
+NETWORK_TYPE_LENGTH = 1
+NETWORK_X_LENGTH = 2                  # The length of the Transmitter/Receiver/Next parameter
+NETWORK_POS_LENGTH = 5
+NETWORK_ACK_LENGTH = 1
+
+N_ACK_OK = 1
+
+DATA_FRAME_TYPE = 1
+CONTROL_FRAME_TYPE = 0
+
+A_TEAM = 0
+B_TEAM = 1
+C_TEAM = 2
+D_TEAM = 3
+
+
+class DataFrame:
+
+    # Class Constructor
     
-#     def __init__(self, ID):
-#         Frame.__init__(self,ID,1,ID.__str__())
+    def __init__(self, rx=B_TEAM, pos=0, payload=''):
+        self.typ = DATA_FRAME_TYPE
+        self.rx = rx
+        self.pos = pos
+        self.payload = payload
+
+    def __str__(self):
+        h = []
+        
+        bin_head = get_bin(self.typ, NETWORK_TYPE_LENGTH) + get_bin(self.rx, NETWORK_X_LENGTH) + get_bin(self.pos, NETWORK_POS_LENGTH)
+        
+        h.append(bin_head)
+
+        header = bits2string(h)
+        
+        return header + self.payload
+
+    def getPayload(self):
+        # ret = ""
+        # for i in range(0, len(self.payload), 1):
+        #     ret = ret + self.payload[i]
+        return self.payload
+    
+    def d2byt(self):
+        h = []
+
+        h.append(get_bin(self.typ, NETWORK_TYPE_LENGTH) + get_bin(self.rx, NETWORK_X_LENGTH) + get_bin(self.pos, NETWORK_POS_LENGTH))
+        
+        return h + string2bits(self.payload)
+
+    def strMssg2Pckt(self, message_bin):
+        mssg_string = ""
+        
+        for i in range(0,len(message_bin),1):
+            mssg_string = mssg_string + chr(message_bin[i])
+
+        head = string2bits(mssg_string[0])
+        
+        self.typ = int(head[0][:1],2)
+        self.rx = int(head[0][1:3], 2)
+        self.pos = int(head[0][3:],2)
+
+        self.payload = mssg_string[1:]
+        
+    # def send(self,transceiver):
+    #     transceiver.write(self.__str__())
+
+
+class ControlFrame:
+
+    # Class Constructor
+
+    def __init__(self, nxt=B_TEAM, ack1=0, ack2=0, ack3=0):
+        self.typ = CONTROL_FRAME_TYPE
+        self.tx = A_TEAM
+        self.nxt = nxt
+        self.ack1 = ack1 
+        self.ack2 = ack2
+        self.ack3 = ack3
+
+    def __str__(self):
+        h = []
+        
+        bin_head = get_bin(self.typ, NETWORK_TYPE_LENGTH) + get_bin(self.tx, NETWORK_X_LENGTH) + get_bin(self.nxt,NETWORK_X_LENGTH) + get_bin(self.ack1,NETWORK_ACK_LENGTH) + get_bin(self.ack2,NETWORK_ACK_LENGTH) + get_bin(self.ack3,NETWORK_ACK_LENGTH)
+        
+        h.append(bin_head)
+
+        return bits2string(h)
+
+    def c2byt(self):
+        return get_bin(self.typ, NETWORK_TYPE_LENGTH) + get_bin(self.tx, NETWORK_X_LENGTH) + get_bin(self.nxt,NETWORK_X_LENGTH) + get_bin(self.ack1,NETWORK_ACK_LENGTH) + get_bin(self.ack2,NETWORK_ACK_LENGTH) + get_bin(self.ack3,NETWORK_ACK_LENGTH)
+
+    def strMssg2Pckt(self, message_bin):
+        mssg_string = ""
+        
+        for i in range(0,len(message_bin),1):
+            mssg_string = mssg_string + chr(message_bin[i])
+
+        head = string2bits(mssg_string[0])
+        
+        self.typ = int(head[0][0],2)
+        self.tx = int(head[0][1:3],2)
+        self.nxt = int(head[0][3:5],2)
+        self.ack1 = int(head[0][5],2)
+        self.ack2 = int(head[0][6],2)
+        self.ack3 = int(head[0][7],2)
+        
+        self.payload = mssg_string[1:]
