@@ -156,7 +156,7 @@ class SYNC(Packet):
     
     def __init__(self, ID):
         header = Header(SYNC,ID,0)
-        Packet.__init__(self,header'')    
+        Packet.__init__(self,header,'')    
 
 
 class Frame(Packet):
