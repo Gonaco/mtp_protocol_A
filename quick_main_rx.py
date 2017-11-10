@@ -75,7 +75,9 @@ while run:
         
     for i in range(0,len(recv_buffer),1):
         tmpStr = tmpStr + chr(recv_buffer[i])
+        print('in')
 
+    print('out')
     rcv = m.Packet()
     rcv.strMssg2Pckt(recv_buffer)
     print(rcv)
