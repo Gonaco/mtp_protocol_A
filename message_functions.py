@@ -64,6 +64,14 @@ class Header:
 
         return bits2string(h) 
 
+    def getTyp(self):
+        return self.typ
+
+    def getID(self):
+        return self.ID
+
+    def getPadding(self):
+        return self.padding
 
     # Class2Binarycode split in Bytes
 
@@ -200,6 +208,15 @@ class DataFrame:
         
         return header + self.payload
 
+    def getTyp(self):
+        return self.typ
+
+    def getRx(self):
+        return self.rx
+    
+    def getPos(self):
+        return self.pos
+
     def getPayload(self):
         # ret = ""
         # for i in range(0, len(self.payload), 1):
@@ -252,6 +269,24 @@ class ControlFrame:
 
         return bits2string(h)
 
+    def getTyp(self):
+        return self.typ
+
+    def getTx(self):
+        return self.tx
+
+    def getNxt(self):
+        return self.nxt
+    
+    def getAck1(self):
+        return self.ack1
+
+    def getAck2(self):
+        return self.ack2
+
+    def getAck3(self):
+        return self.ack3
+        
     def c2byt(self):
         return get_bin(self.typ, NETWORK_TYPE_LENGTH) + get_bin(self.tx, NETWORK_X_LENGTH) + get_bin(self.nxt,NETWORK_X_LENGTH) + get_bin(self.ack1,NETWORK_ACK_LENGTH) + get_bin(self.ack2,NETWORK_ACK_LENGTH) + get_bin(self.ack3,NETWORK_ACK_LENGTH)
 
