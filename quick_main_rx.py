@@ -50,6 +50,7 @@ akpl_buf = [c,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8]
 pipe = [0]
 cnt = 0
 while run:
+    print(cnt)
     cnt = cnt + 1
     tmpStr = ""
     
@@ -80,6 +81,7 @@ while run:
     print(rcv)
     
     time.sleep(3/100.0) # wait a bit for processing
+    print(cnt)
     ack = m.ACK(cnt)
     print(ack)
     radio2.write(ack.__str__()) #send ACK
