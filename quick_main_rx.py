@@ -79,7 +79,7 @@ while run:
     rcv.strMssg2Pckt(recv_buffer)
     
     time.sleep(3/100.0) # wait a bit for processing
-    ack = m.ACK(cnt)
+    ack = m.ACK(c)
     radio2.write(ack.__str__()) #send ACK
 
     tmpStr = rcv.getPayload()

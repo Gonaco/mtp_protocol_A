@@ -154,9 +154,9 @@ class SYNC(Packet):
 
     # Class Constructor
     
-    def __init__(self, ID, payload):
+    def __init__(self, ID):
         header = Header(SYNC,ID,0)
-        Packet.__init__(self,header,payload)    
+        Packet.__init__(self,header'')    
 
 
 class Frame(Packet):
