@@ -50,6 +50,7 @@ akpl_buf = [c,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8]
 pipe = [0]
 cnt = 0
 while run:
+    print(cnt)
     cnt = cnt + 1
     tmpStr = ""
     
@@ -74,13 +75,18 @@ while run:
         
     for i in range(0,len(recv_buffer),1):
         tmpStr = tmpStr + chr(recv_buffer[i])
+        print('in')
 
+    print('out')
     rcv = m.Packet()
     rcv.strMssg2Pckt(recv_buffer)
+    print(rcv)
     
     time.sleep(3/100.0) # wait a bit for processing
-
-    radio2.write(akpl_buf) #send ACK
+    print(cnt)
+    ack = m.ACK(cnt)
+    print(ack)
+    radio2.write(ack.__str__()) #send ACK
 
     tmpStr = rcv.getPayload()
     
