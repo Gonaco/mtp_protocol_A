@@ -7,6 +7,9 @@ GPIO.setmode(GPIO.BCM)
 from lib_nrf24 import NRF24
 import time
 import spidev
+import random
+import time
+import datetime
 import message_functions as m
 
 
@@ -51,47 +54,79 @@ def setup():
 def transmit():
     run = True
     while run:
-        #We send our Control Frame
-        control=m.ControlFrame
-        #We check if we've received anything
-        rcv=
-        #If we've received the same control frame that we've sent...
-        if(m.getTx(rcv) == control.tx):
-            #We send the data frames
-            files = {'B': "tx_file_B.txt", 'C': "tx_file_C.txt", 'D': "tx_file_D.txt"}
-            data = 1;
-            data_id = 1
-            while (data != '')
-                for team in files:
-                    infile = open(files.get(team), "r")
-                    data = infile.read()
-                    infile.close()
-                    if synchronized():
-                        print("Sending the file for team", team)
-                        for i in range(0, len(data), paysize):
-                            if (i + paysize) < len(data):
-                                buf = data[i:i + paysize]
-                                print("sending full packets")
-                            else:
-                                buf = data[i:]
-                                run = False
-                            frame = m.Frame(data_id, 0, buf)
-                            radio.write(frame)
-                            print("We'll try sending")
-                            frame.send(radio)
-                            print("Sent:"),
-                            print(frame)
-                data_id += 1
+        radio.startListening()
+        #We wait a random time between 5 and 10 seconds
+        Tinit=random.randint(5,10)
+        time.sleep(Tinit)
+        #If we havent received any Control Frame yet, we send our Control Frame
+        recv_buffer = []
+        radio.read(recv_buffer, radio.getDynamicPayloadSize())
+        rcv = m.ControlFrame()
+        rcv.strMssg2Pckt(recv_buffer)
+        if (recv_buffer == [])
+            print("Sending our Control Frame\n")
+            control=m.ControlFrame()
+            radio.write(control.__str__())
+            #Let's see if anyone answers back...If we've received at least once the frame that we've sent...
+            recv_buffer = []
+            radio.read(recv_buffer, radio.getDynamicPayloadSize())
+            rcv = m.ControlFrame()
+            rcv.strMssg2Pckt(recv_buffer)
+            if(rcv.getTx() == control.tx):
+                #We send the data frames in order to the teams that have answered back
+                answers=0
+                start_time = datetime.datetime.now()
+                while(answers != 3):
+                    time_delta = datetime.now() - start_time
+                    if(time_delta.seconds <= 0,025)
+                        if (rcv.getAck1() == 1)
+                            files = {'B': "tx_file_B.txt"}
+                            answers += 1
+                        if(rcv.getAck2() == 1)
+                            files['C'] = 'tx_file_C.txt'
+                            answers += 1
+                        if (rcv.getAck3() == 1)
+                            files['D'] = 'tx_file_D.txt'
+                            answers += 1
+                    else
+                        break
+                data = 1;
+                data_id = 1
+                while (data != '')
+                    for team in files:
+                        infile = open(files.get(team), "r")
+                        data = infile.read()
+                        infile.close()
+                        if synchronized():
+                            print("Sending the file for team", team)
+                            for i in range(0, len(data), paysize):
+                                if (i + paysize) < len(data):
+                                    buf = data[i:i + paysize]
+                                    print("sending full packets")
+                                else:
+                                    buf = data[i:]
+                                    run = False
+                                frame = m.Frame(data_id, 0, buf)
+                                radio.write(frame)
+                                print("Sending our Control Frame\n")
+                                frame.send(radio)
+                                print("Sent:"),
+                                print(frame)
+                    data_id += 1
+            end_connection()
+            return 0
+        else
+            #This else means that I have received a Control Frame from other team
+            # I resend that control frame to the transmitter and I wait Tdata=25ms so they can send us the Data Frames
+            print("we received other team's Control Frame")
+            #...
 
+            else:
+                #I keep waiting for Control Frames during a Tctrl and then I resend my own
+                Tinit = random.randint(1, 2)
+                time.sleep(Tinit)
+                #...
 
-        fin_connection(m.getTx(rcv) != control.tx)
-        return 0
-        #ElseIf we've received something different from our control frame
-        elif():
-            #I resend that control frame to the transmitter and I stay listening
-        #else
-        else:
-            #I keep waiting for ACKs
 
 def synchronized():
     done = False
@@ -106,7 +141,7 @@ def synchronized():
     return done;
 
 
-def fin_connection():
+def end_connection():
     ack = m.ACK(0, 0)  # for ending connection we send ACK with ID 0
     ack.send(radio)
     radio.startListening()
