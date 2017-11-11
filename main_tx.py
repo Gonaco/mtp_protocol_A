@@ -1,6 +1,6 @@
 import tx_main_functions as f
 
-def main(file):
+def main_tx(file):
     f.setup()
     f.transmit()
     return 0
