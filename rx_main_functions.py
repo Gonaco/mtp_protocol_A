@@ -3,78 +3,135 @@ GPIO.setmode(GPIO.BCM)
 from lib_nrf24 import NRF24
 import time
 import spidev
+import message_functions as m
 
-pipes = [[0xe7, 0xe7, 0xe7, 0xe7, 0xe7], [0xc2, 0xc2, 0xc2, 0xc2, 0xc2]] #addresses for TX/RX channels
+def setup():
+    pipes = [[0xe7, 0xe7, 0xe7, 0xe7, 0xe7], [0xc2, 0xc2, 0xc2, 0xc2, 0xc2]] #addresses for TX/RX channels
 
-radio = NRF24(GPIO, spidev.SpiDev())
-radio2 = NRF24(GPIO, spidev.SpiDev())
-radio.begin(1, 17) # Set spi-cs pin1, and rf24-CE pin 27
-radio2.begin(0, 27) # Set spi-cs pin0, and rf24-CE pin 17
+    radio = NRF24(GPIO, spidev.SpiDev())
+    radio2 = NRF24(GPIO, spidev.SpiDev())
+    radio.begin(1, 17) # Set spi-cs pin1, and rf24-CE pin 27
+    radio2.begin(0, 27) # Set spi-cs pin0, and rf24-CE pin 17
 
-radio.setRetries(15,15)
-radio.setPayloadSize(32)
-radio.setChannel(0x60)
-radio2.setRetries(15,15)
-radio2.setPayloadSize(32)
-radio2.setChannel(0x60)
+    radio.setRetries(15,15)
+    radio.setPayloadSize(32)
+    radio.setChannel(0x60)
+    radio2.setRetries(15,15)
+    radio2.setPayloadSize(32)
+    radio2.setChannel(0x60)
 
-radio.setDataRate(NRF24.BR_2MBPS)
-radio.setPALevel(NRF24.PA_MAX)
-radio2.setDataRate(NRF24.BR_2MBPS)
-radio2.setPALevel(NRF24.PA_MAX)
+    radio.setDataRate(NRF24.BR_2MBPS)
+    radio.setPALevel(NRF24.PA_MAX)
+    radio2.setDataRate(NRF24.BR_2MBPS)
+    radio2.setPALevel(NRF24.PA_MAX)
 
-radio.setAutoAck(False)
-radio.enableDynamicPayloads() # radio.setPayloadSize(32) for setting a$
-radio.enableAckPayload()
-radio2.setAutoAck(False)
-radio2.enableDynamicPayloads()
-radio2.enableAckPayload()
+    radio.setAutoAck(False)
+    radio.enableDynamicPayloads() # radio.setPayloadSize(32) for setting a$
+    radio.enableAckPayload()
+    radio2.setAutoAck(False)
+    radio2.enableDynamicPayloads()
+    radio2.enableAckPayload()
 
-radio2.openWritingPipe(pipes[0])
-radio.openReadingPipe(1, pipes[1])
+    radio2.openWritingPipe(pipes[0])
+    radio.openReadingPipe(1, pipes[1])
 
-radio2.startListening()
-radio2.stopListening()
+    radio2.startListening()
+    radio2.stopListening()
 
-radio2.printDetails()
+    radio2.printDetails()
 
-radio.startListening()
+    radio.startListening()
+    return radio, radio2
 
-c=1
-num=0
-outfile=open("rx_file.txt","w")
-run=True
-str = ""
-while run:
-    akpl_buf = [c,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8]
-    pipe = [0]
-    while not radio.available(pipe) and num<500:
-        time.sleep(10000/1000000.0)
-        num=num+1
-        if num ==499:
-            run=False
-    num=0
-    if run==True:
+"""def decide_type()
+    recv=m.packet()
+    type= recv.getType()
+    if type == 0:
+        f.receive_sync()
+    elif type == 3:
+        f.receive_frame()
+    elif type == 1:
+        f.receive_ack()
+    return type
+"""
+
+def receive_sync(radio, radio2, pipe):
+    done = False
+    while not done:
+        radio.startListening()
+        while not radio.available(pipe):
+            time.sleep(1/1000.0)
+        print("we received something before time out")
         recv_buffer = []
         radio.read(recv_buffer, radio.getDynamicPayloadSize())
-        print ("Received:")
-        recv_packet= m.Packet()
-        for i in range(0,len(recv_buffer),1):
-            str = str + chr(recv_buffer[i])
-        print (str)
-        recv_packet.strMssg2Pckt(str)
-	print(recv_packet)
-	print(recv_packet.getPayload())
+        rcv = m.Packet()
+        rcv.strMssg2Pckt(recv_buffer)
+        if m.getTyp() == 0: #no sería rcv.getType?
+            if m.getID == 0:
+                ack = m.ACK(0, '')
+                radio2.write(ack.__str__())
+                done = True
+    return done
 
-        c = c + 1
-        if (c&1) == 0:
-            ack=m.ACK(c, "")
-            ack.send(radio)
-            print ("Loaded payload reply:"),
-            print (akpl_buf)
+def receive_frame(radio, radio2):
+    num = 0
+    run = True
+    firstRun = True
+    str = ""
+    pipe = [0]
+    cnt = 0
+    while run:
+        cnt = cnt + 1
+        tmpStr = ""
+
+        if firstRun == False:
+            while not radio.available(pipe) and num < 50000:
+                time.sleep(1 / 1000.0)
+                num = num + 1
+            if num == 50000:
+                run = False
         else:
-            print ("(No return payload)")
-    else:
-        outfile.write(str)
-        outfile.close()
-        print("The message is received")
+            firstRun = False
+            while not radio.available(pipe):
+                time.sleep(1 / 1000.0)
+
+        num = 0
+
+        recv_buffer = []
+        radio.read(recv_buffer, radio.getDynamicPayloadSize())
+        print(recv_buffer)
+        if cnt == 25:
+            print ("Received Packet!")
+
+        for i in range(0, len(recv_buffer), 1):
+            tmpStr = tmpStr + chr(recv_buffer[i])
+
+        rcv = m.Packet()
+        rcv.strMssg2Pckt(recv_buffer)
+
+        time.sleep(3 / 100.0)  # wait a bit for processing
+
+        radio2.write(akpl_buf)  # send ACK
+
+        tmpStr = rcv.getPayload()
+
+        if cnt == 25:
+            print ("ACK SENT")
+            cnt = 0
+
+        if tmpStr == "ThIs Is EnD oF FiLe......":
+            run = False
+            print(tmpStr)
+        else:
+            str = str + rcv.getPayload()
+
+    outfile = open("rx_file.txt", "w")
+    outfile.write(str)
+    outfile.close()
+    print("The message is received")
+
+def receive_ack(radio, radio2):
+
+def send_ack(radio, radio2):
+
+def send_nack(radio, radio2):
