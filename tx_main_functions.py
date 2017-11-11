@@ -44,10 +44,10 @@ def setup():
 
     paysize = 30 # size of payload we send at once
     timeout = time.time() + 0.1
-    return 0
+    return radio, radio2
     
 ##################DEBUG CODE BELOW############################
-def transmit():
+def transmit(radio, radio2):
     run = True
     while run:
         infile = open("tx_file.txt", "r")
@@ -81,22 +81,32 @@ def transmit():
                        timeout = time.time() + 0.1
                 data_id += 1
 
-    fin_connection()
+    end_connection()
     return 0
 
-def synchronized():
+def synchronized(radio, radio2, pipe):
     done=False
     sync=m.SYNC(0, '')
     # print(sync.extractHeader())
-    sync.send(radio)
-    radio.startListening()
-    if radio.available():
-        radio.read(buffer, radio.getPayloadSize())
-        print("Sync done")
-        done=True
-    return done;
+    while not done:
+        radio.write(sync.__str__())
+        radio2.startListening()
+        while not radio2.available(pipe) and num < 400:
+            time.sleep(1 / 1000.0)
+            num = num + 1
+        if num != 400:
+            print("we received something before time out")
+            rcv_buffer = []
+            radio2.read(rcv_buffer, radio2.getDynamicPayloadSize())
+            rcv = m.Packet()
+            rcv.strMssg2Pckt(rcv_buffer)
+            if m.getTyp()==1:
+                if m.getID==0:
+                    done=True
+    return done
 
-def fin_connection():
+
+def end_connection():
     ack=m.ACK(0, 0) #for ending connection we send ACK with ID 0
     ack.send(radio)
     radio.startListening()

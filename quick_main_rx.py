@@ -55,7 +55,7 @@ while run:
     tmpStr = ""
     
     if firstRun == False:
-        while not radio.available(pipe) and num < 5000:
+        while not radio.available(pipe) and num < 50000:
             time.sleep(1/1000.0)
             num=num+1
         if num == 50000:

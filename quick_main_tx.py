@@ -80,7 +80,7 @@ while run:
             time.sleep(1/1000.0)
             num = num+1
 
-        if run == 400:
+        if num == 400:
             i = i -1
             print("REPEATING PACKET")
 
