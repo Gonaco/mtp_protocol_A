@@ -1,11 +1,11 @@
 
-# from lib_nrf24 import NRF24
+from lib_nrf24 import NRF24
 
 byte_length = 8
 # signature_length = byte_length
 ID_length = 32
 typ_length = 2
-padding_length = 1
+end_length = 1
 
 SYNC = 0
 ACK = 1
@@ -43,12 +43,12 @@ class Header:
 
     # Class Constructor
     
-    def __init__(self,typ=SYNC,ID=0,padding=0):
+    def __init__(self,typ=SYNC,ID=0,end=0):
 
         # self.signature = signature                # A-Team signature predefined ## ''.join(format(ord(x), 'b') for x in 'a')
         self.typ = typ # ''.join(format(ord(x), 'b') for x in '3')[-2:] ## ID will be 3='11', 2='10', 1='01', 0='00' 
         self.ID = ID                      
-        self.padding = padding
+        self.end = end
 
     # Class2String
 
@@ -56,7 +56,7 @@ class Header:
 
         h = []
         
-        bin_head = get_bin(self.ID,ID_length) + get_bin(self.typ,typ_length) + get_bin(self.padding,padding_length)+'00000'
+        bin_head = get_bin(self.ID,ID_length) + get_bin(self.typ,typ_length) + get_bin(self.end,end_length)+'00000'
         
         for i in range(0,HEADER_BYTES_LENGTH):
             byte_start = byte_length*i
@@ -70,13 +70,13 @@ class Header:
     def getID(self):
         return self.ID
 
-    def getPadding(self):
-        return self.padding
+    def getEnd(self):
+        return self.end
 
     # Class2Binarycode split in Bytes
 
     def header2byt(self):
-        return get_bin(self.ID,ID_length) + get_bin(self.typ,typ_length) + get_bin(self.padding,padding_length)+'00000'
+        return get_bin(self.ID,ID_length) + get_bin(self.typ,typ_length) + get_bin(self.end,end_length)+'00000'
 
     # Extract the Header from a message
 
@@ -89,10 +89,10 @@ class Header:
         # self.signature = int(head[0], 2)
         # self.typ = int(head[1][:2], 2)
         # self.ID = int(head[1][2:]+head[2]+head[3]+head[4]+head[5][:2], 2)
-        # self.padding = int(head[5][2], 2)
+        # self.end = int(head[5][2], 2)
         self.ID = int(head[0]+head[1]+head[2]+head[3],2)
         self.typ = int(head[4][:2], 2)
-        self.padding = int(head[4][2:],2)
+        self.end = int(head[4][2:],2)
         # print(self.ID)
 
         
@@ -163,11 +163,25 @@ class Frame(Packet):
 
     # Class Constructor
     
-    def __init__(self, ID, padding, payload):
-        header = Header(FRAME,ID,padding)
+    def __init__(self, ID, end, payload):
+        header = Header(FRAME,ID,end)
         Packet.__init__(self,header,payload)
 
+        
+def sendSYNC(ID, radio):
+    sync = SYNC(ID)
+    radio.write(sync.__str__())
 
+def sendACK(ID, radio):
+    ack = ACK(ID)
+    radio.write(ack.__str__())
+
+def sendNACK(ID, lost_IDs_array, radio):
+    payload = ""
+    for i in range(0, len(lost_IDs_array)):
+        payload = payload + str(lost_IDs_array[i]) + ","
+    nack = NACK(ID,payload)
+    radio.write(ack.__str__())
 
 # NETWORK MODE
 
@@ -306,3 +320,6 @@ class ControlFrame:
         self.ack3 = int(head[0][7],2)
         
         self.payload = mssg_string[1:]
+
+        
+def 
