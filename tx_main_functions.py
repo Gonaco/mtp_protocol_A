@@ -7,6 +7,7 @@ from lib_nrf24 import NRF24
 import time
 import spidev
 import message_functions as m
+import re
 
 
 def setup():
@@ -42,46 +43,50 @@ def setup():
     radio.openReadingPipe(1, pipes[0])
     radio.printDetails()
 
-    paysize = 30 # size of payload we send at once
     timeout = time.time() + 0.1
     return radio, radio2
     
 ##################DEBUG CODE BELOW############################
-def transmit(radio, radio2):
+def transmit(radio, radio2, file):
     run = True
+    paysize=27 #may change
+    repeat=False
+    window_id=0
+    window_size=10 #may change
+    last_sent=-1
+    data=file.read()
+    frame_list=build_list()
+    radio2.startListening()
+    nack_list=[]
+    finished=False
     while run:
-        infile = open("tx_file.txt", "r")
-        data = infile.read()
-        infile.close()
-        data_id=1
-        if  synchronized():
-            for i in range(0, len(data), paysize):
-                if (i+paysize) < len(data):
-                    buf = data[i:i+paysize]
-                    print("sneding full packets")
-                else:
-                    buf = data[i:]
-                    run = False
-                frame=m.Frame(data_id, 0, buf)
-                radio.write(frame)
-                print("We'll try sending")
-                frame.send(radio)
-                print ("Sent:"),
-                print (frame)
-                # did it return with a payload?
-                if radio.available():
-                    pl_buffer=[]
-                    radio.read(pl_buffer, radio.getDynamicPayloadSize())
-                    print ("Received back:"),
-                    print (pl_buffer)
-                else:
-                   if(time.time() + 1/20000>timeout):
-                       #we resend packet
-                       frame.send(radio)
-                       timeout = time.time() + 0.1
-                data_id += 1
-
-    end_connection()
+        if not repeat:
+            if (last_sent + window_size) < len():
+                for i in range(0, window_size):
+                    frame=frame_list[last_sent+1]
+                    radio.write(frame.__str__())
+                    last_sent=+1
+            else:
+                for i in range(last_sent+1, len(frame_list)):
+                    frame=frame_list[i]
+                    radio.write(frame.__str__())
+                    finished=True
+        else:
+            #To Do: manage NACKs
+        if radio2.available():
+            rcv_buffer = []
+            radio2.read(rcv_buffer, radio2.getDynamicPayloadSize())
+            rcv = m.Packet()
+            rcv.strMssg2Pckt(rcv_buffer)
+            if rcv.getTyp() == 2:
+                #read payload and store IDs in list
+                nack_string=rcv.getPayload()
+                temp_nack_list=re.split(',', nack_string)
+                temp_nack_list.pop(len(nack_list)-1)
+                nack_list=nack_list+temp_nack_list
+            elif finished:
+                if rcv.getTyp() == 1:
+                    run=False;
     return 0
 
 def synchronized(radio, radio2, pipe):
@@ -100,8 +105,8 @@ def synchronized(radio, radio2, pipe):
             radio2.read(rcv_buffer, radio2.getDynamicPayloadSize())
             rcv = m.Packet()
             rcv.strMssg2Pckt(rcv_buffer)
-            if m.getTyp()==1:
-                if m.getID==0:
+            if rcv.getTyp()==1:
+                if rcv.getID==0:
                     done=True
     return done
 
@@ -115,3 +120,16 @@ def end_connection():
     print("Done sending the file! Exiting!")
 
     return;
+def build_list(data, paysize):
+    data_id = 1
+    frame_list = []
+    for i in range(0, len(data), paysize):
+        if (i + paysize) < len(data):
+            buf = data[i:i + paysize]
+            frame = m.Frame(data_id, 0, buf)
+            i=+1
+        else:
+            buf = data[i:]
+            frame = m.Frame(data_id, 1, buf)
+        frame_list.append(frame)
+    return frame_list
