@@ -85,7 +85,8 @@ while run:
     print(cnt)
     ack = m.ACK(cnt)
     print(ack)
-    radio2.write(ack.__str__()) #send ACK
+    m.sendACK(cnt,radio2)
+    # radio2.write(ack.__str__()) #send ACK
 
     tmpStr = rcv.getPayload()
     
