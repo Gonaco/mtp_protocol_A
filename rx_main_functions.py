@@ -26,7 +26,7 @@ def setup():
     radio2.setPALevel(NRF24.PA_MAX)
 
     radio.setAutoAck(False)
-    radio.enableDynamicPayloads() # radio.setPayloadSize(32) for setting a$
+    radio.enableDynamicPayloads() # radio.setPayloadSize(32) for setting a fixed payload
     radio.enableAckPayload()
     radio2.setAutoAck(False)
     radio2.enableDynamicPayloads()
@@ -55,83 +55,97 @@ def setup():
     return type
 """
 
-def receive_sync(radio, radio2, pipe):
+def synchronized(radio, radio2, pipe):
     done = False
     while not done:
-        radio.startListening()
+        # radio.startListening()
         while not radio.available(pipe):
             time.sleep(1/1000.0)
-        print("we received something before time out")
+        print("sync message received")
         recv_buffer = []
         radio.read(recv_buffer, radio.getDynamicPayloadSize())
         rcv = m.Packet()
         rcv.strMssg2Pckt(recv_buffer)
-        if m.getTyp() == 0: #no sería rcv.getType?
-            if m.getID == 0:
-                ack = m.ACK(0, '')
-                radio2.write(ack.__str__())
+        if rcv.getTyp() == 0:
+            if rcv.getID == 0:
+                m.sendACK(0,radio2)
                 done = True
-    return done
 
-def receive_frame(radio, radio2):
-    num = 0
+def receive(radio, radio2):
+    first_frame = True
     run = True
-    firstRun = True
-    str = ""
+    ack = False
+    nack = False
+    count = 0
+    timer = 0
+    window_id = 0
+    window_size = 10  # may change
+    frames2resend_id = []
+    frames_id = []
+    str = []
     pipe = [0]
-    cnt = 0
+
     while run:
-        cnt = cnt + 1
+        count = count + 1
         tmpStr = ""
 
-        if firstRun == False:
-            while not radio.available(pipe) and num < 50000:
-                time.sleep(1 / 1000.0)
-                num = num + 1
-            if num == 50000:
-                run = False
-        else:
-            firstRun = False
-            while not radio.available(pipe):
-                time.sleep(1 / 1000.0)
-
-        num = 0
+        while not radio.available(pipe) and timer < 50000:
+            time.sleep(1 / 1000.0)
+            timer = timer + 1
+        if timer == 50000: # Timeout
+            if first_frame:
+                m.sendACK(0, radio2) # Send the first ACK
+            else:
+                if ack:
+                    m.sendACK(window_id, radio2) # Resend previous ACK
+                elif nack:
+                    m.sendNACK(window_id, frames2resend_id, radio2) # Resend previous NACK
+        timer = 0
 
         recv_buffer = []
         radio.read(recv_buffer, radio.getDynamicPayloadSize())
-        print(recv_buffer)
-        if cnt == 25:
-            print ("Received Packet!")
-
         for i in range(0, len(recv_buffer), 1):
             tmpStr = tmpStr + chr(recv_buffer[i])
-
         rcv = m.Packet()
         rcv.strMssg2Pckt(recv_buffer)
+        frames_id.append(rcv.getID)
+        str.append(tmpStr)
 
-        time.sleep(3 / 100.0)  # wait a bit for processing
+        if count % window_size == 0:
+            window_id = window_id + 1
+            # frames2resend_id = [] # Initialize the array to zero or it is not necessary?
+            frames2resend_id = find_lost_frames(frames_id[window_size*(window_id-1) : len(count)-1])
+            if len(frames2resend_id) == 0:
+                m.sendACK(window_id, radio2)
+                ack = True
+                nack = False
+            else:
+                m.sendNACK(window_id, frames2resend_id, radio2)
+                ack = False
+                nack = True
 
-        radio2.write(akpl_buf)  # send ACK
+        # CHECK IT because once I receive the frame with flag==1 I'm constantly sending Nacks until all packets
+        # are correclty received
+        if rcv.getFlag == 1 or rcv.getTyp == 1: # Generate a function getFlag in message_functions
+            frames2resend_id = find_lost_frames(frames_id[window_size*(window_id - 1) : len(count)-1])
+            if len(frames2resend_id) == 0: # All frames are received
+                run = False
+            else:
+                m.sendNACK(window_id + 1, frames2resend_id, radio2)
+                ack = False
+                nack = True
 
-        tmpStr = rcv.getPayload()
 
-        if cnt == 25:
-            print ("ACK SENT")
-            cnt = 0
+    #outfile = open("rx_file.txt", "w")
+    aux = ""
+    for i in range(0, len(str), 1):
+        aux = aux + str[i]
+    outfile.write(aux)
+    #outfile.close()
+    print("The entire message is received")
 
-        if tmpStr == "ThIs Is EnD oF FiLe......":
-            run = False
-            print(tmpStr)
-        else:
-            str = str + rcv.getPayload()
+def end_connection(radio, radio2):
 
-    outfile = open("rx_file.txt", "w")
-    outfile.write(str)
-    outfile.close()
-    print("The message is received")
-
-def receive_ack(radio, radio2):
-
-def send_ack(radio, radio2):
-
-def send_nack(radio, radio2):
+def find_lost_frames(array):
+    # Design a function that allows me to know the lost frames
+    return lost_frames_id
