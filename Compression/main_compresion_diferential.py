@@ -1,31 +1,13 @@
 import zlib
 import io
 import numpy as np
-import sys
-
-# file_input = io.open("input.txt", mode="r", encoding="utf-16")
-# file_output_c = io.open("output_compressed.txt", mode="wb")
-#
-#
-# for line in file_input:
-#     print(line)
-#     compressed_line = zlib.compress(line.encode("utf-16"))
-#     file_output_c.write(compressed_line)
-# file_output_c.close()
-# file_input.close()
-
-def compressTextLZW( text ):
-    "This compresses the text file using LZW"
-    compressed_text = zlib.compress(text.encode("utf-16"))
-    # print(compressed_text)
-    return compressed_text
 
 file_input = io.open("input.txt", mode="r", encoding="utf-16")
-file_output_c = io.open("output_compressed.txt", mode="wb")
+file_output_c = io.open("output_compressed.txt", mode="w", encoding="utf-16")
 
 i = 0
 ii= 0
-num_comp  =0
+num_comp=0
 lines = file_input.readlines()
 line = lines[0]
 comps_res = np.array([], dtype=np.bool).reshape(0,len(line))
@@ -50,7 +32,7 @@ where_str = map(str, where)
 str_indices = ''
 for str in where_str:
     str_indices = str_indices + str + "¬"
-
+str_indices=str_indices[0:-1]
 str_send = ''
 
 for line in lines:
@@ -59,18 +41,38 @@ for line in lines:
     for elem in char_line_send:
         str_send = str_send + elem
     str_send = str_send + '¬'
-
-compressed_text_diff = lines[1] + '&' + str_indices + '&' + str_send
-
+to_tx = lines[0] + '&' + str_indices + '&' + str_send
 
 
+file_input.close()
+file_output_c.write(to_tx)
+file_output_c.close()
 
+file_input2 = io.open("output_compressed.txt", mode="r", encoding="utf-16")
+text = file_input2.read()
 
-text = file_input.read()
+lines = text.split('&')
 
+original = lines[0]
+positions = lines[1].split('¬')
+lines = lines[2].split('¬')
 
-compressed_text_LZW = compressTextLZW(text)
+file_input2.close()
+print("WRITING!!!!")
+file_output= io.open("output.txt", mode="w", encoding="utf-16")
+#file_output.write(original)
+print(original)
+for line in lines:
+    line = list(line)
+    next_line = original
+    next_line = list(next_line)
+    i = 0
+    for pos in positions:
+        intpos = int(pos)
+        next_line[intpos] = line[i]
+        i = i+1
+    next_line = "".join(next_line)
+    print(next_line)
+    file_output.write(next_line)
 
-size_raw = sys.getsizeof(text)
-size_compressed_LZW  = sys.getsizeof(compressed_text_LZW)
-size_compressed_diff = sys.getsizeof(compressed_text_diff)
+print("fi programa")
