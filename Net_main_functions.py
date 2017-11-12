@@ -70,7 +70,7 @@ def transmit(f):
             radio.write(control.__str__())
             #Let's see if anyone answers back...If we've received at least once the frame that we've sent...
             recv_buffer = []
-            radio.read(recv_buffer, radio.getDynamicPayloadSize())
+            radio.read(recv_buffer, radio.getDynamicPayloadSize()) #CHECK IT
             rcv = m.ControlFrame()
             rcv.strMssg2Pckt(recv_buffer)
             if(rcv.getTx() == control.tx):
@@ -154,7 +154,7 @@ def synchronized():
 
 
 def end_connection():
-    ack = m.ACK(0, 0)  # for ending connection we send ACK with ID 0
+    ack = m.ACK(0, 0)  # for ending connection we send ACK with ID 0 #CHECK IT
     ack.send(radio)
     radio.startListening()
     if radio.available():
