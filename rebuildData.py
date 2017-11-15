@@ -9,6 +9,7 @@ def rebuildData(string, id):
     ## arrived yet.
     ids_received = [0]*round((file_len/chunk_len)+1)
     ids_writen = [0]*round((file_len/chunk_len)+1)
+    ## I don't understand the concept of these variables.
 
     
     ## Check if the 'id' has been registered yet (repeated packets).
@@ -24,6 +25,7 @@ def rebuildData(string, id):
         if (ids_received[t]!=0 or id==0) and (ids_writen[t]==0 or id==0):
             writeFile(string)
             ids_writen.insert(id, id)
+            ## Añades la variable "String" al fichero... Pero se hace cada vez que recibes un paquete?
         else:
             ## Guardar el string número 'id' para escribirlo después
 
