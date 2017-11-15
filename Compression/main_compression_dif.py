@@ -7,7 +7,6 @@ def compressDiff(text):
     i = 0
     ii= 0
     num_comp=0
-    #podem suposar que tot acaba amb \n?
     lines = text.split('\n')
     lines = lines[0:-1]
     line = lines[0]
