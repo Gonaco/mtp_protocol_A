@@ -133,8 +133,7 @@ def main(argv):
 
     files = loadFiles(argv)
 
-    while(True):
-
+    
 
     
 
