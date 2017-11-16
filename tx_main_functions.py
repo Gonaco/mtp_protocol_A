@@ -64,7 +64,7 @@ def transmit(radio, radio2, file):
     finished = False
     while run:
         if not repeat:
-            if (last_sent + window_size) < len():
+            if (last_sent + window_size) < len(frame_list):
                 for i in range(0, window_size):
                     frame = frame_list[last_sent + 1]
                     radio.write(frame.__str__())
@@ -80,19 +80,25 @@ def transmit(radio, radio2, file):
             nack_len = len(nack_list)
             if nack_len < window_size:
                 # we send a mix of Nack and next ids
-                for i in nack_list:
+                for i in range(0, len(nack_list)):
                     #we send nack
-                    next_id = i
+                    next_id = nack_list[i]
                     frame = frame_list[next_id]
                     radio.write(frame.__str__())
+                    nack_list.pop[i]
                 for i in range(0, partial_window):
                     #we send next frames
                     frame = frame_list[last_sent + 1]
                     radio.write(frame.__str__())
                     last_sent = +1
             else:
-                #To Do: case where we have more Nacks than
-
+                #To Do: case where we have more Nacks than window size
+                for i in range(0, window_size):
+                    #we send the first 10 nacks and eliminate them from the list
+                    next_id = nack_list[i]
+                    frame = frame_list[next_id]
+                    radio.write(frame.__str__())
+                    nack_list.pop[i]
 
         if radio2.available():
             rcv_buffer = []
@@ -117,7 +123,7 @@ def transmit(radio, radio2, file):
 
 def synchronized(radio, radio2, pipe):
     done = False
-    sync = m.SYNC(0, '')
+    sync = m.SYNC(0)
     # print(sync.extractHeader())
     while not done:
         radio.write(sync.__str__())

@@ -321,5 +321,4 @@ class ControlFrame:
         
         self.payload = mssg_string[1:]
 
-        
-def 
+
