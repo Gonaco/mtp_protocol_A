@@ -90,7 +90,7 @@ def tx_rx():
     else:
         RX()
 
-def TX(t_file=files[0]):
+def TX(t_file):
 
     print('\n-TX_mode-\n')
 
@@ -104,7 +104,7 @@ def RX():
     main_rx()
     
     
-def NT(tx_file_buffer=files):
+def NT(tx_file_buffer):
 
     print('\n-NT_mode-\n')
 
