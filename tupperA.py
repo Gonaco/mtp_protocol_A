@@ -133,8 +133,9 @@ def main(argv):
 
     files = loadFiles(argv)
 
+    while(True):
+        # wait? How to make the program wait for the inputs?
     
-
     
 
     # # options = {'tx':TX(argv[1]),
