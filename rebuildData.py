@@ -3,7 +3,7 @@ last_w_id = -1
 
 def rebuildData(p_id, string, last_w_id, storedFrames, filename):
     
-    print "\n-rebuildData-\n"
+    print ("\n-rebuildData-\n")
     
     if (p_id == last_w_id + 1):
         ## El paquete recibido es el siguiente que tenemos que escribir
