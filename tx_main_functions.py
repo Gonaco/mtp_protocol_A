@@ -16,8 +16,8 @@ def setup():
 
     radio2 = NRF24(GPIO, spidev.SpiDev())
     radio = NRF24(GPIO, spidev.SpiDev())
-    radio.begin(1, 27)  # Set spi-cs pin1, and rf24-CE pin 27
-    radio2.begin(0, 17)  # Set spi-cs pin0, and rf24-CE pin 17
+    radio.begin(1, 17)  # Set spi-cs pin1, and rf24-CE pin 27
+    radio2.begin(0, 27)  # Set spi-cs pin0, and rf24-CE pin 17
 
     time.sleep(1)
     radio.setRetries(15, 15)
@@ -90,7 +90,7 @@ def transmit(radio, radio2, file):
                     frame = frame_list[last_sent + 1]
                     radio.write(frame.__str__())
                     last_sent = +1
-            else
+            else:
                 #To Do: case where we have more Nacks than
 
 
