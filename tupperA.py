@@ -1,5 +1,3 @@
-#!/usr/bin/env python2.7
-
 import RPi.GPIO as GPIO
 from lib_nrf24 import NRF24
 import time
@@ -124,14 +122,36 @@ def run():
         GPIO.remove_event_detect(TX_RX_SWITCH)
         GPIO.remove_event_detect(NW_SWITCH)
         
-
-files = []
-
-initPorts()
-
-files = loadFiles(sys.argv)
-
-
-# Closing
     
-GPIO.cleanup()
+def main(argv):
+
+    # cont = 1
+
+    files = []
+
+    initPorts()
+
+    files = loadFiles(argv)
+
+    # # options = {'tx':TX(argv[1]),
+    # #            'rx':RX(),
+    # #            'network':NT(argv)}
+
+
+    # while (cont != 0):
+        
+    #     # if (...):
+    #     #     cont = options['tx']
+    #     # ...
+
+
+        
+    # Closing
+    
+    GPIO.cleanup()
+        
+if __name__ == "__main__":
+    
+    while(True):
+        main(sys.argv)
+
