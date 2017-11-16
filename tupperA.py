@@ -122,34 +122,14 @@ def run():
         GPIO.remove_event_detect(TX_RX_SWITCH)
         GPIO.remove_event_detect(NW_SWITCH)
         
+
+files = []
+
+initPorts()
+
+files = loadFiles(sys.argv)
+
+
+# Closing
     
-def main(argv):
-
-    # cont = 1
-
-    files = []
-
-    initPorts()
-
-    files = loadFiles(argv)
-
-    # # options = {'tx':TX(argv[1]),
-    # #            'rx':RX(),
-    # #            'network':NT(argv)}
-
-
-    # while (cont != 0):
-        
-    #     # if (...):
-    #     #     cont = options['tx']
-    #     # ...
-
-
-        
-    # Closing
-    
-    GPIO.cleanup()
-        
-if __name__ == "__main__":
-    main(sys.argv)
-
+GPIO.cleanup()
