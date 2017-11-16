@@ -88,7 +88,7 @@ def tx_rx():
     else:
         RX()
 
-def TX(t_files=files[0]):
+def TX(t_file=files[0]):
 
     print('\n-TX_mode-\n')
 
