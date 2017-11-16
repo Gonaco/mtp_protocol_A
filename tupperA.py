@@ -17,8 +17,6 @@ IRQS = [35,37]                  # WE ARE NOT USING THEM, BUT JUST IN CASE
 FREE_PINS = [3,5,7,8,10,12,14,15,16,17,18,20,22,25,27,28,30,32,34,39] # IN ORDER TO SET THEM AS OUTPUT AND AVOID ERRORS
 
 
-files = []
-
 def initPorts():
 
     GPIO.setmode(GPIO.BOARD)
@@ -50,6 +48,8 @@ def loadFiles(argv):
 
     print("\n-loadFiles-\n")
 
+    files = []
+
     if len(argv) > 1:
         
         # In case of using terminal to load te files
@@ -68,6 +68,8 @@ def loadFiles(argv):
         for filename in listdir("input_files"):
             if ".txt" in filename:
                 files.append(open(filename, 'r'))
+
+    return files
 
 
 def initInterruptions():
@@ -125,9 +127,11 @@ def main(argv):
 
     # cont = 1
 
+    files = []
+
     initPorts()
 
-    loadFiles(argv)
+    files = loadFiles(argv)
 
     # # options = {'tx':TX(argv[1]),
     # #            'rx':RX(),
