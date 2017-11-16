@@ -111,15 +111,27 @@ def synchronized(radio, radio2, pipe):
     return done
 
 
-def end_connection():
-    ack=m.ACK(0, 0) #for ending connection we send ACK with ID 0
-    ack.send(radio)
-    radio.startListening()
-    if radio.available():
-        radio.read(buffer, radio.getPayloadSize())
-    print("Done sending the file! Exiting!")
+def end_connection(radio, radio2, pipe, id):
+    done = False
+    ack=m.ACK(0) #for ending connection we send ACK with ID 0
+    radio.write(ack.__str__())
+    radio2.startListening()
+    while not done:
+        while not radio2.available(pipe) and num < 400:
+            time.sleep(1 / 1000.0)
+            num = num + 1
+        if num != 400:
+            print("we received something before time out")
+            rcv_buffer = []
+            radio2.read(rcv_buffer, radio2.getDynamicPayloadSize())
+            rcv = m.Packet()
+            rcv.strMssg2Pckt(rcv_buffer)
+            if rcv.getTyp() == 1:
+                #we have the id of the last packet an rx will send un an ack with the next id
+                if rcv.getID == id+1:
+                    radio2.stopListening()
+                    done=True
 
-    return;
 def build_list(data, paysize):
     data_id = 1
     frame_list = []
