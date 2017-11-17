@@ -115,7 +115,7 @@ class Packet:
         return self.payload
 
     def getTyp(self):
-        return self.header.getType()
+        return self.header.getTyp()
 
     def getID(self):
         return self.header.getID()
