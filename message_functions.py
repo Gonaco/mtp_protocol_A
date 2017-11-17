@@ -329,9 +329,3 @@ class ControlFrame:
         self.ack3 = int(head[0][7],2)
         
         self.payload = mssg_string[1:]
-
-<<<<<<< HEAD
-        
-=======
-
->>>>>>> 66029aae640451bbb435952b88f6da25acd5e912
