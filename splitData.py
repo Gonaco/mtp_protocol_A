@@ -2,7 +2,8 @@ def splitData(PacketID, archivo):
 
     print("\n-splitData-\n") ##Debbuging issues.
 	
-
+    ##Itzi comprime el archivo y nos lo manda para que "recortemos" el chunk que sea.
+	
     file_len = 10000 #Size of the file in bytes
     chunk_len = 30 #Size of the chunk in bytes
 
