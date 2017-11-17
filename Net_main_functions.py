@@ -154,6 +154,9 @@ def active():
     #In this function, our furby has won the medium so it will send the first control frame.
     #Then, it will wait for the three teams to send as back their corresponding control fram acknowleding us.
     #If it has received 2 or more ACKs it wil start sending Data Frames
+
+    print("\n-Active Mode-\n")
+    
     files = {'B': f[0], 'C':f[1], 'D':f[2]}
     TACK=0, 025
     print("Sending our Control Frame\n")
