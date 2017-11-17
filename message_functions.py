@@ -93,7 +93,7 @@ class Header:
         # self.end = int(head[5][2], 2)
         self.ID = int(head[0],2)
         self.typ = int(head[1][:2], 2)
-        self.end = int(head[1][2:],2)
+        self.end = int(head[1][2],2)
         # print(self.ID)
 
         

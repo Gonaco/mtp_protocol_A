@@ -137,9 +137,9 @@ def synchronized(radio, radio2, pipe):
             rcv_buffer = []
             radio2.read(rcv_buffer, radio2.getDynamicPayloadSize())
             rcv = m.Packet()
-            rcv.strMssg2Pckt(rcv_buffer)
+            rcv.mssg2Pckt(rcv_buffer)
             if rcv.getTyp() == 1:
-                if rcv.getID == 0:
+                if rcv.getID() == 0:
                     done = True
     return done
 
