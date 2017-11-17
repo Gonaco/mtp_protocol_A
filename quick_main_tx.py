@@ -44,8 +44,8 @@ radio.printDetails()
 
 radio2.startListening();
 
-paysize = 25 # size of payload we send at once
-eof_delimiter = "ThIs Is EnD oF FiLe......"
+paysize = 30 # size of payload we send at once
+eof_delimiter = "ThIs Is EnD oF FiLe..........."
 start = time.time()
 ##################DEBUG CODE BELOW############################
 run = True
