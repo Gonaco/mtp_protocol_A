@@ -71,17 +71,18 @@ def synchronized(radio, radio2, pipe):
                 m.sendACK(0,radio2)
                 done = True
 
-def receive(radio, radio2):
+def receive(radio, radio2, pipe):
     first_frame = True
     run = True
     ack = False
     nack = False
     count = 0
     timer = 0
-    window_id = 0
+    window_id = 1
     window_size = 10  # may change
     frames2resend_id = []
     frames_id = []
+    original_frames_id = []
     str = []
     pipe = [0]
 
@@ -94,13 +95,19 @@ def receive(radio, radio2):
             timer = timer + 1
         if timer == 50000: # Timeout
             if first_frame:
-                m.sendACK(0, radio2) # Send the first ACK
+                m.sendACK(0, radio2) # Send the first ACK again
+
             else:
                 if ack:
                     m.sendACK(window_id, radio2) # Resend previous ACK
                 elif nack:
                     m.sendNACK(window_id, frames2resend_id, radio2) # Resend previous NACK
         timer = 0
+
+        if first_frame:
+            for i in range(1, 2*window_size, 1):
+                original_frames_id.append(i) # Generate the first 2 original frames ID windows
+            first_frame = False
 
         recv_buffer = []
         radio.read(recv_buffer, radio.getDynamicPayloadSize())
@@ -109,12 +116,12 @@ def receive(radio, radio2):
         rcv = m.Packet()
         rcv.strMssg2Pckt(recv_buffer)
         frames_id.append(rcv.getID)
+        original_frames_id[rcv.getID-1] = 0 # In each iteration set to zero the value of this array located in the received frame ID-1 position (The first frame has ID=1 and is located in the position 0 of the array)
         str.append(tmpStr)
 
         if count % window_size == 0:
-            window_id = window_id + 1
             # frames2resend_id = [] # Initialize the array to zero or it is not necessary?
-            frames2resend_id = find_lost_frames(frames_id[window_size*(window_id-1) : len(count)-1])
+            frames2resend_id = find_lost_frames(original_frames_id[window_size*(window_id-1) : len(count)-1])
             if len(frames2resend_id) == 0:
                 m.sendACK(window_id, radio2)
                 ack = True
@@ -124,14 +131,22 @@ def receive(radio, radio2):
                 ack = False
                 nack = True
 
+            window_id = window_id + 1
+
+            for i in range ((window_size*window_id)+1, window_size*(window_id+1), 1):
+                original_frames_id.append(i) # Generate the original frames ID for the the i+1 window
+
         # CHECK IT because once I receive the frame with flag==1 I'm constantly sending Nacks until all packets
         # are correclty received
+        if rcv.getFlag == 1:
+            original_frames_id = original_frames_id[0:rcv.getID-1] # Set the length of original_frames_id
+
         if rcv.getFlag == 1 or rcv.getTyp == 1: # Generate a function getFlag in message_functions
-            frames2resend_id = find_lost_frames(frames_id[window_size*(window_id - 1) : len(count)-1])
+            frames2resend_id = find_lost_frames(original_frames_id[window_size*(window_id-1) : len(original_frames_id)])
             if len(frames2resend_id) == 0: # All frames are received
                 run = False
             else:
-                m.sendNACK(window_id + 1, frames2resend_id, radio2)
+                m.sendNACK(window_id, frames2resend_id, radio2)
                 ack = False
                 nack = True
 
@@ -146,6 +161,10 @@ def receive(radio, radio2):
 
 def end_connection(radio, radio2):
 
+
 def find_lost_frames(array):
-    # Design a function that allows me to know the lost frames
+    for i in range (0, len(array), 1):
+        if array(i) != 0:
+            lost_frames_id.append(i)
+
     return lost_frames_id
