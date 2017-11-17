@@ -52,152 +52,126 @@ def setup():
 
 ##################DEBUG CODE BELOW############################
 
-    # run = True
-    # while run:
-    #     radio.startListening()
-    #     pipe=[1]
-    #     #We wait a random time between 5 and 10 seconds
-    #     Tinit=random.randint(5,10)
-    #     time.sleep(Tinit)
-    #     #If we haven't received any Control Frame yet, we send our Control Frame
-    #     recv_buffer = []
-    #     radio.read(recv_buffer, radio.getDynamicPayloadSize())
-    #     rcv = m.ControlFrame()
-    #     rcv.strMssg2Pckt(recv_buffer)
-    #     if not radio.available(pipe):
-    #         print("Sending our Control Frame\n")
-    #         control=m.ControlFrame()
-    #         radio.write(control.__str__())
-    #         #Let's see if anyone answers back...If we've received at least once the frame that we've sent...
-    #         recv_buffer = []
-    #         radio.read(recv_buffer, radio.getDynamicPayloadSize()) #CHECK IT
-    #         rcv = m.ControlFrame()
-    #         rcv.strMssg2Pckt(recv_buffer)
-    #         if(rcv.getTx() == control.tx):
-    #             #We send the data frames in order to the teams that have answered back
-    #             answers=0
-    #             start_time = datetime.datetime.now()
-    #             while(answers != 3):
-    #                 time_delta = datetime.now() - start_time
-    #                 if(time_delta.seconds <= 0,025)
-    #                     if (rcv.getAck1() == 1):
-    #                         files = {'B': f[0]}
-    #                         answers += 1
-    #                     if(rcv.getAck2() == 1):
-    #                         files['C'] = f[1]
-    #                         answers += 1
-    #                     if (rcv.getAck3() == 1):
-    #                         files['D'] = f[2]
-    #                         answers += 1
-    #                     else:
-    #                     radio.write(control.__str__())
-    #             data = 1;
-    #             data_id = 1
-    #             while (data != ''):
-    #                 for team in files:
-    #                     data = file.get(team).read()
-    #                     if synchronized():
-    #                         print("Sending the file for team", team)
-    #                         for i in range(0, len(data), paysize):
-    #                             if (i + paysize) < len(data):
-    #                                 buf = data[i:i + paysize]
-    #                                 print("sending full packets")
-    #                             else:
-    #                                 buf = data[i:]
-    #                                 run = False
-    #                             frame = m.Frame(data_id, 0, buf)
-    #                             radio.write(frame)
-    #                             print("Sending our Control Frame\n")
-    #                             frame.send(radio)
-    #                             print("Sent:"),
-    #                             print(frame)
-    #                 data_id += 1
-    #         end_connection()
-    #         return 0 # 0 means that the conversation has gone OK
-    #     elif():
-    #         #This else means that I have received a Control Frame from other team
-    #         # I resend that control frame to the transmitter and I wait Tdata=25ms so they can send us the Data Frames
-    #         print("we received other team's Control Frame")
-    #         control = m.ControlFrame()
-    #         if (rcv.getTx()=1): #Depending on Who has send us the Control Frame, our ACK could be in any place
-    #             control.ack1 =0
-    #             control.ack2 =0
-    #             control.ack3 =1
-    #         elif(rcv.getTx()=2):
-    #             control.ack1 =0
-    #             control.ack2 =1
-    #             control.ack3 =0
-    #         else:
-    #             control.ack1=1
-    #             control.ack2=0
-    #             control.ack3=0
-    #         radio.write(control.__str__())
-    #         time.sleep(25/1000.0)
-    #     else:
-    #         #I keep waiting for Control Frames during a Tctrl and then I resend my own
-    #         Tinit = random.randint(1, 2)
-    #         time.sleep(Tinit)
-    #         return 1 # 1 means that the process has to be restarted (TupperA will call this script again)
-
-# NETWORK MODE
-
+    run = True
+    while run:
+    radio.startListening()
+    pipe=[1]
+    TMAX = 120
+    TX_CMPLT=0
+    RX_CMPLT=0
+    TINIT = random.uniform(5, 10)
+    listen(radio,TINIT)
+    while (TX_CMPLT < 3 and RX_CMPLT < 3 and time.time() < (start_time + TMAX)):
+        if (not radio.available):
+            active()
+            # WAIT_CONTROL
+            rx_ctrl, packet = received_ctrl()
+            if (rx_ctrl):
+                # Control received. TX and NEXT updated.
+                t_send_ack = random.uniform(0, 0.1)
+                time.sleep(t_send_ack)
+                # Send ACK
+                pasive()
+                #The else case is that the timer run out and we can send our control frame again, so start the while again
+        else:
+            pasive()
 
 def listen(radio, timer):
-
     print("\n-Listening-\n")
 
-    while(not radio.available(pipe) and time.time() < timer):
+    while (not radio.available(pipe) and time.time() < timer):
+        #Do nothing
 
-        # do nothing
 
 def active():
-    #In this function, our furby has won the medium so it will send the first control frame.
-    #Then, it will wait for the three teams to send as back their corresponding control fram acknowleding us.
-    #If it has received 2 or more ACKs it wil start sending Data Frames
+    # In this function, our furby has won the medium so it will send the first control frame.
+    # Then, it will wait for the three teams to send as back their corresponding control fram acknowleding us.
+    # If it has received 2 or more ACKs it wil start sending Data Frames
 
     print("\n-Active Mode-\n")
-    
-    files = {'B': f[0], 'C':f[1], 'D':f[2]}
-    TACK=0, 025
+
+    files = {'B': f[0], 'C': f[1], 'D': f[2]}
+    TACK = 25 / 1000.0
     print("Sending our Control Frame\n")
     control = m.ControlFrame()
     radio.write(control.__str__())
     # Let's see if anyone answers back...
-    answers=0
+    answers = 0
     start_time = time.time()
-    #If we've received AT LEAST TWICE the frame that we've sent, we sent ALL the data frames
-    while(answers !=3 and time.time() < (start_time + TACK)):
+    # If we've received AT LEAST TWICE the frame that we've sent, we sent ALL the data frames
+    while (answers != 3 and time.time() < (start_time + TACK)):
         recv_buffer = []
         radio.read(recv_buffer, radio.getDynamicPayloadSize())  # CHECK IT
-        rcv= m.ControlFrame()
+        rcv = m.ControlFrame()
         rcv.strMssg2Pckt(recv_buffer)
         if (rcv.getTx() == m.A_TEAM):
-            answers+= 1
-    if(answers < 2):
-        return 1 #1 means that we have to go to wait_control
-    for team in files:
-        data = files.get(team).read()
-        if synchronized():
-            print("Sending the file for team", team)
-            for i in range(0, len(data), paysize):
-                if (i + paysize) < len(data):
-                    buf = data[i:i + paysize]
-                    print("sending full packets")
-                else:
-                    buf = data[i:]
-                    run = False
-                frame = m.Frame(data_id, 0, buf)
-                radio.write(frame)
-                frame.send(radio)
-                print("Sent:"),
-                print(frame)
-    return 0  # 0 means that the conversation has gone OK
-    
+            answers += 1
+    if (answers < 2):
+        return 0
+    else:
+        for team in files:
+            data = files.get(team).read()
+            if synchronized():
+                print("Sending the file for team", team)
+                for i in range(0, len(data), paysize):
+                    if (i + paysize) < len(data):
+                        buf = data[i:i + paysize]
+                        print("sending full packets")
+                    else:
+                        buf = data[i:]
+                        run = False
+                    frame = m.Frame(data_id, 0, buf)
+                    radio.write(frame)
+                    frame.send(radio)
+                    print("Sent:"),
+                    print(frame)
+        return 0
 
 
 def passive():
+    # In this function, another team's furby has won the medium
+    # We will resend the control frame that we've receive changing the ACK bit that corresponds to our team
+    # Stay listening for our data frame
 
     print("\n-Passive Mode-\n")
-    
-    
-    
+
+    recv_buffer = []
+    radio.read(recv_buffer, radio.getDynamicPayloadSize()) #CHECK IT
+    rcv = m.ControlFrame()
+    rcv.strMssg2Pckt(recv_buffer)
+    print("we received other team's Control Frame")
+    TDATA = 25 / 1000.0
+    control = m.ControlFrame()
+    # Depending on Who has send us the Control Frame, our ACK could be in any place
+    if (rcv.getTx()=1):
+     control.ack1 =0
+     control.ack2 =0
+     control.ack3 =1
+    elif(rcv.getTx()=2):
+     control.ack1 =0
+     control.ack2 =1
+     control.ack3 =0
+    else:
+     control.ack1=1
+     control.ack2=0
+     control.ack3=0
+    radio.write(control.__str__()) #Send the ACK
+
+    time.sleep(TDATA) #Waiting 25ms for our data packet
+
+def received_ctrl():
+    TCTRL = random.uniform(1, 2)
+    ctrl_rx = False
+
+    start_time = time.time()
+    packet = PKT()
+    # While if still not TCTRL but something (wrong) received
+    while (time.time() < start_time + TCTRL and not ctrl_rx):
+        if (radio_Rx.available(0)):
+            # Something received
+            packet.read_pkt()
+            if (packet.is_CTRL()):
+                # ACK info updated in read_pkt
+                ctrl_rx = True
+
+    return ctrl_rx, packet
