@@ -13,6 +13,7 @@ NACK_TYPE = 2
 FRAME = 3
 
 HEADER_BYTES_LENGTH = 2
+FRAME_PAYLOAD_BYTES_LENGTH = 30
 
 # A_TEAM_SIGN = 97                # The ASCII code of 'a'
 
