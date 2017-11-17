@@ -78,7 +78,7 @@ while run:
 
     print('out')
     rcv = m.Packet()
-    rcv.strMssg2Pckt(recv_buffer)
+    rcv.mssg2Pckt(recv_buffer)
     print(rcv)
     
     time.sleep(3/100.0) # wait a bit for processing
@@ -92,7 +92,7 @@ while run:
         print ("ACK SENT")
         cnt = 0
     
-    if tmpStr == "ThIs Is EnD oF FiLe......":
+    if tmpStr == "ThIs Is EnD oF FiLe...........":
         run = False
         print(tmpStr)
     else:

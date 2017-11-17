@@ -44,8 +44,8 @@ radio.printDetails()
 
 radio2.startListening();
 
-paysize = 25 # size of payload we send at once
-eof_delimiter = "ThIs Is EnD oF FiLe......"
+paysize = 30 # size of payload we send at once
+eof_delimiter = "ThIs Is EnD oF FiLe..........."
 start = time.time()
 ##################DEBUG CODE BELOW############################
 run = True
@@ -70,7 +70,7 @@ while run:
             frame = m.Frame(i,1,buf)
             run = False
 
-        # print(frame.getPayload())
+        print(frame.getPayload())
         radio.write(frame.__str__())
         if cnt == 25:
             print ("Sent!"),

@@ -72,13 +72,13 @@ def loadFiles(argv):
     return files
 
 
-def initInterruptions():
+# def initInterruptions():
 
-    GPIO.add_event_detect(TX_RX_SWITCH, GPIO.BOTH)
-    GPIO.add_event_callback(TX_RX_SWITCH, tx_rx)
+#     GPIO.add_event_detect(TX_RX_SWITCH, GPIO.BOTH)
+#     GPIO.add_event_callback(TX_RX_SWITCH, tx_rx)
 
-    GPIO.add_event_detect(NW_SWITCH, GPIO.RISING)
-    GPIO.add_event_callback(NW_SWITCH, NT)
+#     GPIO.add_event_detect(NW_SWITCH, GPIO.RISING)
+#     GPIO.add_event_callback(NW_SWITCH, NT)
 
 
 def tx_rx():
@@ -113,14 +113,18 @@ def NT(tx_file_buffer):
 
 def run():
 
-    if (GPIO.input(ON_OFF_SWITCH)):
+    while (GPIO.input(ON_OFF_SWITCH)):
         print("\n-Running-\n")
-        initInterruptions()
+        # initInterruptions()
+        options = {'tx':TX(files[1]),
+                   'rx':RX(),
+                   'network':NT(files)}
         
-    else:
-        print("\n-Closing-\n")
-        GPIO.remove_event_detect(TX_RX_SWITCH)
-        GPIO.remove_event_detect(NW_SWITCH)
+        
+    
+    print("\n-Closing-\n")
+    GPIO.remove_event_detect(TX_RX_SWITCH)
+    GPIO.remove_event_detect(NW_SWITCH)
         
     
 def main(argv):
@@ -133,15 +137,6 @@ def main(argv):
 
     files = loadFiles(argv)
 
-    while(True):
-        # wait? How to make the program wait for the inputs?
-    
-    
-
-    # # options = {'tx':TX(argv[1]),
-    # #            'rx':RX(),
-    # #            'network':NT(argv)}
-
 
     # while (cont != 0):
         
@@ -149,8 +144,6 @@ def main(argv):
     #     #     cont = options['tx']
     #     # ...
 
-
-        
     # Closing
     
     GPIO.cleanup()
