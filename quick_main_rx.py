@@ -88,8 +88,6 @@ while run:
     m.sendACK(cnt,radio2)
     # radio2.write(ack.__str__()) #send ACK
 
-    tmpStr = rcv.getPayload()
-    
     if cnt == 25:
         print ("ACK SENT")
         cnt = 0
