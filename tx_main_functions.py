@@ -124,6 +124,7 @@ def transmit(radio, radio2, file):
 def synchronized(radio, radio2, pipe):
     done = False
     sync = m.SYNC(0)
+    num=0
     # print(sync.extractHeader())
     while not done:
         radio.write(sync.__str__())
