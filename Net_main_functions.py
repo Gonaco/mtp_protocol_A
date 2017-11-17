@@ -89,7 +89,7 @@ def transmit(f):
                         if (rcv.getAck3() == 1):
                             files['D'] = f[2]
                             answers += 1
-                    else
+                        else:
                         radio.write(control.__str__())
                 data = 1;
                 data_id = 1

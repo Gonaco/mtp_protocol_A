@@ -41,9 +41,9 @@ def main(argv):
     # print(k.header2byt())
     # j.extractHeader(a)
     # print(j)
+    
 
-
-    # p = m.FrameSimple(5000)
+    # p = m.SYNC(5000)
     # print(p)
     # k=p.header
     # print(k.header2byt())
@@ -54,9 +54,9 @@ def main(argv):
     # print(h)
 
     # rcv = m.Packet()
-    # rcv.strMssg2Pckt(p.__str__())
+    # rcv.mssg2Pckt(p.__str__())
     # print(rcv)
-    # print(rcv.header.ID)
+    # print(rcv.getID())
     # print(rcv.payload)
 
     control = m.ControlFrame(m.C_TEAM)
@@ -64,7 +64,7 @@ def main(argv):
     rcv = []
     rcv.append(int(control.c2byt(),2))
     rcvc = m.ControlFrame()
-    rcvc.strMssg2Pckt(rcv)
+    rcvc.mssg2Pckt(rcv)
     print(rcvc)
 
     data = m.DataFrame(m.B_TEAM, 0, "Hola peña")
@@ -75,7 +75,7 @@ def main(argv):
     n = []
     for i in range(0,len(data.d2byt())):
         n.append(int(data.d2byt()[i],2))
-    rcvd.strMssg2Pckt(n)
+    rcvd.mssg2Pckt(n)
     print(rcvd)
     print(rcvd.getPayload())
     

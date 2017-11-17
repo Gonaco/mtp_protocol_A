@@ -7,9 +7,9 @@ ID_length = 32
 typ_length = 2
 end_length = 1
 
-SYNC = 0
-ACK = 1
-NACK = 2
+SYNC_TYPE = 0
+ACK_TYPE = 1
+NACK_TYPE = 2
 FRAME = 3
 
 HEADER_BYTES_LENGTH = 5
@@ -43,7 +43,7 @@ class Header:
 
     # Class Constructor
     
-    def __init__(self,typ=SYNC,ID=0,end=0):
+    def __init__(self,typ=SYNC_TYPE,ID=0,end=0):
 
         # self.signature = signature                # A-Team signature predefined ## ''.join(format(ord(x), 'b') for x in 'a')
         self.typ = typ # ''.join(format(ord(x), 'b') for x in '3')[-2:] ## ID will be 3='11', 2='10', 1='01', 0='00' 
@@ -112,6 +112,15 @@ class Packet:
         # for i in range(0, len(self.payload), 1):
         #     ret = ret + self.payload[i]
         return self.payload
+
+    def getTyp(self):
+        return self.header.getType()
+
+    def getID(self):
+        return self.header.getID()
+
+    def getEnd(self):
+        return self.header.getEnd()
     
     def packet2byt(self):
         payload_byt = string2bits(self.payload.__str__())
@@ -120,7 +129,7 @@ class Packet:
             payload_bit = payload_bit + payload_byt[i]
         return self.header.header2byt()+payload_bit
 
-    def strMssg2Pckt(self, message_bin):
+    def mssg2Pckt(self, message_bin):
         mssg_string = ""
         
         for i in range(0,len(message_bin),1):
@@ -138,7 +147,7 @@ class ACK(Packet):
     # Class Constructor
     
     def __init__(self, ID): # TO Change No Payload and Test if it sends with no payload
-        header = Header(ACK,ID,0)
+        header = Header(ACK_TYPE,ID,0)
         Packet.__init__(self,header,'')
 
 class NACK(Packet):
@@ -146,7 +155,7 @@ class NACK(Packet):
     # Class Constructor
     
     def __init__(self, ID, payload):
-        header = Header(NACK,ID,0)
+        header = Header(NACK_TYPE,ID,0)
         Packet.__init__(self,header,payload)
 
 
@@ -155,7 +164,7 @@ class SYNC(Packet):
     # Class Constructor
     
     def __init__(self, ID):
-        header = Header(SYNC,ID,0)
+        header = Header(SYNC_TYPE,ID,0)
         Packet.__init__(self,header,'')    
 
 
@@ -244,7 +253,7 @@ class DataFrame:
         
         return h + string2bits(self.payload)
 
-    def strMssg2Pckt(self, message_bin):
+    def mssg2Pckt(self, message_bin):
         mssg_string = ""
         
         for i in range(0,len(message_bin),1):
@@ -304,7 +313,7 @@ class ControlFrame:
     def c2byt(self):
         return get_bin(self.typ, NETWORK_TYPE_LENGTH) + get_bin(self.tx, NETWORK_X_LENGTH) + get_bin(self.nxt,NETWORK_X_LENGTH) + get_bin(self.ack1,NETWORK_ACK_LENGTH) + get_bin(self.ack2,NETWORK_ACK_LENGTH) + get_bin(self.ack3,NETWORK_ACK_LENGTH)
 
-    def strMssg2Pckt(self, message_bin):
+    def mssg2Pckt(self, message_bin):
         mssg_string = ""
         
         for i in range(0,len(message_bin),1):
@@ -322,4 +331,3 @@ class ControlFrame:
         self.payload = mssg_string[1:]
 
         
-def 
