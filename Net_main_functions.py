@@ -151,7 +151,44 @@ def listen(radio, timer):
         # do nothing
 
 def active():
-
+    #In this function, our furby has won the medium so it will send the first control frame.
+    #Then, it will wait for the three teams to send as back their corresponding control fram acknowleding us.
+    #If it has received 2 or more ACKs it wil start sending Data Frames
+    files = {'B': f[0], 'C':f[1], 'D':f[2]}
+    TACK=0, 025
+    print("Sending our Control Frame\n")
+    control = m.ControlFrame()
+    radio.write(control.__str__())
+    # Let's see if anyone answers back...
+    answers=0
+    start_time = time.time()
+    #If we've received AT LEAST TWICE the frame that we've sent, we sent ALL the data frames
+    while(answers !=3 and time.time() < (start_time + TACK)):
+        recv_buffer = []
+        radio.read(recv_buffer, radio.getDynamicPayloadSize())  # CHECK IT
+        rcv= m.ControlFrame()
+        rcv.strMssg2Pckt(recv_buffer)
+        if (rcv.getTx() == m.A_TEAM):
+            answers+= 1
+    if(answers < 2):
+        return 1 #1 means that we have to go to wait_control
+    for team in files:
+        data = files.get(team).read()
+        if synchronized():
+            print("Sending the file for team", team)
+            for i in range(0, len(data), paysize):
+                if (i + paysize) < len(data):
+                    buf = data[i:i + paysize]
+                    print("sending full packets")
+                else:
+                    buf = data[i:]
+                    run = False
+                frame = m.Frame(data_id, 0, buf)
+                radio.write(frame)
+                frame.send(radio)
+                print("Sent:"),
+                print(frame)
+    return 0  # 0 means that the conversation has gone OK
     
 
 
