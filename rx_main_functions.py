@@ -10,8 +10,8 @@ def setup():
 
     radio = NRF24(GPIO, spidev.SpiDev())
     radio2 = NRF24(GPIO, spidev.SpiDev())
-    radio.begin(1, 27) # Set spi-cs pin1, and rf24-CE pin 27
-    radio2.begin(0, 17) # Set spi-cs pin0, and rf24-CE pin 17
+    radio.begin(1, 17) # Set spi-cs pin1, and rf24-CE pin 17
+    radio2.begin(0, 27) # Set spi-cs pin0, and rf24-CE pin 27
 
     radio.setRetries(15,15)
     radio.setPayloadSize(32)
@@ -58,7 +58,6 @@ def setup():
 def synchronized(radio, radio2, pipe):
     done = False
     while not done:
-        # radio.startListening()
         while not radio.available(pipe):
             time.sleep(1/1000.0)
         print("sync message received")
