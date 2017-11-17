@@ -330,4 +330,8 @@ class ControlFrame:
         
         self.payload = mssg_string[1:]
 
+<<<<<<< HEAD
         
+=======
+
+>>>>>>> 66029aae640451bbb435952b88f6da25acd5e912
