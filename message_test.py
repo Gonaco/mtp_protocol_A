@@ -67,7 +67,7 @@ def main(argv):
     rcvc.mssg2Pckt(rcv)
     print(rcvc)
 
-    data = m.DataFrame(m.B_TEAM, 0, "Hola peña")
+    data = m.ACK(m.B_TEAM, 0, "Hola peña")
     print(data)
     print(data.getPayload())
     print(data.d2byt())

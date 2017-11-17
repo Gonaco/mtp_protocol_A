@@ -1,9 +1,9 @@
-def splitData(PacketID):
+def splitData(PacketID, archivo):
 
     print("\n-splitData-\n") ##Debbuging issues.
 	
-    archivo = open("RXFILE-D-MRM-4.txt") ## Example of a text file
-
+    ##Itzi comprime el archivo y nos lo manda para que "recortemos" el chunk que sea.
+	
     file_len = 10000 #Size of the file in bytes
     chunk_len = 30 #Size of the chunk in bytes
 
