@@ -162,3 +162,21 @@ def end_connection():
     print("Done sending the file! Exiting!")
 
     return;
+
+
+# NETWORK MODE 2.0
+
+
+def listen(radio, timer):
+
+    while(not radio.available(pipe) and time.time() < timer):
+
+        # do nothing
+
+def active():
+
+
+
+def passive():
+
+    

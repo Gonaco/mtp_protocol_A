@@ -3,7 +3,7 @@ from lib_nrf24 import NRF24
 
 byte_length = 8
 # signature_length = byte_length
-ID_length = 32
+ID_length = 8
 typ_length = 2
 end_length = 1
 
