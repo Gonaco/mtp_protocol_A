@@ -1,8 +1,7 @@
-def splitData(PacketID):
+def splitData(PacketID, archivo):
 
     print("\n-splitData-\n") ##Debbuging issues.
 	
-    archivo = open("RXFILE-D-MRM-4.txt") ## Example of a text file
 
     file_len = 10000 #Size of the file in bytes
     chunk_len = 30 #Size of the chunk in bytes
