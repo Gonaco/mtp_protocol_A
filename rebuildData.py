@@ -1,5 +1,6 @@
-storedFrames = {"-2N" : "DEFAULT"} ##Inicializamos el diccionario.
-last_w_id = -1
+##Esto lo inicializa Carlos en sus funciones:
+##storedFrames = {"-2N" : "DEFAULT"} ##Inicializamos el diccionario.
+##last_w_id = -1
 
 
 ## DISCLAIMER
