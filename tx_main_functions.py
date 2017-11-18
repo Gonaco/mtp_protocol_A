@@ -8,10 +8,13 @@ from lib_nrf24 import NRF24
 import time
 import spidev
 import message_functions as m
+import splitData as s
 import re
+import math
 
 
 def setup():
+    print("\n-setUp-\n")  ##Debbuging issues.
     pipes = [[0xe7, 0xe7, 0xe7, 0xe7, 0xe7], [0xc2, 0xc2, 0xc2, 0xc2, 0xc2]]  # addresses for TX/RX channels
 
     radio2 = NRF24(GPIO, spidev.SpiDev())
@@ -49,63 +52,57 @@ def setup():
 
 ##################DEBUG CODE BELOW############################
 def transmit(radio, radio2, file):
+    print("\n-transmit-\n")  ##Debbuging issues.
     run = True
     paysize = 27  # may change
     repeat = False
     window_id = 1
     window_size = 10  # may change
     last_sent = -1
-    data = file.read()
-    frame_list = build_list(data, paysize)
+    # data = file.read()
+    frame_list = build_list(file, paysize)
     radio2.startListening()
     nack_list = []
     nack_len = 0
     partial_window = 0
     finished = False
+    id_last = frame_list[-1].getID()
+    print('before starting the run loop')
     while run:
         if not repeat:
-            if (last_sent + window_size) < len(frame_list):
-                for i in range(0, window_size):
-                    frame = frame_list[last_sent + 1]
-                    radio.write(frame.__str__())
-                    last_sent = +1
-            else:
-                for i in range(last_sent + 1, len(frame_list)):
-                    frame = frame_list[last_sent + 1]
-                    radio.write(frame.__str__())
-                    last_sent = +1
-                    finished = True
+            last_sent, finished = send_window(frame_list, last_sent, window_size, radio, finished)
         else:
-            # To Do: manage NACKs
+            print('we have nacks')
             nack_len = len(nack_list)
             if nack_len < window_size:
+                print('we have mix window')
                 # we send a mix of Nack and next ids
                 for i in range(0, len(nack_list)):
-                    #we send nack
+                    # we send nack
                     next_id = nack_list[i]
                     frame = frame_list[next_id]
                     radio.write(frame.__str__())
-                    nack_list.pop[i]
-                for i in range(0, partial_window):
-                    #we send next frames
-                    frame = frame_list[last_sent + 1]
-                    radio.write(frame.__str__())
-                    last_sent = +1
+                    nack_list.pop(i)
+                # we send the rest of the window
+                last_sent, finished = send_window(frame_list, last_sent, partial_window, radio, finished)
             else:
-                #To Do: case where we have more Nacks than window size
+                print('we only send nacks')
                 for i in range(0, window_size):
-                    #we send the first 10 nacks and eliminate them from the list
+                    # we send the first 10 nacks and eliminate them from the list
                     next_id = nack_list[i]
                     frame = frame_list[next_id]
                     radio.write(frame.__str__())
-                    nack_list.pop[i]
-
+                    nack_list.pop(i)
+        # after we send, we look for nacks
         if radio2.available():
+            print('we have things to read')
             rcv_buffer = []
             radio2.read(rcv_buffer, radio2.getDynamicPayloadSize())
             rcv = m.Packet()
-            rcv.strMssg2Pckt(rcv_buffer)
+            rcv.mssg2Pckt(rcv_buffer)
+            # wether I finished or not I want to look for nacks
             if rcv.getTyp() == 2:
+                print('nacks arrived')
                 # nack received
                 repeat = True
                 # read payload and store IDs in list
@@ -114,17 +111,22 @@ def transmit(radio, radio2, file):
                 temp_nack_list.pop(len(nack_list) - 1)
                 nack_list = nack_list + temp_nack_list
             elif finished:
+                print('I sent last so I will check for ack')
+                # if I don't have nacks, I only care if I finished
+                # if rx send ack we stop running, if we didn't finish, just write next window
                 if rcv.getTyp() == 1:
+                    print('there is ack')
                     # I store the ID of the last ACK rx set me
-                    id_last = rcv.getID()
-                    run = False;
+                    # id_last = rcv.getID()
+                    run = False
     return id_last
 
 
 def synchronized(radio, radio2, pipe):
+    print("\n-synchronized-\n")  #Debbuging issues.
     done = False
     sync = m.SYNC(0)
-    num=0
+    num = 0
     # print(sync.extractHeader())
     while not done:
         radio.write(sync.__str__())
@@ -141,10 +143,10 @@ def synchronized(radio, radio2, pipe):
             if rcv.getTyp() == 1:
                 if rcv.getID() == 0:
                     done = True
-    return done
 
 
-def end_connection(radio, radio2, pipe, id):
+def end_connection(radio, radio2, pipe, last_id):
+    print("\n-end_connection-\n")  ##Debbuging issues.
     done = False
     ack = m.ACK(0)  # for ending connection we send ACK with ID 0
     radio.write(ack.__str__())
@@ -158,24 +160,47 @@ def end_connection(radio, radio2, pipe, id):
             rcv_buffer = []
             radio2.read(rcv_buffer, radio2.getDynamicPayloadSize())
             rcv = m.Packet()
-            rcv.strMssg2Pckt(rcv_buffer)
+            rcv.mssg2Pckt(rcv_buffer)
             if rcv.getTyp() == 1:
                 # we have the id of the last packet an rx will send un an ack with the next id
-                if rcv.getID == id + 1:
+                if rcv.getID() == last_id + 1:
                     radio2.stopListening()
                     done = True
 
 
-def build_list(data, paysize):
-    data_id = 1
+def build_list(file, paysize):
+    print("\n-build_list-\n")  ##Debbuging issues.
+    data_id = 0
     frame_list = []
-    for i in range(0, len(data), paysize):
-        if (i + paysize) < len(data):
-            buf = data[i:i + paysize]
-            frame = m.Frame(data_id, 0, buf)
-            i = +1
-        else:
-            buf = data[i:]
-            frame = m.Frame(data_id, 1, buf)
+    data = file.read()
+    file_length = len(data)
+    payload = ''
+    num = math.ceil(file_length / paysize)
+    for i in range(0, int(num - 1)):
+        payload = s.splitData(data_id, file)
+        frame = m.Frame(data_id, 0, payload)
+        data_id = + 1
         frame_list.append(frame)
+    # the last packet should have end flag to 1
+    payload = s.splitData(data_id, file)
+    frame = m.Frame(data_id, 1, payload)
+    frame_list.append(frame)
     return frame_list
+
+
+def send_window(frame_list, last_sent, window_size, radio, finished):
+    print("\n-send_window-\n")  ##Debbuging issues.
+    if (last_sent + window_size) < len(frame_list):
+        print('we send a window')
+        for i in range(0, window_size):
+            frame = frame_list[last_sent + 1]
+            radio.write(frame.__str__())
+            last_sent = +1
+    else:
+        print('we send last window')
+        for i in range(last_sent + 1, len(frame_list)):
+            frame = frame_list[last_sent + 1]
+            radio.write(frame.__str__())
+            last_sent = +1
+            finished = True
+    return last_sent, finished
