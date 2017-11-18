@@ -184,6 +184,7 @@ def handshake(radio, radio2, pipe, id):
         radio.read(recv_buffer, radio.getDynamicPayloadSize())
         rcv = m.Packet()
         rcv.mssg2Pckt(recv_buffer)
+        print(rcv)
         if rcv.getTyp() == 0 and rcv.getID() == 0:
             print("sync message received")
             m.sendACK(id, radio2)
