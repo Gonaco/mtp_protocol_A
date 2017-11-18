@@ -7,6 +7,9 @@ import message_functions as m
 import rebuildData
 
 def setup():
+
+    print("\n-setup-\n")
+
     pipes = [[0xe7, 0xe7, 0xe7, 0xe7, 0xe7], [0xc2, 0xc2, 0xc2, 0xc2, 0xc2]] #addresses for TX/RX channels
 
     radio = NRF24(GPIO, spidev.SpiDev())
@@ -45,6 +48,7 @@ def setup():
     return radio, radio2
 
 def receive(radio, radio2, pipe):
+    print("\n-receive-\n")
     first_frame = True
     last_frame = False
     run = True
@@ -123,6 +127,7 @@ def receive(radio, radio2, pipe):
     return final_id
 
 def find_lost_frames(array):
+    print("\n-find_lost_frames-\n")
     lost_frames_id = []
     for i in range(0, len(array), 1):
         if array(i) != -1:
@@ -131,6 +136,7 @@ def find_lost_frames(array):
     return lost_frames_id
 
 def handshake(radio, radio2, pipe, id):
+    print("\n-handshake-\n")
     done = False
     while not done:
         while not radio.available(pipe):
