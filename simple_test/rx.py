@@ -62,4 +62,6 @@ for i in range(0,len(rcv_buffer),1):
     mssg_string = mssg_string + chr(rcv_buffer[i])
     
 print(mssg_string)
+
 mouth.write(send)
+print(send)
