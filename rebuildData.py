@@ -1,4 +1,4 @@
-##Esto lo inicializa Carlos en sus funciones:
+##This is initialized by Carlos:
 ##storedFrames = {"-2N" : "DEFAULT"} ##Inicializamos el diccionario.
 ##last_w_id = -1
 
@@ -13,25 +13,25 @@ def rebuildData(p_id, string, last_w_id, storedFrames, team):
     print ("\n-rebuildData-\n") ##Debbuging issues
     
     filename = "RXfile_" + team
-    if (p_id == last_w_id + 1): ## El paquete recibido es el siguiente que tenemos que escribir
+    if (p_id == last_w_id + 1): ## The received packet is the one we should write.
 
-        writeFile(string, filename) ##Escribimos 'string' en 'filename'
-        last_w_id = last_w_id + 1 ##Actualizamos el ID del ltimo paquete escrito
+        writeFile(string, filename) ##We write 'string' in 'filename'
+        last_w_id = last_w_id + 1 ##Update the last writen packet ID
 
         p_id = p_id + 1
         while storedFrames.has_key(str(p_id)+team): ## Comprobamos si est el paquete p_id+1 y posteriores consecutivos en el diccionario
             string = storedFrames[str(p_id)+team] ##Extraemos el 'string' nmero 'p_id'
-            writeFile(string, filename) ##Escribimos 'string' en 'filename'
-            del storedFrames[str(p_id)+team] ##Eliminamos del diccionario el string que acabamos de escribir
-            last_w_id = last_w_id + 1 ##Actualizamos el ID del ltimo paquete escrito
-            p_id = p_id + 1 ##Incrementamos el ID del paquete para ver en la siguiente iteracin si est en el diccionario
+            writeFile(string, filename) ##We write 'string' in 'filename'
+            del storedFrames[str(p_id)+team] ##Remove from the dictionary the string we have just writen
+            last_w_id = last_w_id + 1 ##Update the last writen packet ID
+            p_id = p_id + 1 ##Increase the packet ID to see in the next iteration if it is in diccionary
 
     elif (p_id > last_w_id):
-        ## El paquete recibido todava no lo podemos escribir
-        ## -> Lo aadimos en el diccionario
+        ## We cannot write the received packet yet.
+        ## -> We add it to the dictionary
         storedFrames.update({str(p_id)+team : string})
         
-    ## Devolvemos el diccionario y el last_w_id actualizados
+    ## We return the dictionary and the last writen id (updated versions)
     return storedFrames, last_w_id    
 
  
