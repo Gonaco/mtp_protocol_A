@@ -168,7 +168,7 @@ def passive():
         
     radio.write(rcv.__str__()) #Send the ACK
 
-    time.sleep(TDATA) #Waiting 25ms for our data packet
+    listen(radio,TDATA) #Waiting 25ms for our data packet
 
 # def received_ctrl():
 #     TCTRL = random.uniform(1, 2)
