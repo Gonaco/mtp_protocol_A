@@ -13,14 +13,14 @@ print("\n-setup-\n")
 
 pipes = [[0xe7, 0xe7, 0xe7, 0xe7, 0xe7], [0xc2, 0xc2, 0xc2, 0xc2, 0xc2]] #addresses for TX/RX channels
 
-radio = NRF24(GPIO, spidev.SpiDev())
-radio2 = NRF24(GPIO, spidev.SpiDev())
+radio = NRF24(GPIO, spidev.SpiDev())  # EARS
+radio2 = NRF24(GPIO, spidev.SpiDev())  # MOUTH
 radio.begin(1, 17) # Set spi-cs pin1, and rf24-CE pin 17
 radio2.begin(0, 27) # Set spi-cs pin0, and rf24-CE pin 27
 
 radio.setRetries(15,15)
 radio.setPayloadSize(32)
-radio.setChannel(0x60)
+radio.setChannel(0x65)
 radio2.setRetries(15,15)
 radio2.setPayloadSize(32)
 radio2.setChannel(0x60)
