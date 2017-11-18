@@ -132,6 +132,7 @@ def synchronized(radio, radio2, pipe):
         radio.write(sync.__str__())
         radio2.startListening()
         while not radio2.available(pipe) and num < 400:
+            print(radio2.available(pipe))
             time.sleep(1 / 1000.0)
             num = num + 1
         if num != 400:
