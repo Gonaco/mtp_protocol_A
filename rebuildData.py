@@ -18,16 +18,16 @@ def rebuildData(p_id, string, last_w_id, storedFrames, team):
         last_w_id = last_w_id + 1 ##Actualizamos el ID del ltimo paquete escrito
 
         p_id = p_id + 1
-        while storedFrames.has_key(str(p_id)+team): ## Comprobamos si está el paquete p_id+1 y posteriores consecutivos en el diccionario
-            string = storedFrames[str(p_id)+team] ##Extraemos el 'string' número 'p_id'
+        while storedFrames.has_key(str(p_id)+team): ## Comprobamos si est el paquete p_id+1 y posteriores consecutivos en el diccionario
+            string = storedFrames[str(p_id)+team] ##Extraemos el 'string' nmero 'p_id'
             writeFile(string, filename) ##Escribimos 'string' en 'filename'
             del storedFrames[str(p_id)+team] ##Eliminamos del diccionario el string que acabamos de escribir
             last_w_id = last_w_id + 1 ##Actualizamos el ID del último paquete escrito
-            p_id = p_id + 1 ##Incrementamos el ID del paquete para ver en la siguiente iteración si está en el diccionario
+            p_id = p_id + 1 ##Incrementamos el ID del paquete para ver en la siguiente iteracin si est en el diccionario
 
     elif (p_id > last_w_id):
-        ## El paquete recibido todavía no lo podemos escribir
-        ## -> Lo añadimos en el diccionario
+        ## El paquete recibido todava no lo podemos escribir
+        ## -> Lo aadimos en el diccionario
         storedFrames.update({str(p_id)+team : string})
         
     ## Devolvemos el diccionario y el last_w_id actualizados
