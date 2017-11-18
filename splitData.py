@@ -3,7 +3,7 @@ def splitData(PacketID, archivo):
     print("\n-splitData-\n") ##Debbuging issues.
 	
     ## Modo normal:	
-    ## Itzi comprime el archivo y nos lo manda para que "recortemos" el chunk número 'PacketID' y meterlo como payload del paquete.
+    ## Itzi comprime el archivo y nos lo manda para que "recortemos" el chunk nmero 'PacketID' y meterlo como payload del paquete.
     ##
     ## Network Mode:
     ## Nacho me pasa el archivo ABIERTO y el ID del paquete que necesite. Yo le devuelvo el chunk (es un string) para formar el payload.
