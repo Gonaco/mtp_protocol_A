@@ -55,6 +55,9 @@ while not ears.available(1):
 
 rcv_buffer = []
 ears.read(rcv_buffer, ears.getDynamicPayloadSize())
+print(rcv_buffer)
+
+mssg_string = ""
 for i in range(0,len(rcv_buffer),1):
     mssg_string = mssg_string + chr(rcv_buffer[i])
     
