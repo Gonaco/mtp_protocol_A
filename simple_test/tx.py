@@ -15,7 +15,6 @@ mouth = NRF24(GPIO, spidev.SpiDev())
 mouth.begin(1, 27)  # Set spi-cs pin1, and rf24-CE pin 27
 ears.begin(0, 17)  # Set spi-cs pin0, and rf24-CE pin 17
 
-time.sleep(1)
 mouth.setRetries(15, 15)
 mouth.setPayloadSize(32)
 mouth.setChannel(0x60)
@@ -47,7 +46,7 @@ ears.startListening()
 send = "Psst"
 
 
-while not ears.available([1]):
+while not ears.available([0]):
     print(send)
     mouth.write(send)
 
