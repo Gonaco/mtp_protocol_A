@@ -50,7 +50,7 @@ ears.startListening()
 
 send = "Oh. Hola!"
 
-while not ears.available(1):
+while not ears.available([1]):
     print("Listening")
 
 rcv_buffer = []

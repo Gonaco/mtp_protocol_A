@@ -47,7 +47,7 @@ ears.startListening()
 send = "Psst"
 
 
-while not ears.available(0):
+while not ears.available([0]):
     print(send)
     mouth.write(send)
 
