@@ -82,6 +82,11 @@ def listen(radio, timer):
     while (not radio.available(pipe) and time.time() < timer):
         #Do nothing
 
+    # if radio.available(pipe):
+    #     recv_buffer = []
+    #     rcv = m.C
+    #     radio.read(recv_buffer, radio.getDynamicPayloadSize())
+
 
 def active():
     # In this function, our furby has won the medium so it will send the first control frame.
@@ -141,37 +146,43 @@ def passive():
     rcv.strMssg2Pckt(recv_buffer)
     print("we received other team's Control Frame")
     TDATA = 25 / 1000.0
-    control = m.ControlFrame()
+
     # Depending on Who has send us the Control Frame, our ACK could be in any place
-    if (rcv.getTx()=1):
-     control.ack1 =0
-     control.ack2 =0
-     control.ack3 =1
-    elif(rcv.getTx()=2):
-     control.ack1 =0
-     control.ack2 =1
-     control.ack3 =0
-    else:
-     control.ack1=1
-     control.ack2=0
-     control.ack3=0
-    radio.write(control.__str__()) #Send the ACK
+    if rcv.getTx() == m.B_TEAM:
+        print("Team B is active mode")
+        rcv.ack1 = 0
+        rcv.ack2 = 0
+        rcv.ack3 = 1
+        
+    elif rcv.getTx() == m.C_TEAM:
+        print("Team C is active mode")
+        rcv.ack1 = 0
+        rcv.ack2 = 1
+        rcv.ack3 = 0
+        
+    elif rcv.getTx() == m.D_TEAM:
+        print("Team D is active mode")
+        rcv.ack1 = 1
+        rcv.ack2 = 0
+        rcv.ack3 = 0
+        
+    radio.write(rcv.__str__()) #Send the ACK
 
     time.sleep(TDATA) #Waiting 25ms for our data packet
 
-def received_ctrl():
-    TCTRL = random.uniform(1, 2)
-    ctrl_rx = False
+# def received_ctrl():
+#     TCTRL = random.uniform(1, 2)
+#     ctrl_rx = False
 
-    start_time = time.time()
-    packet = PKT()
-    # While if still not TCTRL but something (wrong) received
-    while (time.time() < start_time + TCTRL and not ctrl_rx):
-        if (radio_Rx.available(0)):
-            # Something received
-            packet.read_pkt()
-            if (packet.is_CTRL()):
-                # ACK info updated in read_pkt
-                ctrl_rx = True
+#     start_time = time.time()
+#     packet = PKT()
+#     # While if still not TCTRL but something (wrong) received
+#     while (time.time() < start_time + TCTRL and not ctrl_rx):
+#         if (radio_Rx.available(0)):
+#             # Something received
+#             packet.read_pkt()
+#             if (packet.is_CTRL()):
+#                 # ACK info updated in read_pkt
+#                 ctrl_rx = True
 
-    return ctrl_rx, packet
+#     return ctrl_rx, packet
