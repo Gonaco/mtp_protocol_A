@@ -5,8 +5,6 @@ GPIO.setmode(GPIO.BCM)
 from lib_nrf24 import NRF24
 import time
 import spidev
-import message_functions as m
-import splitData as s
 import re
 import math
 
