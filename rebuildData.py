@@ -15,7 +15,7 @@ def rebuildData(p_id, string, last_w_id, storedFrames, team):
     if (p_id == last_w_id + 1): ## El paquete recibido es el siguiente que tenemos que escribir
 
         writeFile(string, filename) ##Escribimos 'string' en 'filename'
-        last_w_id = last_w_id + 1 ##Actualizamos el ID del último paquete escrito
+        last_w_id = last_w_id + 1 ##Actualizamos el ID del ltimo paquete escrito
 
         p_id = p_id + 1
         while storedFrames.has_key(str(p_id)+team): ## Comprobamos si está el paquete p_id+1 y posteriores consecutivos en el diccionario
