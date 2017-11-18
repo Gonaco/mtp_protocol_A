@@ -1,7 +1,7 @@
 import tx_main_functions as f
 
 def main_tx():
-    file= open("RXFILE-D-MRM-4.txt")
+    file= open("tx_file.txt")
     radio, radio2=f.setup()
     pipe = [1]
     f.synchronized(radio, radio2, pipe)
