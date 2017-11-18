@@ -146,6 +146,8 @@ def synchronized(radio, radio2, pipe):
 
         while not radio2.available(pipe):
             # do nothing
+            pass
+            
 
         print("we received something before time out")
         rcv_buffer = []
