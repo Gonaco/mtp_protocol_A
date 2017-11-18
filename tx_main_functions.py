@@ -131,18 +131,30 @@ def synchronized(radio, radio2, pipe):
     while not done:
         radio.write(sync.__str__())
         radio2.startListening()
-        while not radio2.available(pipe) or num < 400: # AND? IT IS OR!!!
-            time.sleep(1 / 1000.0)
-            num = num + 1
-        if num != 400:
-            print("we received something before time out")
-            rcv_buffer = []
-            radio2.read(rcv_buffer, radio2.getDynamicPayloadSize())
-            rcv = m.Packet()
-            rcv.mssg2Pckt(rcv_buffer)
-            if rcv.getTyp() == 1:
-                if rcv.getID() == 0:
-                    done = True
+        # while not radio2.available(pipe) and num < 400: # WHY A TIMER (400) HERE?
+            # time.sleep(1 / 1000.0)
+            # num = num + 1
+        # if num != 400:
+            # print("we received something before time out")
+            # rcv_buffer = []
+            # radio2.read(rcv_buffer, radio2.getDynamicPayloadSize())
+            # rcv = m.Packet()
+            # rcv.mssg2Pckt(rcv_buffer)
+            # if rcv.getTyp() == 1:
+            #     if rcv.getID() == 0:
+            #         done = True
+
+        while not radio2.available(pipe):
+            # do nothing
+
+        print("we received something before time out")
+        rcv_buffer = []
+        radio2.read(rcv_buffer, radio2.getDynamicPayloadSize())
+        rcv = m.Packet()
+        rcv.mssg2Pckt(rcv_buffer)
+        if rcv.getTyp() == 1:
+            if rcv.getID() == 0:
+                done = True
 
 
 def end_connection(radio, radio2, pipe, last_id):
