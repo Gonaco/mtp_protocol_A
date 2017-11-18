@@ -51,7 +51,7 @@ radio.startListening()
 send = "Oh. Hola!"
 
 while not radio.available(1):
-    pass
+    print("Listening")
 
 rcv_buffer = []
 radio.read(rcv_buffer, radio.getDynamicPayloadSize())

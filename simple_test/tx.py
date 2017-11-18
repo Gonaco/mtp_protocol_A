@@ -43,6 +43,7 @@ send = "Psst"
 
 
 while not radio2.available(0):
+    print(send)
     radio.write(send)
 
 rcv_buffer = []
