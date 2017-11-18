@@ -140,6 +140,7 @@ def handshake(radio, radio2, pipe, id):
     done = False
     while not done:
         while not radio.available(pipe):
+            print("\n-listening-\n")
             time.sleep(1/1000.0)
 
         recv_buffer = []
