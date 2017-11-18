@@ -56,25 +56,30 @@ def setup():
     while run:
     radio.startListening()
     pipe=[1]
+    i = 0
     TMAX = 120
-    TX_CMPLT=0
-    RX_CMPLT=0
+    TX_CMPLT = 0
+    RX_CMPLT = 0
+    #TCTRLMAX = 25 / 1000.0    25ms??
     TINIT = random.uniform(5, 10)
+    TCTRL = random.uniform(1, 2)
     listen(radio,TINIT)
     while (TX_CMPLT < 3 and RX_CMPLT < 3 and time.time() < (start_time + TMAX)):
         if (not radio.available):
-            active()
+            i =+ 1
+            comp = active()
             # WAIT_CONTROL
-            rx_ctrl, packet = received_ctrl()
-            if (rx_ctrl):
-                # Control received. TX and NEXT updated.
-                t_send_ack = random.uniform(0, 0.1)
-                time.sleep(t_send_ack)
-                # Send ACK
-                pasive()
+            #listen(radio,TCTRLMAX) We have to implement a Tmax to wait until the next team send us its Control Frame
+            if(radio.available):
+                ack_B(i),ack_C,ack_D = passive()
+                if(comp == 3 and ack_B)
+            else:
+                listen(radio,TCTRL)
+                if (radio.available):
+                    passive()
                 #The else case is that the timer run out and we can send our control frame again, so start the while again
         else:
-            pasive()
+            passive()
 
 def listen(radio, timer):
     print("\n-Listening-\n")
@@ -82,20 +87,15 @@ def listen(radio, timer):
     while (not radio.available(pipe) and time.time() < timer):
         #Do nothing
 
-    # if radio.available(pipe):
-    #     recv_buffer = []
-    #     rcv = m.C
-    #     radio.read(recv_buffer, radio.getDynamicPayloadSize())
-
-
 def active():
     # In this function, our furby has won the medium so it will send the first control frame.
     # Then, it will wait for the three teams to send as back their corresponding control fram acknowleding us.
     # If it has received 2 or more ACKs it wil start sending Data Frames
 
     print("\n-Active Mode-\n")
-
+    paysize = 30
     files = {'B': f[0], 'C': f[1], 'D': f[2]}
+    completed_files = 0
     TACK = 25 / 1000.0
     print("Sending our Control Frame\n")
     control = m.ControlFrame()
@@ -124,13 +124,14 @@ def active():
                         print("sending full packets")
                     else:
                         buf = data[i:]
-                        run = False
+                        print("FILE COMPLETED")
+                        completed_files += 1
                     frame = m.Frame(data_id, 0, buf)
                     radio.write(frame)
                     frame.send(radio)
                     print("Sent:"),
                     print(frame)
-        return 0
+        return completed_files
 
 
 def passive():
@@ -140,49 +141,42 @@ def passive():
 
     print("\n-Passive Mode-\n")
 
+    acked_B = 0
+    acked_C = 0
+    acked_D = 0
     recv_buffer = []
     radio.read(recv_buffer, radio.getDynamicPayloadSize()) #CHECK IT
     rcv = m.ControlFrame()
     rcv.strMssg2Pckt(recv_buffer)
     print("we received other team's Control Frame")
     TDATA = 25 / 1000.0
-
     # Depending on Who has send us the Control Frame, our ACK could be in any place
     if rcv.getTx() == m.B_TEAM:
         print("Team B is active mode")
-        rcv.ack1 = 0
-        rcv.ack2 = 0
-        rcv.ack3 = 1
-        
+        if(rcv.ack3 = 1): #B is acknowleding our data frame
+            acked_B += 1
+            rcv.ack1 = 0
+            rcv.ack2 = 0
+            rcv.ack3 = 1
+
     elif rcv.getTx() == m.C_TEAM:
-        print("Team C is active mode")
-        rcv.ack1 = 0
-        rcv.ack2 = 1
-        rcv.ack3 = 0
-        
+        print("Team C is active mode"
+        if (rcv.ack2 = 1):  # C is acknowleding our data frame
+            acked_C += 1)
+            rcv.ack1 = 0
+            rcv.ack2 = 1
+            rcv.ack3 = 0
+
     elif rcv.getTx() == m.D_TEAM:
         print("Team D is active mode")
-        rcv.ack1 = 1
-        rcv.ack2 = 0
-        rcv.ack3 = 0
-        
+        if(rcv.ack1 = 1): #D is acknowleding our data frame
+            acked_D += 1
+            rcv.ack1 = 1
+            rcv.ack2 = 0
+            rcv.ack3 = 0
+
     radio.write(rcv.__str__()) #Send the ACK
 
     listen(radio,TDATA) #Waiting 25ms for our data packet
-
-# def received_ctrl():
-#     TCTRL = random.uniform(1, 2)
-#     ctrl_rx = False
-
-#     start_time = time.time()
-#     packet = PKT()
-#     # While if still not TCTRL but something (wrong) received
-#     while (time.time() < start_time + TCTRL and not ctrl_rx):
-#         if (radio_Rx.available(0)):
-#             # Something received
-#             packet.read_pkt()
-#             if (packet.is_CTRL()):
-#                 # ACK info updated in read_pkt
-#                 ctrl_rx = True
-
-#     return ctrl_rx, packet
+    #WE HAVE TO DO THE APRT OF WRTING OUR 3 FILES
+    return acked_B, acked_C, acked_D
