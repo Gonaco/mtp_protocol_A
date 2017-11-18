@@ -14,7 +14,7 @@ import math
 
 
 def setup():
-    print("\n-setUp-\n")  ##Debbuging issues.
+    print("\n-setup-\n")  ##Debbuging issues.
     pipes = [[0xe7, 0xe7, 0xe7, 0xe7, 0xe7], [0xc2, 0xc2, 0xc2, 0xc2, 0xc2]]  # addresses for TX/RX channels
 
     radio2 = NRF24(GPIO, spidev.SpiDev())
