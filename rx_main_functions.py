@@ -44,39 +44,10 @@ def setup():
     radio.startListening()
     return radio, radio2
 
-"""def decide_type()
-    recv=m.packet()
-    type= recv.getType()
-    if type == 0:
-        f.receive_sync()
-    elif type == 3:
-        f.receive_frame()
-    elif type == 1:
-        f.receive_ack()
-    return type
-"""
-
-def synchronized(radio, radio2, pipe):
-    done = False
-    while not done:
-        while not radio.available(pipe):
-            time.sleep(1/1000.0)
-        print("sync message received")
-        recv_buffer = []
-        radio.read(recv_buffer, radio.getDynamicPayloadSize())
-        rcv = m.Packet()
-        rcv.mssg2Pckt(recv_buffer)
-        if rcv.getTyp() == 0:
-            if rcv.getID() == 0:
-                m.sendACK(0,radio2)
-                done = True
-
 def receive(radio, radio2, pipe):
     first_frame = True
     last_frame = False
     run = True
-    ack = False
-    nack = False
     count = 0
     timer = 0
     num_frames_lost = 0
@@ -92,18 +63,12 @@ def receive(radio, radio2, pipe):
     while run:
         count = count + 1
 
-        while not radio.available(pipe) and timer < 50000:
+        while not radio.available(pipe):
             time.sleep(1 / 1000.0)
             timer = timer + 1
-        if timer == 50000: # Timeout
-            if first_frame:
+            if timer == 50000 and first_frame: # TIMEOUT (may be less than 50000)
                 m.sendACK(0, radio2) # Send the first ACK again
-
-            else:
-                if ack:
-                    m.sendACK(window_id, radio2) # Resend previous ACK
-                elif nack:
-                    m.sendNACK(window_id, frames2resend_id, radio2) # Resend previous NACK
+                timer = 0
         timer = 0
 
         if first_frame:
@@ -116,19 +81,15 @@ def receive(radio, radio2, pipe):
         rcv.mssg2Pckt(recv_buffer)
         storedFrames, last_w_id = rebuildData(rcv.getID, rcv.getPayload, last_w_id, storedFrames, team)
 
-        original_frames_id.insert(rcv.getID,0) # In each iteration set to zero the value of this array located in the received frame ID position (The first frame has ID=0 and is located in the position 0 of the array)
+        original_frames_id.insert(rcv.getID, -1) # In each iteration set to -1 the value of this array located in the received frame ID position (The first frame has ID=0 and is located in the position 0 of the array)
 
         if count % window_size == 0:
             frames2resend_id = []
             frames2resend_id = find_lost_frames(original_frames_id[window_size*(window_id-1) : len(count)-1])
             if len(frames2resend_id) == 0:
                 m.sendACK(window_id, radio2)
-                ack = True
-                nack = False
             else:
                 m.sendNACK(window_id, frames2resend_id, radio2)
-                ack = False
-                nack = True
 
             window_id = window_id + 1
 
@@ -148,8 +109,6 @@ def receive(radio, radio2, pipe):
                 count = 0
                 num_frames_lost = len(frames2resend_id)
                 m.sendNACK(window_id, frames2resend_id, radio2)
-                ack = False
-                nack = True
 
         if last_frame == True and count == num_frames_lost:
             frames2resend_id = find_lost_frames(original_frames_id[window_size*(window_id - 1): len(original_frames_id)])
@@ -160,18 +119,32 @@ def receive(radio, radio2, pipe):
                 count = 0
                 num_frames_lost = len(frames2resend_id)
                 m.sendNACK(window_id, frames2resend_id, radio2)
-                ack = False
-                nack = True
 
     return final_id
 
-def end_connection(radio, radio2, pipe):
-
-
 def find_lost_frames(array):
-    lost_frames_id=[]
-    for i in range (0, len(array), 1):
+    lost_frames_id = []
+    for i in range(0, len(array), 1):
         if array(i) != -1:
             lost_frames_id.append(i)
 
     return lost_frames_id
+
+def handshake(radio, radio2, pipe, id):
+    done = False
+    while not done:
+        while not radio.available(pipe):
+            time.sleep(1/1000.0)
+
+        recv_buffer = []
+        radio.read(recv_buffer, radio.getDynamicPayloadSize())
+        rcv = m.Packet()
+        rcv.mssg2Pckt(recv_buffer)
+        if rcv.getTyp() == 0 and rcv.getID() == 0:
+            print("sync message received")
+            m.sendACK(id, radio2)
+            done = True
+        elif rcv.getTyp() == 1 and rcv.getID() == 0:
+            print("ACK message received")
+            m.sendACK(id + 1, radio2)
+            done = True
