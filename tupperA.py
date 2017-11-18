@@ -28,7 +28,7 @@ def initPorts():
     GPIO.setup(NW_SWITCH, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
     
     GPIO.setup(ON_OFF_SWITCH, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-    GPIO.add_event_detect(ON_OFF_SWITCH, GPIO.BOTH)
+    GPIO.add_event_detect(ON_OFF_SWITCH, GPIO.RISING)
     GPIO.add_event_callback(ON_OFF_SWITCH, run)
 
     GPIO.setup(IRQS, GPIO.IN)
@@ -81,14 +81,6 @@ def loadFiles(argv):
 #     GPIO.add_event_callback(NW_SWITCH, NT)
 
 
-def tx_rx():
-
-    
-    
-    if GPIO.input(TX_RX_SWITCH):
-        TX()
-    else:
-        RX()
 
 def TX(t_file):
 
@@ -113,15 +105,28 @@ def NT(tx_file_buffer):
 
 def run():
 
-    while (GPIO.input(ON_OFF_SWITCH)):
+    while GPIO.input(ON_OFF_SWITCH):
         print("\n-Running-\n")
         # initInterruptions()
-        options = {'tx':TX(files[1]),
-                   'rx':RX(),
-                   'network':NT(files)}
-        
-        
-    
+        # options = {'tx':TX(files[1]),
+        #            'rx':RX(),
+        #            'network':NT(files)} 
+
+        if (GPIO.input(NW_SWITCH)):
+
+            NT(files)
+            
+        elif GPIO.input(TX_RX_SWITCH):
+
+            
+            TX(files[0])
+
+            
+        else:
+            
+            RX()
+
+                
     print("\n-Closing-\n")
     GPIO.remove_event_detect(TX_RX_SWITCH)
     GPIO.remove_event_detect(NW_SWITCH)
@@ -137,13 +142,7 @@ def main(argv):
 
     files = loadFiles(argv)
 
-
-    # while (cont != 0):
-        
-    #     # if (...):
-    #     #     cont = options['tx']
-    #     # ...
-
+    
     # Closing
     
     GPIO.cleanup()
