@@ -22,7 +22,7 @@ def rebuildData(p_id, string, last_w_id, storedFrames, team):
             string = storedFrames[str(p_id)+team] ##Extraemos el 'string' nmero 'p_id'
             writeFile(string, filename) ##Escribimos 'string' en 'filename'
             del storedFrames[str(p_id)+team] ##Eliminamos del diccionario el string que acabamos de escribir
-            last_w_id = last_w_id + 1 ##Actualizamos el ID del último paquete escrito
+            last_w_id = last_w_id + 1 ##Actualizamos el ID del ltimo paquete escrito
             p_id = p_id + 1 ##Incrementamos el ID del paquete para ver en la siguiente iteracin si est en el diccionario
 
     elif (p_id > last_w_id):
