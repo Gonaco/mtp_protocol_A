@@ -63,6 +63,6 @@ for i in range(0,len(rcv_buffer),1):
     
 print(mssg_string)
 
-for i in range(0,10):
+for i in range(0,50):
     mouth.write(send)
     print(send)
