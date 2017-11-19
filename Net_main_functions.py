@@ -95,8 +95,9 @@ def network_mode(f):
 def listen(radio, timer):
     print("\n-Listening-\n")
 
-    while (not radio.available(pipe) and time.time() < timer):
+    while (not radio.available(pipe) and time.time() < (start_time + timer)):
         #Do nothing
+        pass
 
 def active(f):
     # In this function, our furby has won the medium so it will send the first control frame.
@@ -116,7 +117,7 @@ def active(f):
     answers = 0
     start_time = time.time()
     # If we've received AT LEAST TWICE the frame that we've sent, we sent ALL the data frames
-    while (answers != 3 and time.time() < (start_time + TACK)):
+    while (answers != 3 and time.time() < (start_time + TACK)):  # I THINK THAT BEFORE THIS WHILE OR INSIDE IT, WE SHOULD CHECK THE RADIO.AVAILABLE IN ORDET TO NOT READ NOTHING
         recv_buffer = []
         radio.read(recv_buffer, radio.getDynamicPayloadSize())  # CHECK IT
         rcv = m.ControlFrame()
@@ -128,7 +129,7 @@ def active(f):
     else:
         for team in files:
             data = files.get(team).read()
-            if synchronized():
+            if synchronized():  # WHY SYNCHRONIZED FUNCTION??
                 print("Sending the file for team", team)
                 for i in range(0, len(data), paysize):
                     if (i + paysize) < len(data):

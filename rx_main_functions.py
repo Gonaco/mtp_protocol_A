@@ -107,8 +107,9 @@ def receive(radio, radio2, pipe):
         while not radio.available(pipe):
             time.sleep(1 / 1000.0)
             timer = timer + 1
-            if timer == 50000 and first_frame:  # TIMEOUT (may be less than 50000)
+            if timer == 2000 and first_frame:  # TIMEOUT (may be less than 50000)
                 m.sendACK(0, radio2)  # Send the first ACK again
+                print("Resend ACK 0")
                 timer = 0
         timer = 0
 
@@ -117,6 +118,7 @@ def receive(radio, radio2, pipe):
                 original_frames_id.append(i)  # Generate the first 2 original frames ID windows
             first_frame = False
 
+        print("I have got a frame")
         recv_buffer = []
         rcv = m.Packet()
         rcv.mssg2Pckt(recv_buffer)

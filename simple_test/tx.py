@@ -73,7 +73,7 @@ send = "Psst"
 send_thrd = Thread (target = subSend, args = (mouth,send))
 send_thrd.setDaemon(True)
 
-while not ears.available([0,1,2,3,4,5]):
+while not ears.available([0]):
     # print("Something received?: %r" % ears.available([0]))
     
     if not send_thrd.isAlive():
