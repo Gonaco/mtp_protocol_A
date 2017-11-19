@@ -53,8 +53,10 @@ def setup():
 
     ears = NRF24(GPIO, spidev.SpiDev())
     mouth = NRF24(GPIO, spidev.SpiDev())
-    mouth.begin(1, 17)  # Set spi-cs pin1, and rf24-CE pin 27 ¿?SURE¿? NOT AS IN THE QUICK MODE
-    ears.begin(0, 27)  # Set spi-cs pin0, and rf24-CE pin 17 ¿?SURE¿? NOT AS IN THE QUICK MODE
+    mouth.begin(1, 27)  # Set spi-cs pin1, and rf24-CE pin 27 ¿?SURE¿? NOT AS IN THE QUICK MODE
+    ears.begin(0, 17)  # Set spi-cs pin0, and rf24-CE pin 17 ¿?SURE¿? NOT AS IN THE QUICK MODE
+
+    time.sleep(1)
 
     mouth.setRetries(15, 15)
     mouth.setPayloadSize(32)
@@ -168,6 +170,21 @@ def synchronized(radio, radio2, pipe):
     # print(sync.extractHeader())
     while not done:
         radio.write(sync.__str__())
+<<<<<<< HEAD
+        radio2.startListening()
+        while not radio2.available(pipe) and num < 400: # WHY A TIMER (400) HERE?
+            time.sleep(1 / 1000.0)
+            num = num + 1
+        if num != 400:
+            print("we received something before time out")
+            rcv_buffer = []
+            radio2.read(rcv_buffer, radio2.getDynamicPayloadSize())
+            rcv = m.Packet()
+            rcv.mssg2Pckt(rcv_buffer)
+            if rcv.getTyp() == 1:
+                if rcv.getID() == 0:
+                    done = True
+=======
         # radio2.startListening()
         # while not radio2.available(pipe) and num < 400: # WHY A TIMER (400) HERE?
             # time.sleep(1 / 1000.0)
@@ -186,15 +203,8 @@ def synchronized(radio, radio2, pipe):
             # do nothing
             pass
             
+>>>>>>> 61d6baa7eb947b87dd1f16f8085213fb8f3bd399
 
-        print("we received something before time out")
-        rcv_buffer = []
-        radio2.read(rcv_buffer, radio2.getDynamicPayloadSize())
-        rcv = m.Packet()
-        rcv.mssg2Pckt(rcv_buffer)
-        if rcv.getTyp() == 1:
-            if rcv.getID() == 0:
-                done = True
 
 
 def end_connection(radio, radio2, pipe, last_id):
