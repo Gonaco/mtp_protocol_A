@@ -9,8 +9,12 @@ import time
 import spidev
 import random
 import time
+import math
 import datetime
 import message_functions as m
+import packetManagement as pm
+import splitData as s
+
 
 
 def setup():
@@ -45,16 +49,16 @@ def setup():
     radio.openReadingPipe(1, pipes[0])
     radio.printDetails()
 
-    paysize = 30  # size of payload we send at once
-    timeout = time.time() + 0.1
+
     return 0
 
 
 ##################DEBUG CODE BELOW############################
-def transmit(f):
+def network_mode(f):
     run = True
     while run:
     radio.startListening()
+    paysize = 31
     frame_list_B = build_list(f[0], paysize)
     id_last_B = frame_list_B[-1].getID()
     frame_list_C = build_list(f[1], paysize)
@@ -69,15 +73,17 @@ def transmit(f):
     TINIT = random.uniform(5, 10)
     TCTRL = random.uniform(1, 2)
     listen(radio,TINIT)
+    start_time = time.time()
     while (TX_CMPLT < 3 and RX_CMPLT < 3 and time.time() < (start_time + TMAX)):
         if (not radio.available):
             TX_CMPLT = active(f)
             # WAIT_CONTROL
             listen(radio,TCTRLMAX) #We have to implement a Tmax to wait until the next team send us its Control Frame
             if(radio.available):
-                ack_B,ack_C,ack_D = passive()
-                if(TX_CMPLT == 3 and ack_B == id_last_B  and ack_C == id_last_C and ack_D == id_last_D):
-
+                ack_B,ack_C,ack_D, writen_B, writen_C, writen_D = passive()
+                if(TX_CMPLT == 3 and ack_B == id_last_B  and ack_C == id_last_C and ack_D == id_last_D and writen_B ==  and writen_C ==  and writen_D == ):
+                    print("\n-THE END-\n")
+                    return 0 #If we have send all the files, received confirmation for all of them and writen down everything...We are done!
             else:
                 listen(radio,TCTRL)
                 if (radio.available):
@@ -98,10 +104,11 @@ def active(f):
     # If it has received 2 or more ACKs it wil start sending Data Frames
 
     print("\n-Active Mode-\n")
-    paysize = 30
+    paysize = 31
     files = {'B': f[0], 'C': f[1], 'D': f[2]}
     completed_files = 0
     TACK = 25 / 1000.0
+    data_id = 0
     print("Sending our Control Frame\n")
     control = m.ControlFrame()
     radio.write(control.__str__())
@@ -131,11 +138,11 @@ def active(f):
                         buf = data[i:]
                         print("FILE COMPLETED")
                         completed_files += 1
-                    frame = m.Frame(data_id, 0, buf)
-                    radio.write(frame)
-                    frame.send(radio)
-                    print("Sent:"),
+                    frame = m.DataFrame(team, data_id, buf)
+                    radio.write(frame.__str__())
+                    print("Sent:")
                     print(frame)
+        data_id += 1
         return completed_files
 
 
@@ -146,6 +153,12 @@ def passive():
 
     print("\n-Passive Mode-\n")
 
+    last_w_id_B = -1
+    last_w_id_C = -1
+    last_w_id_D = -1
+    storedFrames = {"-2N": "DEFAULT"}
+    team = "A"
+    active = "B" #We are supposing that the first time to send us a Data Fram is teamB, if not, it will be changed
     acked_B = 0
     acked_C = 0
     acked_D = 0
@@ -158,23 +171,26 @@ def passive():
     # Depending on Who has send us the Control Frame, our ACK could be in any place
     if rcv.getTx() == m.B_TEAM:
         print("Team B is active mode")
-        if(rcv.ack3 = 1): #B is acknowleding our data frame
+        active = "B"
+        if(rcv.ack3 == 1): #B is acknowleding our data frame
             acked_B += 1
             rcv.ack1 = 0
             rcv.ack2 = 0
             rcv.ack3 = 1
 
     elif rcv.getTx() == m.C_TEAM:
-        print("Team C is active mode"
-        if (rcv.ack2 = 1):  # C is acknowleding our data frame
-            acked_C += 1)
+        print("Team C is active mode")
+        active = "C"
+        if (rcv.ack2 == 1):  # C is acknowleding our data frame
+            acked_C += 1
             rcv.ack1 = 0
             rcv.ack2 = 1
             rcv.ack3 = 0
 
     elif rcv.getTx() == m.D_TEAM:
         print("Team D is active mode")
-        if(rcv.ack1 = 1): #D is acknowleding our data frame
+        active = "D"
+        if(rcv.ack1 == 1): #D is acknowleding our data frame
             acked_D += 1
             rcv.ack1 = 1
             rcv.ack2 = 0
@@ -183,8 +199,21 @@ def passive():
     radio.write(rcv.__str__()) #Send the ACK
 
     listen(radio,TDATA) #Waiting 25ms for our data packet
-    #WE HAVE TO DO THE PART OF WRTING OUR 3 FILES
-    return acked_B, acked_C, acked_D
+    if (radio.available):
+        #We are gonna write down what we have received
+        recv_buffer = []
+        radio.read(recv_buffer, radio.getDynamicPayloadSize())  # CHECK IT
+        rcv = m.DataFrame
+        rcv.strMssg2Pckt(recv_buffer)
+        if(rcv.getRx() == team): #If the Data Fram is for us, we write it down
+            if(active == "B"):
+                storedFrames, last_w_id_B = pm.rebuildData(rcv.getPos(), rcv.getPayload(), last_w_id_B, storedFrames, active)
+            elif(active == "C"):
+                storedFrames, last_w_id_C = pm.rebuildData(rcv.getPos(), rcv.getPayload(), last_w_id_C, storedFrames, active)
+            elif(active == "D"):
+                storedFrames, last_w_id_D = pm.rebuildData(rcv.getPos(), rcv.getPayload(), last_w_id_D, storedFrames, active)
+    return acked_B, acked_C, acked_D, last_w_id_B, last_w_id_C, last_w_id_D
+
 
 def build_list(file, paysize):
     print("\n-build_list-\n")  ##Debbuging issues.
@@ -204,3 +233,38 @@ def build_list(file, paysize):
     frame = m.Frame(data_id, 1, payload)
     frame_list.append(frame)
     return frame_list
+
+def synchronized(radio, radio2, pipe):
+    print("\n-synchronized-\n")  # Debbuging issues.
+    done = False
+    sync = m.SYNC(0)
+    num = 0
+    # print(sync.extractHeader())
+    while not done:
+        radio.write(sync.__str__())
+        radio2.startListening()
+        # while not radio2.available(pipe) and num < 400: # WHY A TIMER (400) HERE?
+        # time.sleep(1 / 1000.0)
+        # num = num + 1
+        # if num != 400:
+        # print("we received something before time out")
+        # rcv_buffer = []
+        # radio2.read(rcv_buffer, radio2.getDynamicPayloadSize())
+        # rcv = m.Packet()
+        # rcv.mssg2Pckt(rcv_buffer)
+        # if rcv.getTyp() == 1:
+        #     if rcv.getID() == 0:
+        #         done = True
+
+        while not radio2.available(pipe):
+            # do nothing
+            pass
+
+        print("we received something before time out")
+        rcv_buffer = []
+        radio2.read(rcv_buffer, radio2.getDynamicPayloadSize())
+        rcv = m.Packet()
+        rcv.mssg2Pckt(rcv_buffer)
+        if rcv.getTyp() == 1:
+            if rcv.getID() == 0:
+                done = True
