@@ -15,8 +15,19 @@ import message_functions as m
 import packetManagement as pm
 import splitData as s
 
+# NETWORK CONSTANTS
 PAYLOAD_LENGTH = 31
 HEADER_LENGTH = 1
+TDATA = TACK =  0.2                         # Data and ACK frames timeout (in seconds)
+TCTRL = TINIT = 0                           # Control frame and initialization random timeouts (in seconds)
+TMAX = 120                                  # Max time for network mode (in seconds)
+PLOAD_SIZE = 32                             # Payload size corresponding to data in one frame (32 B max)
+HDR_SIZE = 1                                # Header size inside payload frame
+
+# TRANSCEIVER CONSTANTS
+RF_CH = [0x50, 0x64]                        # UL & DL channels
+PWR_LVL = NRF24.PA_HIGH                     # Transceiver output (HIGH = -6 dBm + 20 dB)
+BRATE = NRF24.BR_250KBPS                    # 250 kbps bit rate
 
 
 def setup():

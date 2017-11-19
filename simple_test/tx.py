@@ -1,7 +1,6 @@
 import RPi.GPIO as GPIO
 
 GPIO.setmode(GPIO.BCM)
-GPIO.cleanup()
 
 from lib_nrf24 import NRF24
 import time
