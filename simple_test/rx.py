@@ -19,10 +19,10 @@ mouth.begin(0, 17) # Set spi-cs pin0, and rf24-CE pin 27
 
 ears.setRetries(15,15)
 ears.setPayloadSize(32)
-ears.setChannel(0x60)
+ears.setChannel(0x65)
 mouth.setRetries(15,15)
 mouth.setPayloadSize(32)
-mouth.setChannel(0x80)
+mouth.setChannel(0x00)
 
 ears.setDataRate(NRF24.BR_2MBPS)
 ears.setPALevel(NRF24.PA_MAX)
