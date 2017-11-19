@@ -26,7 +26,7 @@ from threading import Thread
 #         r.write(s)
 
 
-def run(self,r,s):
+def sunSend(self,r,s):
     r.write(s)
 
 
