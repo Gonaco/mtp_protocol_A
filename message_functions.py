@@ -195,7 +195,7 @@ def sendNACK(ID, lost_IDs_array, radio):
     for i in range(0, len(lost_IDs_array)):
         payload = payload + str(lost_IDs_array[i]) + ","
     nack = NACK(ID,payload)
-    radio.write(ack.__str__())
+    radio.write(nack.__str__())
 
 # NETWORK MODE
 
