@@ -94,14 +94,16 @@ send_thrd = Thread (target = subSend, args = (mouth,send))
 
 while not ears.available([0]):
     # print("Something received?: %r" % ears.available([0]))
+    mouth.write(send)
     
-    if not send_thrd.isAlive():
-        send_thrd = Thread (target = subSend, args = (mouth,send))
-        send_thrd.setDaemon(True)
-        print(send)
-        send_thrd.start()
-    else:
-        print("working")
+    # if not send_thrd.isAlive():
+    #     send_thrd = Thread (target = subSend, args = (mouth,send))
+    #     # send_thrd.setDaemon(True)
+    #     print(send)
+    #     send_thrd.start()
+    
+    # else:
+    #     print("working")
     # time.sleep(1)
     
     # print(send)
