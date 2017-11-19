@@ -70,8 +70,8 @@ ears.startListening()
 
 send = "Psst"
 
-# send_thrd = Thread (target = subSend, args = (mouth,send))
-# send_thrd.setDaemon(True)
+send_thrd = Thread (target = subSend, args = (mouth,send))
+send_thrd.setDaemon(True)
 
 while not ears.available():
     # print("Something received?: %r" % ears.available([0]))
