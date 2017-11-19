@@ -19,10 +19,10 @@ from threading import Thread
 
 # class sendThrd(Thread):
     
-#     def __init__(self):  
-#         Thread.__init__(self)
+#     def __init__(self,r,s):  
+#         Thread.__init__(self,target = run, args = (r,s,))
 
-#     def run(self,r,s):
+#     def run(r,s):
 #         r.write(s)
 
 
@@ -70,12 +70,11 @@ send = "Psst"
 
 send_thrd = Thread (target = subSend, args = (mouth,send))
 
-send_thrd.start()
-
 while not ears.available([0]):
     if not send_thrd.isAlive():
+        send_thrd = Thread (target = subSend, args = (mouth,send))
         print(send)
-        send_thrd.run()
+        send_thrd.start()
 
 rcv_buffer = []
 ears.read(rcv_buffer, ears.getDynamicPayloadSize())
