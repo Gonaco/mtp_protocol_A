@@ -71,6 +71,7 @@ send = "Psst"
 send_thrd = Thread (target = subSend, args = (mouth,send))
 
 while not ears.available([0]):
+    print("Something received?: "+ ears.available([0]))
     if not send_thrd.isAlive():
         send_thrd = Thread (target = subSend, args = (mouth,send))
         print(send)
