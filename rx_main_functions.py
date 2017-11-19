@@ -4,7 +4,7 @@ from lib_nrf24 import NRF24
 import time
 import spidev
 import message_functions as m
-import packet_management as pm
+import packetManagement as pm
 
 def setup():
 
