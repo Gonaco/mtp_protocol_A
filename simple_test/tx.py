@@ -75,6 +75,8 @@ while not ears.available([0]):
         send_thrd = Thread (target = subSend, args = (mouth,send))
         print(send)
         send_thrd.start()
+    else:
+        print("working")
 
 rcv_buffer = []
 ears.read(rcv_buffer, ears.getDynamicPayloadSize())
