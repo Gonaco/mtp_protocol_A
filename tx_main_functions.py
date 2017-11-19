@@ -169,6 +169,7 @@ def synchronized(radio, radio2, pipe):
     num = 0
     # print(sync.extractHeader())
     while not done:
+        print('sending sync')
         radio.write(sync.__str__())
 
         radio2.startListening()
@@ -184,6 +185,8 @@ def synchronized(radio, radio2, pipe):
             if rcv.getTyp() == 1:
                 if rcv.getID() == 0:
                     done = True
+        else:
+            print('did not receive ack')
 
 
 def end_connection(radio, radio2, pipe, last_id):
