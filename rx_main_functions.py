@@ -4,7 +4,7 @@ from lib_nrf24 import NRF24
 import time
 import spidev
 import message_functions as m
-import rebuildData
+import packet_management as pm
 
 def setup():
 
@@ -91,6 +91,7 @@ def receive(radio, radio2, pipe):
     run = True
     count = 0
     timer = 0
+    final_id = 0
     num_frames_lost = 0
     last_w_id = -1
     storedFrames = {"-2N" : "DEFAULT"}
@@ -112,19 +113,19 @@ def receive(radio, radio2, pipe):
 
         if first_frame:
             for i in range(0, (2*window_size)-1, 1):
-                original_frames_id.append(i) # Generate the first 2 original frames ID windows
+                original_frames_id.append(i)  # Generate the first 2 original frames ID windows
             first_frame = False
 
         recv_buffer = []
         rcv = m.Packet()
         rcv.mssg2Pckt(recv_buffer)
-        storedFrames, last_w_id = rebuildData(rcv.getID(), rcv.getPayload(), last_w_id, storedFrames, team)
+        storedFrames, last_w_id = pm.rebuildData(rcv.getID(), rcv.getPayload(), last_w_id, storedFrames, team)
 
         original_frames_id.insert(rcv.getID(), -1) # In each iteration set to -1 the value of this array located in the received frame ID position (The first frame has ID=0 and is located in the position 0 of the array)
 
         if count % window_size == 0:
             frames2resend_id = []
-            frames2resend_id = find_lost_frames(original_frames_id[window_size*(window_id-1) : len(count)-1])
+            frames2resend_id = find_lost_frames(original_frames_id[window_size*(window_id-1) : count-1])
             if len(frames2resend_id) == 0:
                 m.sendACK(window_id, radio2)
             else:
