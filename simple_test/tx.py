@@ -62,8 +62,9 @@ send = "Psst"
 send_thrd = Thread (target = subSend, args = (mouth,send))
 
 while not ears.available([0]):
-    print(send)
-    send_thrd.start()
+    if not thrd.isAlive():
+        print(send)
+        send_thrd.start()
 
 rcv_buffer = []
 ears.read(rcv_buffer, ears.getDynamicPayloadSize())
