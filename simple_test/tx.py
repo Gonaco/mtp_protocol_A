@@ -71,15 +71,18 @@ ears.startListening()
 send = "Psst"
 
 send_thrd = Thread (target = subSend, args = (mouth,send))
+send_thrd.setDaemon(True)
 
 while not ears.available([0]):
     print("Something received?: %r" % ears.available([0]))
     if not send_thrd.isAlive():
         send_thrd = Thread (target = subSend, args = (mouth,send))
+        send_thrd.setDaemon(True)
         print(send)
         send_thrd.start()
     else:
         print("working")
+    sleep(1)
 
 rcv_buffer = []
 ears.read(rcv_buffer, ears.getDynamicPayloadSize())
