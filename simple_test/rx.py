@@ -8,7 +8,6 @@ import spidev
 import re
 import math
 
-
 print("\n-setup-\n")
 
 pipes = [[0xe7, 0xe7, 0xe7, 0xe7, 0xe7], [0xc2, 0xc2, 0xc2, 0xc2, 0xc2]] #addresses for TX/RX channels
@@ -50,6 +49,7 @@ ears.startListening()
 
 send = "Oh. Hola!"
 
+
 while not ears.available([1]):
     print("Listening")
 
@@ -66,6 +66,6 @@ print(mssg_string)
 # mouth.write(send)
 # print(send)
 
-for i in range(0,50):
-    mouth.write(send)
-    print(send)
+# for i in range(0,50):
+#     mouth.write(send)
+#     print(send)
