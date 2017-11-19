@@ -2,6 +2,8 @@
 import RPi.GPIO as GPIO
 
 GPIO.setmode(GPIO.BCM)
+GPIO.cleanup()
+
 from lib_nrf24 import NRF24
 import time
 import spidev
@@ -69,3 +71,4 @@ print(mssg_string)
 # for i in range(0,50):
 #     mouth.write(send)
 #     print(send)
+GPIO.cleanup()
