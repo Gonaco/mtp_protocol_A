@@ -43,7 +43,7 @@ mouth.setPayloadSize(32)
 mouth.setChannel(0x60)
 ears.setRetries(15, 15)
 ears.setPayloadSize(32)
-ears.setChannel(0x65)
+ears.setChannel(0x80)
 
 ears.setDataRate(NRF24.BR_2MBPS)
 ears.setPALevel(NRF24.PA_MAX)
