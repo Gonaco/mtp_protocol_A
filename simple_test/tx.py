@@ -64,6 +64,23 @@ ears.enableAckPayload()
 
 mouth.openWritingPipe(pipes[1])
 ears.openReadingPipe(1, pipes[0])
+
+if not mouth.isPVariant():
+    # If radio configures correctly, we confirmed a "plus" (ie "variant") nrf24l01+
+    # Else print diagnostic stuff & exit.
+    mouth.printDetails()
+    # (or we could always just print details anyway, even on good setup, for debugging)
+    print ("NRF24L01+ not found.")
+    exit()
+
+if not ears.isPVariant():
+    # If radio configures correctly, we confirmed a "plus" (ie "variant") nrf24l01+
+    # Else print diagnostic stuff & exit.
+    ears.printDetails()
+    # (or we could always just print details anyway, even on good setup, for debugging)
+    print ("NRF24L01+ not found.")
+    exit()
+    
 mouth.printDetails()
 
 mouth.startListening()
