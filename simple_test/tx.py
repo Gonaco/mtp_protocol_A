@@ -24,7 +24,10 @@ from threading import Thread
 
 #     def run(self,r,s):
 #         r.write(s)
-    
+
+
+def run(self,r,s):
+    r.write(s)
 
 
 print("\n-setup-\n")  ##Debbuging issues.
