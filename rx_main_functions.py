@@ -108,7 +108,7 @@ def receive(radio, radio2, pipe, frame_received):
     first_frame = True
     last_frame = False
     run = True
-    count = 1
+    count = 0
     final_id = 0
     num_frames_lost = 0
     last_w_id = -1
@@ -182,12 +182,12 @@ def receive(radio, radio2, pipe, frame_received):
     return final_id
 
 
-def find_lost_frames(array):
+def find_lost_frames(vector_id):
     print("\n-find_lost_frames-\n")
     lost_frames_id = []
-    for i in range(0, len(array), 1):
-        if array(i) != -1:
-            lost_frames_id.append(i)
+    for i in range(0, len(vector_id)-1, 1):
+        if vector_id[i] != -1:
+            lost_frames_id.append(vector_id[i])
 
     return lost_frames_id
 
