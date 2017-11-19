@@ -7,6 +7,20 @@ import spidev
 import re
 import math
 
+from threading import Thread
+
+# def listening():
+#     global rcvd
+#     while True:
+#         rcvd = False
+#         rcvd = ears.available([0])
+#         time.sleep(1)
+
+def subSend(r,s):
+    r.write(s)
+    
+
+
 print("\n-setup-\n")  ##Debbuging issues.
 pipes = [[0xe7, 0xe7, 0xe7, 0xe7, 0xe7], [0xc2, 0xc2, 0xc2, 0xc2, 0xc2]]  # addresses for TX/RX channels
 
@@ -45,10 +59,11 @@ ears.startListening()
 
 send = "Psst"
 
+send_thrd = Thread (target = subSend, args = (mouth,send))
 
 while not ears.available([0]):
     print(send)
-    mouth.write(send)
+    send_thrd.start()
 
 rcv_buffer = []
 ears.read(rcv_buffer, ears.getDynamicPayloadSize())
