@@ -62,7 +62,7 @@ send = "Psst"
 send_thrd = Thread (target = subSend, args = (mouth,send))
 
 while not ears.available([0]):
-    if not thrd.isAlive():
+    if not send_thrd.isAlive():
         print(send)
         send_thrd.start()
 
