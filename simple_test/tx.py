@@ -82,7 +82,7 @@ while not ears.available([0]):
         send_thrd.start()
     else:
         print("working")
-    sleep(1)
+    time.sleep(1)
 
 rcv_buffer = []
 ears.read(rcv_buffer, ears.getDynamicPayloadSize())
