@@ -1,16 +1,17 @@
 import RPi.GPIO as GPIO
-GPIO.setmode(GPIO.BCM)
 from lib_nrf24 import NRF24
 import time
 import spidev
 import message_functions as m
 import packetManagement as pm
+GPIO.setmode(GPIO.BCM)
+
 
 def setup():
 
     print("\n-setup-\n")
 
-    pipes = [[0xe7, 0xe7, 0xe7, 0xe7, 0xe7], [0xc2, 0xc2, 0xc2, 0xc2, 0xc2]] #addresses for TX/RX channels
+    pipes = [[0xe7, 0xe7, 0xe7, 0xe7, 0xe7], [0xc2, 0xc2, 0xc2, 0xc2, 0xc2]]  # addresses for TX/RX channels
 
     # radio = NRF24(GPIO, spidev.SpiDev())
     # radio2 = NRF24(GPIO, spidev.SpiDev())
@@ -49,13 +50,13 @@ def setup():
 
     ears = NRF24(GPIO, spidev.SpiDev())  # EARS
     mouth = NRF24(GPIO, spidev.SpiDev())  # MOUTH
-    ears.begin(1, 27) # Set spi-cs pin1, and rf24-CE pin 17
-    mouth.begin(0, 17) # Set spi-cs pin0, and rf24-CE pin 27
+    ears.begin(1, 27)  # Set spi-cs pin1, and rf24-CE pin 17
+    mouth.begin(0, 17)  # Set spi-cs pin0, and rf24-CE pin 27
 
-    ears.setRetries(15,15)
+    ears.setRetries(15, 15)
     ears.setPayloadSize(32)
     ears.setChannel(0x60)
-    mouth.setRetries(15,15)
+    mouth.setRetries(15, 15)
     mouth.setPayloadSize(32)
     mouth.setChannel(0x65)
 
@@ -65,7 +66,7 @@ def setup():
     mouth.setPALevel(NRF24.PA_MAX)
 
     ears.setAutoAck(False)
-    ears.enableDynamicPayloads() # ears.setPayloadSize(32) for setting a fixed payload
+    ears.enableDynamicPayloads()  # ears.setPayloadSize(32) for setting a fixed payload
     ears.enableAckPayload()
     mouth.setAutoAck(False)
     mouth.enableDynamicPayloads()
@@ -94,7 +95,7 @@ def receive(radio, radio2, pipe):
     final_id = 0
     num_frames_lost = 0
     last_w_id = -1
-    storedFrames = {"-2N" : "DEFAULT"}
+    storedFrames = {"-2N": "DEFAULT"}
     team = "A"
     window_id = 1
     window_size = 10  # may change
@@ -106,8 +107,8 @@ def receive(radio, radio2, pipe):
         while not radio.available(pipe):
             time.sleep(1 / 1000.0)
             timer = timer + 1
-            if timer == 50000 and first_frame: # TIMEOUT (may be less than 50000)
-                m.sendACK(0, radio2) # Send the first ACK again
+            if timer == 50000 and first_frame:  # TIMEOUT (may be less than 50000)
+                m.sendACK(0, radio2)  # Send the first ACK again
                 timer = 0
         timer = 0
 
@@ -121,11 +122,12 @@ def receive(radio, radio2, pipe):
         rcv.mssg2Pckt(recv_buffer)
         storedFrames, last_w_id = pm.rebuildData(rcv.getID(), rcv.getPayload(), last_w_id, storedFrames, team)
 
-        original_frames_id.insert(rcv.getID(), -1) # In each iteration set to -1 the value of this array located in the received frame ID position (The first frame has ID=0 and is located in the position 0 of the array)
+        # In each iteration set to -1 the value of this array located in the received frame ID position
+        original_frames_id.insert(rcv.getID(), -1)
 
         if count % window_size == 0:
             frames2resend_id = []
-            frames2resend_id = find_lost_frames(original_frames_id[window_size*(window_id-1) : count-1])
+            frames2resend_id = find_lost_frames(original_frames_id[window_size*(window_id-1): count-1])
             if len(frames2resend_id) == 0:
                 m.sendACK(window_id, radio2)
             else:
@@ -134,14 +136,14 @@ def receive(radio, radio2, pipe):
             window_id = window_id + 1
 
             for i in range((window_size*window_id), window_size*(window_id+1)-1, 1):
-                original_frames_id.append(i) # Generate the original frames ID for the the i+1 window
+                original_frames_id.append(i)  # Generate the original frames ID for the the i+1 window
 
-        if rcv.getEnd() == 1 and last_frame == False:
+        if rcv.getEnd() == 1 and not last_frame:
             final_id = rcv.getID()
-            original_frames_id = original_frames_id[0:final_id-1] # Set the length of original_frames_id
+            original_frames_id = original_frames_id[0:final_id-1]  # Set the length of original_frames_id
             last_frame = True
 
-            frames2resend_id = find_lost_frames(original_frames_id[window_size*(window_id - 1): len(original_frames_id)])
+            frames2resend_id = find_lost_frames(original_frames_id[window_size*(window_id-1): len(original_frames_id)])
             if len(frames2resend_id) == 0:  # All frames are received
                 run = False
                 print("The entire message is received")
@@ -150,8 +152,8 @@ def receive(radio, radio2, pipe):
                 num_frames_lost = len(frames2resend_id)
                 m.sendNACK(window_id, frames2resend_id, radio2)
 
-        if last_frame == True and count == num_frames_lost:
-            frames2resend_id = find_lost_frames(original_frames_id[window_size*(window_id - 1): len(original_frames_id)])
+        if last_frame and count == num_frames_lost:
+            frames2resend_id = find_lost_frames(original_frames_id[window_size*(window_id-1): len(original_frames_id)])
             if len(frames2resend_id) == 0:  # All frames are received
                 run = False
                 print("The entire message is received")
@@ -162,6 +164,7 @@ def receive(radio, radio2, pipe):
 
     return final_id
 
+
 def find_lost_frames(array):
     print("\n-find_lost_frames-\n")
     lost_frames_id = []
@@ -171,7 +174,8 @@ def find_lost_frames(array):
 
     return lost_frames_id
 
-def handshake(radio, radio2, pipe, id):
+
+def handshake(radio, radio2, pipe, packet_id):
     print("\n-handshake-\n")
     done = False
     while not done:
@@ -186,9 +190,9 @@ def handshake(radio, radio2, pipe, id):
         print(rcv)
         if rcv.getTyp() == 0 and rcv.getID() == 0:
             print("sync message received")
-            m.sendACK(id, radio2)
+            m.sendACK(packet_id, radio2)
             done = True
         elif rcv.getTyp() == 1 and rcv.getID() == 0:
             print("ACK message received")
-            m.sendACK(id + 1, radio2)
+            m.sendACK(packet_id + 1, radio2)
             done = True
