@@ -17,13 +17,13 @@ from threading import Thread
 #         time.sleep(1)
 
 
-class sendThrd(Thread):
+# class sendThrd(Thread):
     
-    def __init__(self):  
-        Thread.__init__(self)
+#     def __init__(self):  
+#         Thread.__init__(self)
 
-    def run(self,r,s):
-        r.write(s)
+#     def run(self,r,s):
+#         r.write(s)
     
 
 
@@ -67,10 +67,12 @@ send = "Psst"
 
 send_thrd = Thread (target = subSend, args = (mouth,send))
 
+send_thrd.start()
+
 while not ears.available([0]):
     if not send_thrd.isAlive():
         print(send)
-        send_thrd.start()
+        send_thrd.run()
 
 rcv_buffer = []
 ears.read(rcv_buffer, ears.getDynamicPayloadSize())
