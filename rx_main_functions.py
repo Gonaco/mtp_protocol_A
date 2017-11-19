@@ -98,8 +98,6 @@ def receive(radio, radio2, pipe):
     window_id = 1
     window_size = 10  # may change
     original_frames_id = []
-    frames2resend_id = []
-    pipe = [0]
 
     while run:
         count = count + 1
@@ -120,9 +118,9 @@ def receive(radio, radio2, pipe):
         recv_buffer = []
         rcv = m.Packet()
         rcv.mssg2Pckt(recv_buffer)
-        storedFrames, last_w_id = rebuildData(rcv.getID, rcv.getPayload, last_w_id, storedFrames, team)
+        storedFrames, last_w_id = rebuildData(rcv.getID(), rcv.getPayload(), last_w_id, storedFrames, team)
 
-        original_frames_id.insert(rcv.getID, -1) # In each iteration set to -1 the value of this array located in the received frame ID position (The first frame has ID=0 and is located in the position 0 of the array)
+        original_frames_id.insert(rcv.getID(), -1) # In each iteration set to -1 the value of this array located in the received frame ID position (The first frame has ID=0 and is located in the position 0 of the array)
 
         if count % window_size == 0:
             frames2resend_id = []
@@ -134,7 +132,7 @@ def receive(radio, radio2, pipe):
 
             window_id = window_id + 1
 
-            for i in range ((window_size*window_id), window_size*(window_id+1)-1, 1):
+            for i in range((window_size*window_id), window_size*(window_id+1)-1, 1):
                 original_frames_id.append(i) # Generate the original frames ID for the the i+1 window
 
         if rcv.getEnd() == 1 and last_frame == False:
