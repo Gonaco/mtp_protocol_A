@@ -51,6 +51,8 @@ def setup():
     # timeout = time.time() + 0.1
     # return radio, radio2
 
+    GPIO.setup([0,1,17,27], GPIO.OUT, initial=GPIO.LOW)
+
     ears = NRF24(GPIO, spidev.SpiDev())
     mouth = NRF24(GPIO, spidev.SpiDev())
     mouth.begin(1, 27)  # Set spi-cs pin1, and rf24-CE pin 27 ¿?SURE¿? NOT AS IN THE QUICK MODE
@@ -79,6 +81,24 @@ def setup():
 
     mouth.openWritingPipe(pipes[1])
     ears.openReadingPipe(1, pipes[0])
+
+    if not mouth.isPVariant():
+        # If radio configures correctly, we confirmed a "plus" (ie "variant") nrf24l01+
+        # Else print diagnostic stuff & exit.
+        mouth.printDetails()
+        # (or we could always just print details anyway, even on good setup, for debugging)
+        print ("NRF24L01+ not found.")
+        return
+
+    if not ears.isPVariant():
+        # If radio configures correctly, we confirmed a "plus" (ie "variant") nrf24l01+
+        # Else print diagnostic stuff & exit.
+        ears.printDetails()
+        # (or we could always just print details anyway, even on good setup, for debugging)
+        print ("NRF24L01+ not found.")
+        return
+
+    
     mouth.printDetails()
 
     mouth.startListening()
