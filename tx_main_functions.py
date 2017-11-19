@@ -8,7 +8,7 @@ from lib_nrf24 import NRF24
 import time
 import spidev
 import message_functions as m
-import splitData as s
+import packetManagement as p
 import re
 import math
 
@@ -218,12 +218,12 @@ def build_list(file, paysize):
     payload = ''
     num = math.ceil(file_length / paysize)
     for i in range(0, int(num - 1)):
-        payload = s.splitData(data_id, file)
+        payload = p.splitData(data_id, file)
         frame = m.Frame(data_id, 0, payload)
         data_id = + 1
         frame_list.append(frame)
     # the last packet should have end flag to 1
-    payload = s.splitData(data_id, file)
+    payload = p.splitData(data_id, file)
     frame = m.Frame(data_id, 1, payload)
     frame_list.append(frame)
     return frame_list
