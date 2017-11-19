@@ -68,7 +68,7 @@ print(mssg_string)
 # mouth.write(send)
 # print(send)
 
-for i in range(0,50):
+for i in range(0,500):
     mouth.write(send)
     print(send)
 
