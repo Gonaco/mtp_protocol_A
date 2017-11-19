@@ -51,25 +51,25 @@ ears.startListening()
 
 send = "Oh. Hola!"
 
+while True:
+    while not ears.available([1]):
+        print("Listening")
 
-while not ears.available([1]):
-    print("Listening")
+    rcv_buffer = []
+    ears.read(rcv_buffer, ears.getDynamicPayloadSize())
+    print(rcv_buffer)
 
-rcv_buffer = []
-ears.read(rcv_buffer, ears.getDynamicPayloadSize())
-print(rcv_buffer)
+    mssg_string = ""
+    for i in range(0,len(rcv_buffer),1):
+        mssg_string = mssg_string + chr(rcv_buffer[i])
 
-mssg_string = ""
-for i in range(0,len(rcv_buffer),1):
-    mssg_string = mssg_string + chr(rcv_buffer[i])
-    
-print(mssg_string)
+    print(mssg_string)
 
-# mouth.write(send)
-# print(send)
-
-for i in range(0,50):
     mouth.write(send)
     print(send)
+
+# for i in range(0,50):
+#     mouth.write(send)
+#     print(send)
 
 GPIO.cleanup()
