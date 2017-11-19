@@ -14,6 +14,9 @@ print("\n-setup-\n")
 
 pipes = [[0xe7, 0xe7, 0xe7, 0xe7, 0xe7], [0xc2, 0xc2, 0xc2, 0xc2, 0xc2]] #addresses for TX/RX channels
 
+GPIO.setup([0,1,17,27], GPIO.OUT, initial=GPIO.LOW)
+# GPIO.output([0,1,17,27], 0)
+
 ears = NRF24(GPIO, spidev.SpiDev())  # EARS
 mouth = NRF24(GPIO, spidev.SpiDev())  # MOUTH
 ears.begin(1, 27) # Set spi-cs pin1, and rf24-CE pin 17
@@ -51,25 +54,26 @@ ears.startListening()
 
 send = "Oh. Hola!"
 
-while True:
-    while not ears.available([1]):
-        print("Listening")
 
-    rcv_buffer = []
-    ears.read(rcv_buffer, ears.getDynamicPayloadSize())
-    print(rcv_buffer)
+while not ears.available([1]):
+    print("Listening")
 
-    mssg_string = ""
-    for i in range(0,len(rcv_buffer),1):
-        mssg_string = mssg_string + chr(rcv_buffer[i])
+rcv_buffer = []
+ears.read(rcv_buffer, ears.getDynamicPayloadSize())
+print(rcv_buffer)
 
-    print(mssg_string)
+mssg_string = ""
+for i in range(0,len(rcv_buffer),1):
+    mssg_string = mssg_string + chr(rcv_buffer[i])
 
-    mouth.write(send)
-    print(send)
+print(mssg_string)
+
+mouth.write(send)
+print(send)
 
 # for i in range(0,50):
 #     mouth.write(send)
 #     print(send)
 
+ears.stopListening()
 GPIO.cleanup()

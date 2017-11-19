@@ -15,6 +15,8 @@ import message_functions as m
 import packetManagement as pm
 import splitData as s
 
+PAYLOAD_LENGTH = 31
+HEADER_LENGTH = 1
 
 
 def setup():
