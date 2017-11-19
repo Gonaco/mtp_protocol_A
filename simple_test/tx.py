@@ -16,8 +16,14 @@ from threading import Thread
 #         rcvd = ears.available([0])
 #         time.sleep(1)
 
-def subSend(r,s):
-    r.write(s)
+
+class sendThrd(Thread):
+    
+    def __init__(self):  
+        Thread.__init__(self)
+
+    def run(self,r,s):
+        r.write(s)
     
 
 

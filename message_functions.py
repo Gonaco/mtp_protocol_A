@@ -132,10 +132,14 @@ class Packet:
 
     def mssg2Pckt(self, message_bin):
         mssg_string = ""
+
+        print(message_bin)
         
         for i in range(0,len(message_bin),1):
             mssg_string = mssg_string + chr(message_bin[i])
 
+        print(mssg_string)
+            
         self.header.extractHeader(mssg_string)
         self.payload = mssg_string[HEADER_BYTES_LENGTH:]
         
