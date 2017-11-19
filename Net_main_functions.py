@@ -51,28 +51,33 @@ def setup():
 
 
 ##################DEBUG CODE BELOW############################
-
+def transmit(f):
     run = True
     while run:
     radio.startListening()
+    frame_list_B = build_list(f[0], paysize)
+    id_last_B = frame_list_B[-1].getID()
+    frame_list_C = build_list(f[1], paysize)
+    id_last_C = frame_list_C[-1].getID()
+    frame_list_D = build_list(f[2], paysize)
+    id_last_D = frame_list_D[-1].getID()
     pipe=[1]
-    i = 0
     TMAX = 120
     TX_CMPLT = 0
     RX_CMPLT = 0
-    #TCTRLMAX = 25 / 1000.0    25ms??
+    TCTRLMAX = 1
     TINIT = random.uniform(5, 10)
     TCTRL = random.uniform(1, 2)
     listen(radio,TINIT)
     while (TX_CMPLT < 3 and RX_CMPLT < 3 and time.time() < (start_time + TMAX)):
         if (not radio.available):
-            i =+ 1
-            comp = active()
+            TX_CMPLT = active(f)
             # WAIT_CONTROL
-            #listen(radio,TCTRLMAX) We have to implement a Tmax to wait until the next team send us its Control Frame
+            listen(radio,TCTRLMAX) #We have to implement a Tmax to wait until the next team send us its Control Frame
             if(radio.available):
-                ack_B(i),ack_C,ack_D = passive()
-                if(comp == 3 and ack_B)
+                ack_B,ack_C,ack_D = passive()
+                if(TX_CMPLT == 3 and ack_B == id_last_B  and ack_C == id_last_C and ack_D == id_last_D):
+
             else:
                 listen(radio,TCTRL)
                 if (radio.available):
@@ -87,7 +92,7 @@ def listen(radio, timer):
     while (not radio.available(pipe) and time.time() < timer):
         #Do nothing
 
-def active():
+def active(f):
     # In this function, our furby has won the medium so it will send the first control frame.
     # Then, it will wait for the three teams to send as back their corresponding control fram acknowleding us.
     # If it has received 2 or more ACKs it wil start sending Data Frames
@@ -178,5 +183,24 @@ def passive():
     radio.write(rcv.__str__()) #Send the ACK
 
     listen(radio,TDATA) #Waiting 25ms for our data packet
-    #WE HAVE TO DO THE APRT OF WRTING OUR 3 FILES
+    #WE HAVE TO DO THE PART OF WRTING OUR 3 FILES
     return acked_B, acked_C, acked_D
+
+def build_list(file, paysize):
+    print("\n-build_list-\n")  ##Debbuging issues.
+    data_id = 0
+    frame_list = []
+    data = file.read()
+    file_length = len(data)
+    payload = ''
+    num = math.ceil(file_length / paysize)
+    for i in range(0, int(num - 1)):
+        payload = s.splitData(data_id, file)
+        frame = m.Frame(data_id, 0, payload)
+        data_id = + 1
+        frame_list.append(frame)
+    # the last packet should have end flag to 1
+    payload = s.splitData(data_id, file)
+    frame = m.Frame(data_id, 1, payload)
+    frame_list.append(frame)
+    return frame_list
