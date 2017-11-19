@@ -85,13 +85,12 @@ def setup():
     return ears, mouth
 
 
-def receive(radio, radio2, pipe):
+def receive(radio, radio2, pipe, frame_received):
     print("\n-receive-\n")
     first_frame = True
     last_frame = False
     run = True
-    count = 0
-    timer = 0
+    count = 1
     final_id = 0
     num_frames_lost = 0
     last_w_id = -1
@@ -104,66 +103,63 @@ def receive(radio, radio2, pipe):
     while run:
         count = count + 1
 
-        while not radio.available(pipe):
-            time.sleep(1 / 1000.0)
-            timer = timer + 1
-            if timer == 400 and first_frame:  # TIMEOUT (may be less than 50000)
-                m.sendACK(0, radio2)  # Send the first ACK again
-                print("Resend ACK 0")
-                timer = 0
-        timer = 0
-
         if first_frame:
             for i in range(0, (2*window_size)-1, 1):
                 original_frames_id.append(i)  # Generate the first 2 original frames ID windows
+            storedFrames, last_w_id = pm.rebuildData(frame_received.getID(), frame_received.getPayload(), last_w_id, storedFrames, team)
+            original_frames_id.insert(frame_received.getID(), -1)
             first_frame = False
 
-        print("I have got a frame")
-        recv_buffer = []
-        radio.read(recv_buffer, radio.getDynamicPayloadSize())
-        rcv = m.Packet()
-        rcv.mssg2Pckt(recv_buffer)
-        storedFrames, last_w_id = pm.rebuildData(rcv.getID(), rcv.getPayload(), last_w_id, storedFrames, team)
+        else:
+            while not radio.available(pipe):
+                time.sleep(1 / 1000.0)
 
-        # In each iteration set to -1 the value of this array located in the received frame ID position
-        original_frames_id.insert(rcv.getID(), -1)
+            print("I have got a frame")
+            recv_buffer = []
+            radio.read(recv_buffer, radio.getDynamicPayloadSize())
+            rcv = m.Packet()
+            rcv.mssg2Pckt(recv_buffer)
+            storedFrames, last_w_id = pm.rebuildData(rcv.getID(), rcv.getPayload(), last_w_id, storedFrames, team)
 
-        if count % window_size == 0:
-            frames2resend_id = []
-            frames2resend_id = find_lost_frames(original_frames_id[window_size*(window_id-1): count-1])
-            if len(frames2resend_id) == 0:
-                m.sendACK(window_id, radio2)
-            else:
-                m.sendNACK(window_id, frames2resend_id, radio2)
+            # In each iteration set to -1 the value of this array located in the received frame ID position
+            original_frames_id.insert(rcv.getID(), -1)
 
-            window_id = window_id + 1
+            if count % window_size == 0:
+                frames2resend_id = []
+                frames2resend_id = find_lost_frames(original_frames_id[window_size*(window_id-1): count-1])
+                if len(frames2resend_id) == 0:
+                    m.sendACK(window_id, radio2)
+                else:
+                    m.sendNACK(window_id, frames2resend_id, radio2)
 
-            for i in range((window_size*window_id), window_size*(window_id+1)-1, 1):
-                original_frames_id.append(i)  # Generate the original frames ID for the the i+1 window
+                window_id = window_id + 1
 
-        if rcv.getEnd() == 1 and not last_frame:
-            final_id = rcv.getID()
-            original_frames_id = original_frames_id[0:final_id-1]  # Set the length of original_frames_id
-            last_frame = True
+                for i in range((window_size*window_id), window_size*(window_id+1)-1, 1):
+                    original_frames_id.append(i)  # Generate the original frames ID for the the i+1 window
 
-            frames2resend_id = find_lost_frames(original_frames_id[window_size*(window_id-1): len(original_frames_id)])
-            if len(frames2resend_id) == 0:  # All frames are received
-                run = False
-                print("The entire message is received")
-            else:
-                count = 0
-                num_frames_lost = len(frames2resend_id)
-                m.sendNACK(window_id, frames2resend_id, radio2)
+            if rcv.getEnd() == 1 and not last_frame:
+                final_id = rcv.getID()
+                original_frames_id = original_frames_id[0:final_id-1]  # Set the length of original_frames_id
+                last_frame = True
 
-        if last_frame and count == num_frames_lost:
-            frames2resend_id = find_lost_frames(original_frames_id[window_size*(window_id-1): len(original_frames_id)])
-            if len(frames2resend_id) == 0:  # All frames are received
-                run = False
-                print("The entire message is received")
-            else:
-                count = 0
-                num_frames_lost = len(frames2resend_id)
-                m.sendNACK(window_id, frames2resend_id, radio2)
+                frames2resend_id = find_lost_frames(original_frames_id[window_size*(window_id-1): len(original_frames_id)])
+                if len(frames2resend_id) == 0:  # All frames are received
+                    run = False
+                    print("The entire message is received")
+                else:
+                    count = 0
+                    num_frames_lost = len(frames2resend_id)
+                    m.sendNACK(window_id, frames2resend_id, radio2)
+
+            if last_frame and count == num_frames_lost:
+                frames2resend_id = find_lost_frames(original_frames_id[window_size*(window_id-1): len(original_frames_id)])
+                if len(frames2resend_id) == 0:  # All frames are received
+                    run = False
+                    print("The entire message is received")
+                else:
+                    count = 0
+                    num_frames_lost = len(frames2resend_id)
+                    m.sendNACK(window_id, frames2resend_id, radio2)
 
     return final_id
 
@@ -181,10 +177,19 @@ def find_lost_frames(array):
 def handshake(radio, radio2, pipe, packet_id):
     print("\n-handshake-\n")
     done = False
+    wait = False
+    timer = 0
+    frame_received = []
     while not done:
         while not radio.available(pipe):
             # print("\n-listening-\n")
             time.sleep(1/1000.0)
+            if wait:
+                timer = timer + 1
+                if timer == 400:  # TIMEOUT
+                    m.sendACK(packet_id, radio2)
+                    print("Resend ACK")
+                    timer = 0
 
         recv_buffer = []
         radio.read(recv_buffer, radio.getDynamicPayloadSize())
@@ -194,8 +199,14 @@ def handshake(radio, radio2, pipe, packet_id):
         if rcv.getTyp() == 0 and rcv.getID() == 0:
             print("sync message received")
             m.sendACK(packet_id, radio2)
-            done = True
+            wait = True
         elif rcv.getTyp() == 1 and rcv.getID() == 0:
             print("ACK message received")
-            m.sendACK(packet_id + 1, radio2)
+            m.sendACK(packet_id, radio2)
             done = True
+        elif rcv.getTyp() == 3 and rcv.getID() == 0:
+            print("I have got the first frame")
+            frame_received = rcv
+            done = True
+
+    return frame_received
