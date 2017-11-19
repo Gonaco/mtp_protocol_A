@@ -168,7 +168,7 @@ def synchronized(radio, radio2, pipe):
     # print(sync.extractHeader())
     while not done:
         radio.write(sync.__str__())
-        radio2.startListening()
+        # radio2.startListening()
         # while not radio2.available(pipe) and num < 400: # WHY A TIMER (400) HERE?
             # time.sleep(1 / 1000.0)
             # num = num + 1

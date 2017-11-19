@@ -1,6 +1,5 @@
 ##This is initialized by Carlos:
 ##storedFrames = {"-2N" : "DEFAULT"} ##Inicializamos el diccionario.
-##last_w_id = -1
 
 
 ## DISCLAIMER
@@ -34,4 +33,9 @@ def rebuildData(p_id, string, last_w_id, storedFrames, team):
     ## We return the dictionary and the last writen id (updated versions)
     return storedFrames, last_w_id    
 
- 
+## This function appends a given string to a file saved as filename (without including the .txt)
+def writeFile(string, filename):
+    print('\n-writeFile-\n')
+    finalFILE = open(filename + ".txt", 'a+')
+    finalFILE.write(string)
+    finalFILE.close()
