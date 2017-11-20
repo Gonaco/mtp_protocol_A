@@ -121,14 +121,14 @@ def receive(radio, radio2, pipe, frame_received):
     while run:
         count = count + 1
 
-        if first_frame:
+        """if first_frame:
             for i in range(0, (2*window_size)-1, 1):
                 original_frames_id.append(i)  # Generate the first 2 original frames ID windows
             storedFrames, last_w_id = pm.rebuildData(frame_received.getID(), frame_received.getPayload(), last_w_id, storedFrames, team)
             original_frames_id.insert(frame_received.getID(), -1)
-            first_frame = False
+            first_frame = False"""
 
-        else:
+        if not first_frame:
             while not radio.available(pipe):
                 time.sleep(1 / 1000.0)
 
@@ -178,6 +178,14 @@ def receive(radio, radio2, pipe, frame_received):
                     count = 0
                     num_frames_lost = len(frames2resend_id)
                     m.sendNACK(window_id, frames2resend_id, radio2)
+
+        else:
+            for i in range(0, (2 * window_size) - 1, 1):
+                original_frames_id.append(i)  # Generate the first 2 original frames ID windows
+            storedFrames, last_w_id = pm.rebuildData(frame_received.getID(), frame_received.getPayload(),
+                                                     last_w_id, storedFrames, team)
+            original_frames_id.insert(frame_received.getID(), -1)
+            first_frame = False
 
     return final_id
 
