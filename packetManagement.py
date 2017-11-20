@@ -50,7 +50,7 @@ def splitData(PacketID, archivo):
     ## Network Mode:
     ## Nacho me pasa el archivo ABIERTO y el ID del paquete que necesite. Yo le devuelvo el chunk (es un string) para formar el payload.
 
-	
+    ##archivo.seek(0)
     file_len = len(archivo.read()) #Size of the file in bytes
     print("File len: %d \n" %file_len)
     chunk_len = 30 #Size of the chunk in bytes
