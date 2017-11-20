@@ -171,9 +171,12 @@ def transmit(radio, radio2, archivo):
                 repeat = True
                 # read payload and store IDs in list
                 nack_string = rcv.getPayload()
+                print('this is the string of nacks we receive %s' % nack_string)
                 temp_nack_list = re.split(',', nack_string)
                 temp_nack_list.pop(len(nack_list) - 1)
                 nack_list = nack_list + temp_nack_list
+                print(nack_list[0])
+
             elif finished:
                 print('I sent last so I will check for ack')
                 # if I don't have nacks, I only care if I finished
