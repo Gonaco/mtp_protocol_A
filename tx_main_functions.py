@@ -242,7 +242,7 @@ def build_list(archivo, paysize):
     #print('%d is the length of the file' % file_length)
     payload_list = []
     #num = math.ceil(file_length / paysize)
-    payload_list = p.splitData(archivo)
+    payload_list = p.splitData(archivo, paysize)
     #print('%s is the payload returned by carol' % payload)
     for i in range(0, int(len(payload_list)-1)):
         payload=payload_list[i]
