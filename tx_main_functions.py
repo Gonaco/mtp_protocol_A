@@ -173,7 +173,7 @@ def transmit(radio, radio2, archivo):
                 nack_string = rcv.getPayload()
                 print('this is the string of nacks we receive %s' % nack_string)
                 temp_nack_list = re.split(',', nack_string)
-                temp_nack_list.pop(len(nack_list) - 1)
+                temp_nack_list.pop(-1)
                 nack_list = nack_list + temp_nack_list
                 print(nack_list[0])
 
