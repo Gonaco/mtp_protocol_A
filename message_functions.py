@@ -143,7 +143,7 @@ class Packet:
         self.header.extractHeader(mssg_string)
         self.payload = mssg_string[HEADER_BYTES_LENGTH:]
 
-        print(self)
+        print(self.getID())
         
     # def send(self,transceiver):
     #     transceiver.write(self.__str__())
