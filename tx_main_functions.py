@@ -114,7 +114,7 @@ def setup():
 def transmit(radio, radio2, archivo):
     print("\n-transmit-\n")  ##Debbuging issues.
     run = True
-    paysize = 27  # may change
+    paysize = 30  # may change
     repeat = False
     window_id = 1
     window_size = 10  # may change
