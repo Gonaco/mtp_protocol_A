@@ -246,7 +246,7 @@ def build_list(archivo, paysize):
         payload = p.splitData(data_id, archivo)
         print('%s is the payload returned by carol' % payload)
         frame = m.Frame(data_id, 0, payload)
-        data_id = + 1
+        data_id = data_id + 1
         frame_list.append(frame)
         print('%d is the id of the frame' % frame.getID())
     # the last packet should have end flag to 1
