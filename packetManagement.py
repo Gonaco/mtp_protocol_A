@@ -40,7 +40,7 @@ def writeFile(string, filename):
     finalFILE.write(string)
     finalFILE.close()
     
-def splitData(PacketID, archivo):
+def splitData(PacketID, archivo, chunk_len):
 
     print("\n-splitData-\n") ##Debbuging issues.
 	
@@ -52,7 +52,7 @@ def splitData(PacketID, archivo):
 
 	
     file_len = len(archivo.read()) #Size of the file in bytes
-    chunk_len = 30 #Size of the chunk in bytes
+    # chunk_len = 30 #Size of the chunk in bytes
 
     archivo.seek(PacketID*chunk_len) #It moves the pointer to the starting point of the chunk number 'nPacket'
     chunk = archivo.read(chunk_len) #It reads 'cunk_len' bytes from the previous pointer

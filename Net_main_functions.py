@@ -13,7 +13,6 @@ import math
 import datetime
 import message_functions as m
 import packetManagement as pm
-import splitData as s
 
 # NETWORK CONSTANTS
 PAYLOAD_LENGTH = 31
@@ -29,6 +28,7 @@ RF_CH = [0x50, 0x64]                        # UL & DL channels
 PWR_LVL = NRF24.PA_HIGH                     # Transceiver output (HIGH = -6 dBm + 20 dB)
 BRATE = NRF24.BR_250KBPS                    # 250 kbps bit rate
 
+TCTRL = random.uniform(1, 2)
 
 def setup():
 
@@ -90,53 +90,61 @@ def setup():
 
     return ears, mouth
 
+def listen(ears, timer):
+    print("\n-Listening-\n")
+
+    while (not ears.available(pipe) and time.time() < (start_time + timer)):
+        #Do nothing
+        pass
+
+def network_mode(ears, mouth, files):
+
+    while True:                 # IN REALITY TILL 2 MIN
+
+        pm.splitData
+        
+        TINIT = random.uniform(5, 10)
+        listen(ears)
 
 
 ##################DEBUG CODE BELOW############################
 def network_mode(f):
     run = True
     while run:
-    radio.startListening()
-    paysize = 31
-    frame_list_B = build_list(f[0], paysize)
-    id_last_B = frame_list_B[-1].getID()
-    frame_list_C = build_list(f[1], paysize)
-    id_last_C = frame_list_C[-1].getID()
-    frame_list_D = build_list(f[2], paysize)
-    id_last_D = frame_list_D[-1].getID()
-    pipe=[1]
-    TMAX = 120
-    TX_CMPLT = 0
-    RX_CMPLT = 0
-    TCTRLMAX = 1
-    TINIT = random.uniform(5, 10)
-    TCTRL = random.uniform(1, 2)
-    listen(radio,TINIT)
-    start_time = time.time()
-    while (TX_CMPLT < 3 and RX_CMPLT < 3 and time.time() < (start_time + TMAX)):
-        if (not radio.available):
-            TX_CMPLT = active(f)
-            # WAIT_CONTROL
-            listen(radio,TCTRLMAX) #We have to implement a Tmax to wait until the next team send us its Control Frame
-            if(radio.available):
-                ack_B,ack_C,ack_D, writen_B, writen_C, writen_D = passive()
-                if(TX_CMPLT == 3 and ack_B == id_last_B  and ack_C == id_last_C and ack_D == id_last_D and writen_B ==  and writen_C ==  and writen_D == ):
-                    print("\n-THE END-\n")
-                    return 0 #If we have send all the files, received confirmation for all of them and writen down everything...We are done!
+        radio.startListening()
+        paysize = 31
+        frame_list_B = build_list(f[0], paysize)
+        id_last_B = frame_list_B[-1].getID()
+        frame_list_C = build_list(f[1], paysize)
+        id_last_C = frame_list_C[-1].getID()
+        frame_list_D = build_list(f[2], paysize)
+        id_last_D = frame_list_D[-1].getID()
+        pipe=[1]
+        TMAX = 120
+        TX_CMPLT = 0
+        RX_CMPLT = 0
+        TCTRLMAX = 1
+
+        listen(radio,TINIT)
+        start_time = time.time()
+        while (TX_CMPLT < 3 and RX_CMPLT < 3 and time.time() < (start_time + TMAX)):
+            if (not radio.available):
+                TX_CMPLT = active(f)
+                # WAIT_CONTROL
+                listen(radio,TCTRLMAX) #We have to implement a Tmax to wait until the next team send us its Control Frame
+                if(radio.available):
+                    ack_B,ack_C,ack_D, writen_B, writen_C, writen_D = passive()
+                    if(TX_CMPLT == 3 and ack_B == id_last_B  and ack_C == id_last_C and ack_D == id_last_D and writen_B ==  and writen_C ==  and writen_D == ):
+                        print("\n-THE END-\n")
+                        return 0 #If we have send all the files, received confirmation for all of them and writen down everything...We are done!
+                else:
+                    listen(radio,TCTRL)
+                    if (radio.available):
+                        passive()
+                    #The else case is that the timer run out and we can send our control frame again, so start the while again
             else:
-                listen(radio,TCTRL)
-                if (radio.available):
-                    passive()
-                #The else case is that the timer run out and we can send our control frame again, so start the while again
-        else:
-            passive()
+                passive()
 
-def listen(radio, timer):
-    print("\n-Listening-\n")
-
-    while (not radio.available(pipe) and time.time() < (start_time + timer)):
-        #Do nothing
-        pass
 
 def active(f):
     # In this function, our furby has won the medium so it will send the first control frame.
@@ -144,13 +152,13 @@ def active(f):
     # If it has received 2 or more ACKs it wil start sending Data Frames
 
     print("\n-Active Mode-\n")
-    paysize = 31
-    files = {'B': f[0], 'C': f[1], 'D': f[2]}
+    # paysize = 31
+    # files = {'B': f[0], 'C': f[1], 'D': f[2]}
     completed_files = 0
     TACK = 25 / 1000.0
     data_id = 0
     print("Sending our Control Frame\n")
-    control = m.ControlFrame()
+    control = m.ControlFrame()  # FILL WITH ACK FOR THE RX PKTS
     radio.write(control.__str__())
     # Let's see if anyone answers back...
     answers = 0
