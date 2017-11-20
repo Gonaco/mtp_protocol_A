@@ -268,12 +268,12 @@ def send_window(frame_list, last_sent, window_size, radio, finished):
         for i in range(0, window_size):
             frame = frame_list[last_sent + 1]
             radio.write(frame.__str__())
-            last_sent = +1
+            last_sent = last_sent+1
     else:
         print('we send last window')
         for i in range(last_sent + 1, len(frame_list)):
             frame = frame_list[last_sent + 1]
             radio.write(frame.__str__())
-            last_sent = +1
+            last_sent = last_sent+1
             finished = True
     return last_sent, finished
