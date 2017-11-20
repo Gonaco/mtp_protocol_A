@@ -120,6 +120,7 @@ def receive(radio, radio2, pipe, frame_received):
 
     while run:
         count = count + 1
+        print ("the counter value is %s" % count)
 
         """if first_frame:
             for i in range(0, (2*window_size)-1, 1):
