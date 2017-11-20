@@ -128,7 +128,7 @@ def transmit(radio, radio2, archivo):
     finished = False
     id_last = frame_list[-1].getID()
     print('before starting the run loop')
-    time.sleep(15)
+    #time.sleep(15)
     while run:
         if not repeat:
             last_sent, finished = send_window(frame_list, last_sent, window_size, radio, finished)
