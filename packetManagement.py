@@ -55,13 +55,18 @@ def splitData(archivo):
 
 
     file_len = len(archivo.read())  # Size of the file in bytes
+    #print(file_len)
     chunk_len = 30  # Size of the chunk in bytes
-
-    packets = math.ceil(file_len/chunk_len)
-
+    aux=float(file_len)/chunk_len
+    #print(aux)
+    packets = math.ceil(aux)
+    #print(packets)
     lista = []
-    for i in range(0, packets):
-        lista.append(archivo.read(chunk_len))
+    for i in range(0, int(packets)):
+        archivo.seek(i*chunk_len)
+        chunk = archivo.read(chunk_len)
+        lista.append(chunk)
+
 
     ##archivo.seek(PacketID * chunk_len)  # It moves the pointer to the starting point of the chunk number 'nPacket'
     ##chunk = archivo.read(chunk_len)  # It reads 'cunk_len' bytes from the previous pointer

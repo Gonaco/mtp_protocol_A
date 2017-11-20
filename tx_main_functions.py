@@ -237,22 +237,25 @@ def build_list(archivo, paysize):
     print("\n-build_list-\n")  ##Debbuging issues.
     data_id = 0
     frame_list = []
-    data = archivo.read()
-    file_length = len(data)
-    print('%d is the length of the file' % file_length)
-    payload = ''
-    num = math.ceil(file_length / paysize)
-    for i in range(0, int(num - 1)):
-        payload = p.splitData(data_id, archivo)
-        print('%s is the payload returned by carol' % payload)
+    #data = archivo.read()
+    #file_length = len(data)
+    #print('%d is the length of the file' % file_length)
+    payload_list = []
+    #num = math.ceil(file_length / paysize)
+    payload_list = p.splitData(archivo)
+    #print('%s is the payload returned by carol' % payload)
+    for i in range(0, int(len(payload_list)-1)):
+        payload=payload_list[i]
         frame = m.Frame(data_id, 0, payload)
-        data_id = data_id + 1
         frame_list.append(frame)
-        print('%d is the id of the frame' % frame.getID())
-        print('%d is the length of the file' % file_length)
-        print('%d is the number of chunks' % num)
+        data_id = data_id + 1
+
+   # print('%d is the id of the frame' % frame.getID())
+    #print('%d is the length of the file' % file_length)
+    #print('%d is the number of chunks' % num)
+
     # the last packet should have end flag to 1
-    payload = p.splitData(data_id, archivo)
+    payload = payload_list[-1]
     frame = m.Frame(data_id, 1, payload)
     frame_list.append(frame)
     return frame_list
