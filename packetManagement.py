@@ -52,6 +52,7 @@ def splitData(PacketID, archivo):
 
 	
     file_len = len(archivo.read()) #Size of the file in bytes
+    print("File len: %d \n" %file_len)
     chunk_len = 30 #Size of the chunk in bytes
     packets = file_len/chunk_len	
 
@@ -60,7 +61,7 @@ def splitData(PacketID, archivo):
 
 
     if PacketID>round((file_len/chunk_len)+1):
-        print("That packet %d does not exist. EOF reached.", PacketID)
+        print("That packet %d does not exist. EOF reached." %PacketID)
 	return packets
 	
 
