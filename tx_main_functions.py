@@ -238,13 +238,16 @@ def build_list(file, paysize):
     frame_list = []
     data = file.read()
     file_length = len(data)
+    print(file_length+' is the length of the file')
     payload = ''
     num = math.ceil(file_length / paysize)
     for i in range(0, int(num - 1)):
         payload = p.splitData(data_id, file)
+        print(payload+' is the payload returned by carol')
         frame = m.Frame(data_id, 0, payload)
         data_id = + 1
         frame_list.append(frame)
+        print(frame.getID()+' is the id of the frame')
     # the last packet should have end flag to 1
     payload = p.splitData(data_id, file)
     frame = m.Frame(data_id, 1, payload)
