@@ -250,6 +250,7 @@ def build_list(archivo, paysize):
         frame_list.append(frame)
         print('%d is the id of the frame' % frame.getID())
         print('%d is the length of the file' % file_length)
+        print('%d is the number of chunks' % num)
     # the last packet should have end flag to 1
     payload = p.splitData(data_id, archivo)
     frame = m.Frame(data_id, 1, payload)
