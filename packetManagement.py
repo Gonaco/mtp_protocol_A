@@ -44,7 +44,7 @@ def writeFile(string, filename):
     finalFILE.close()
 
 
-def splitData(archivo):
+def splitData(archivo, chunk_len):
     print("\n-splitData-\n")  ##Debbuging issues.
 
     ## Modo normal:
@@ -56,7 +56,7 @@ def splitData(archivo):
 
     file_len = len(archivo.read())  # Size of the file in bytes
     #print(file_len)
-    chunk_len = 30  # Size of the chunk in bytes
+    #chunk_len = 30  # Size of the chunk in bytes
     aux=float(file_len)/chunk_len
     #print(aux)
     packets = math.ceil(aux)
@@ -75,3 +75,4 @@ def splitData(archivo):
     ##    print("That packet does not exist. EOF reached.")
 
     return lista
+

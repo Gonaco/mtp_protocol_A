@@ -140,8 +140,10 @@ def transmit(radio, radio2, archivo):
                 # we send a mix of Nack and next ids
                 for i in range(0, len(nack_list)):
                     # we send nack
-                    next_id = nack_list[i]
+                    print(nack_list[i])
+                    next_id = int(nack_list[i])
                     frame = frame_list[next_id]
+                    print('%d we send frame' % next_id)
                     radio.write(frame.__str__())
                     nack_list.pop(i)
                 # we send the rest of the window
@@ -152,6 +154,7 @@ def transmit(radio, radio2, archivo):
                     # we send the first 10 nacks and eliminate them from the list
                     next_id = nack_list[i]
                     frame = frame_list[next_id]
+                    print('%d we send frame' % next_id)
                     radio.write(frame.__str__())
                     nack_list.pop(i)
         # after we send, we look for nacks
@@ -242,7 +245,7 @@ def build_list(archivo, paysize):
     #print('%d is the length of the file' % file_length)
     payload_list = []
     #num = math.ceil(file_length / paysize)
-    payload_list = p.splitData(archivo)
+    payload_list = p.splitData(archivo, paysize)
     #print('%s is the payload returned by carol' % payload)
     for i in range(0, int(len(payload_list)-1)):
         payload=payload_list[i]
@@ -267,13 +270,14 @@ def send_window(frame_list, last_sent, window_size, radio, finished):
         print('we send a window')
         for i in range(0, window_size):
             frame = frame_list[last_sent + 1]
+            print('%d we send frame' % last_sent)
             radio.write(frame.__str__())
-            last_sent = +1
+            last_sent = last_sent+1
     else:
         print('we send last window')
         for i in range(last_sent + 1, len(frame_list)):
             frame = frame_list[last_sent + 1]
             radio.write(frame.__str__())
-            last_sent = +1
+            last_sent = last_sent+1
             finished = True
     return last_sent, finished
