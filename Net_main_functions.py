@@ -31,39 +31,65 @@ BRATE = NRF24.BR_250KBPS                    # 250 kbps bit rate
 
 
 def setup():
+
+    print("\n-setup-\n")
+
     pipes = [[0xe7, 0xe7, 0xe7, 0xe7, 0xe7], [0xc2, 0xc2, 0xc2, 0xc2, 0xc2]]  # addresses for TX/RX channels
 
-    radio2 = NRF24(GPIO, spidev.SpiDev())
-    radio = NRF24(GPIO, spidev.SpiDev())
-    radio.begin(1, 27)  # Set spi-cs pin1, and rf24-CE pin 27
-    radio2.begin(0, 17)  # Set spi-cs pin0, and rf24-CE pin 17
+    GPIO.setup([0,1,17,27], GPIO.OUT, initial=GPIO.LOW)
 
-    time.sleep(1)
-    radio.setRetries(15, 15)
-    radio.setPayloadSize(32)
-    radio.setChannel(0x60)
-    radio2.setRetries(15, 15)
-    radio2.setPayloadSize(32)
-    radio2.setChannel(0x60)
+    ears = NRF24(GPIO, spidev.SpiDev())  # EARS
+    mouth = NRF24(GPIO, spidev.SpiDev())  # MOUTH
+    ears.begin(1, 27)  # Set spi-cs pin1, and rf24-CE pin 17
+    mouth.begin(0, 17)  # Set spi-cs pin0, and rf24-CE pin 27
 
-    radio2.setDataRate(NRF24.BR_2MBPS)
-    radio2.setPALevel(NRF24.PA_MAX)
-    radio.setDataRate(NRF24.BR_2MBPS)
-    radio.setPALevel(NRF24.PA_MAX)
+    ears.setRetries(15, 15)
+    ears.setPayloadSize(32)
+    ears.setChannel(0x60)
+    mouth.setRetries(15, 15)
+    mouth.setPayloadSize(32)
+    mouth.setChannel(0x65)
 
-    radio.setAutoAck(False)
-    radio.enableDynamicPayloads()  # radio.setPayloadSize(32) for setting a fixed payload
-    radio.enableAckPayload()
-    radio2.setAutoAck(False)
-    radio2.enableDynamicPayloads()
-    radio2.enableAckPayload()
+    ears.setDataRate(NRF24.BR_2MBPS)
+    ears.setPALevel(NRF24.PA_MAX)
+    mouth.setDataRate(NRF24.BR_2MBPS)
+    mouth.setPALevel(NRF24.PA_MAX)
 
-    radio.openWritingPipe(pipes[1])
-    radio.openReadingPipe(1, pipes[0])
-    radio.printDetails()
+    ears.setAutoAck(False)
+    ears.enableDynamicPayloads()  # ears.setPayloadSize(32) for setting a fixed payload
+    ears.enableAckPayload()
+    mouth.setAutoAck(False)
+    mouth.enableDynamicPayloads()
+    mouth.enableAckPayload()
 
+    mouth.openWritingPipe(pipes[0])
+    ears.openReadingPipe(1, pipes[1])
 
-    return 0
+    if not mouth.isPVariant():
+        # If radio configures correctly, we confirmed a "plus" (ie "variant") nrf24l01+
+        # Else print diagnostic stuff & exit.
+        mouth.printDetails()
+        # (or we could always just print details anyway, even on good setup, for debugging)
+        print ("NRF24L01+ not found.")
+        return
+
+    if not ears.isPVariant():
+        # If radio configures correctly, we confirmed a "plus" (ie "variant") nrf24l01+
+        # Else print diagnostic stuff & exit.
+        ears.printDetails()
+        # (or we could always just print details anyway, even on good setup, for debugging)
+        print ("NRF24L01+ not found.")
+        return
+    
+    mouth.startListening()
+    mouth.stopListening()
+
+    mouth.printDetails()
+
+    ears.startListening()
+
+    return ears, mouth
+
 
 
 ##################DEBUG CODE BELOW############################

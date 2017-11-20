@@ -142,6 +142,8 @@ class Packet:
             
         self.header.extractHeader(mssg_string)
         self.payload = mssg_string[HEADER_BYTES_LENGTH:]
+
+        print(self)
         
     # def send(self,transceiver):
     #     transceiver.write(self.__str__())
