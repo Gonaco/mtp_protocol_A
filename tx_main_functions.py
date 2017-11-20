@@ -128,7 +128,7 @@ def transmit(radio, radio2, archivo):
     finished = False
     id_last = frame_list[-1].getID()
     print('before starting the run loop')
-    time.sleep(15)
+    #time.sleep(15)
     while run:
         if not repeat:
             last_sent, finished = send_window(frame_list, last_sent, window_size, radio, finished)
@@ -237,20 +237,25 @@ def build_list(archivo, paysize):
     print("\n-build_list-\n")  ##Debbuging issues.
     data_id = 0
     frame_list = []
-    data = archivo.read()
-    file_length = len(data)
-    print('%d is the length of the file' % file_length)
-    payload = ''
-    num = math.ceil(file_length / paysize)
-    for i in range(0, int(num - 1)):
-        payload = p.splitData(data_id, archivo)
-        print('%s is the payload returned by carol' % payload)
+    #data = archivo.read()
+    #file_length = len(data)
+    #print('%d is the length of the file' % file_length)
+    payload_list = []
+    #num = math.ceil(file_length / paysize)
+    payload_list = p.splitData(archivo)
+    #print('%s is the payload returned by carol' % payload)
+    for i in range(0, int(len(payload_list)-1)):
+        payload=payload_list[i]
         frame = m.Frame(data_id, 0, payload)
-        data_id = data_id + 1
         frame_list.append(frame)
-        print('%d is the id of the frame' % frame.getID())
+        data_id = data_id + 1
+
+   # print('%d is the id of the frame' % frame.getID())
+    #print('%d is the length of the file' % file_length)
+    #print('%d is the number of chunks' % num)
+
     # the last packet should have end flag to 1
-    payload = p.splitData(data_id, archivo)
+    payload = payload_list[-1]
     frame = m.Frame(data_id, 1, payload)
     frame_list.append(frame)
     return frame_list
@@ -263,12 +268,12 @@ def send_window(frame_list, last_sent, window_size, radio, finished):
         for i in range(0, window_size):
             frame = frame_list[last_sent + 1]
             radio.write(frame.__str__())
-            last_sent = +1
+            last_sent = last_sent+1
     else:
         print('we send last window')
         for i in range(last_sent + 1, len(frame_list)):
             frame = frame_list[last_sent + 1]
             radio.write(frame.__str__())
-            last_sent = +1
+            last_sent = last_sent+1
             finished = True
     return last_sent, finished
