@@ -138,7 +138,7 @@ def transmit(radio, radio2, archivo):
             if nack_len < window_size:
                 print('we have mix window')
                 # we send a mix of Nack and next ids
-                for i in range(0, len(nack_list)):
+                for i in range(0, nack_len):
                     # we send nack
                     print(nack_list[i])
                     next_id = int(nack_list[i])
