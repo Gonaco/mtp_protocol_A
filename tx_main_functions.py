@@ -111,7 +111,7 @@ def setup():
 
 
 ##################DEBUG CODE BELOW############################
-def transmit(radio, radio2, file):
+def transmit(radio, radio2, archivo):
     print("\n-transmit-\n")  ##Debbuging issues.
     run = True
     paysize = 27  # may change
@@ -120,7 +120,7 @@ def transmit(radio, radio2, file):
     window_size = 10  # may change
     last_sent = -1
     # data = file.read()
-    frame_list = build_list(file, paysize)
+    frame_list = build_list(archivo, paysize)
     radio2.startListening()
     nack_list = []
     nack_len = 0
@@ -232,24 +232,24 @@ def end_connection(radio, radio2, pipe, last_id):
                     done = True
 
 
-def build_list(file, paysize):
+def build_list(archivo, paysize):
     print("\n-build_list-\n")  ##Debbuging issues.
     data_id = 0
     frame_list = []
-    data = file.read()
+    data = archivo.read()
     file_length = len(data)
     print('%d is the length of the file' % file_length)
     payload = ''
     num = math.ceil(file_length / paysize)
     for i in range(0, int(num - 1)):
-        payload = p.splitData(data_id, file)
-        print('%d is the payload returned by carol' % payload)
+        payload = p.splitData(data_id, archivo)
+        print('%s is the payload returned by carol' % payload)
         frame = m.Frame(data_id, 0, payload)
         data_id = + 1
         frame_list.append(frame)
         print('%d is the id of the frame' % frame.getID())
     # the last packet should have end flag to 1
-    payload = p.splitData(data_id, file)
+    payload = p.splitData(data_id, archivo)
     frame = m.Frame(data_id, 1, payload)
     frame_list.append(frame)
     return frame_list
