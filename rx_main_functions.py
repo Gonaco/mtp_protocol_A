@@ -137,6 +137,7 @@ def receive(radio, radio2, pipe, frame_received):
             radio.read(recv_buffer, radio.getDynamicPayloadSize())
             rcv = m.Packet()
             rcv.mssg2Pckt(recv_buffer)
+            print"the frame is %s" % (rcv.getID())
             storedFrames, last_w_id = pm.rebuildData(rcv.getID(), rcv.getPayload(), last_w_id, storedFrames, team)
 
             # In each iteration set to -1 the value of this array located in the received frame ID position
@@ -182,6 +183,7 @@ def receive(radio, radio2, pipe, frame_received):
         else:
             for i in range(0, (2 * window_size) - 1, 1):
                 original_frames_id.append(i)  # Generate the first 2 original frames ID windows
+            print"the frame is %s" % (rcv.getID())
             storedFrames, last_w_id = pm.rebuildData(frame_received.getID(), frame_received.getPayload(),
                                                      last_w_id, storedFrames, team)
             original_frames_id.insert(frame_received.getID(), -1)
