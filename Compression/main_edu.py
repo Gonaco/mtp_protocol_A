@@ -7,7 +7,7 @@ import numpy as np
 
 def compressTextLZW( text ):
     "This compresses the text file using LZW"
-    compressed_text = zlib.compress(text.encode("utf-16"))
+    compressed_text = zlib.compress(text) #.encode("utf-8"))
     # print(compressed_text)
     return compressed_text
 
@@ -39,8 +39,8 @@ def readTextFile2( filename, length ):
 
 
 # Introdice here name of the input text file
-#filename = "SampleTextFile_1000kb.txt"
-filename = "input - copia.txt"
+filename = "SampleTextFile_1000kb.txt"
+#filename = "input - copia.txt"
 #filename = "input.txt"
 
 
