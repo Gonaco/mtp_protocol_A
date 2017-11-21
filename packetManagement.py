@@ -55,12 +55,12 @@ def writeFile(chunk, filename):
         finalFILE.write(chunk)
 
 
-def splitData(archivo):
+def splitData(archivo, chunk_len):
 
     print("\n-splitData-\n")  ##Debbuging issues.
 
     file_len = len(archivo.read())  # Size of the file in bytes
-    chunk_len = 30  # Size of the chunk in bytes
+    ##chunk_len = 30  # Size of the chunk in bytes
 
     packets = math.ceil(file_len/chunk_len)
 
