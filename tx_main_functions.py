@@ -139,7 +139,7 @@ def transmit(radio, radio2, archivo):
                     # next_id = int(nack_list[i])
                     next_id = nack_list[0]
                     frame = frame_list[int(next_id)]
-                    print('%d we send frame' % i)
+                    print('%d we send frame' % next_id)
                     radio.write(frame.__str__())
                     nack_list.pop(0)
                 # we send the rest of the window
@@ -244,11 +244,7 @@ def build_list(archivo, paysize):
     print("\n-build_list-\n")  # Debbuging issues.
     data_id = 0
     frame_list = []
-    # data = archivo.read()
-    # file_length = len(data)
-    # print('%d is the length of the file' % file_length)
     payload_list = []
-    # num = math.ceil(file_length / paysize)
     payload_list = p.splitData(archivo, paysize)
     # print('%s is the payload returned by carol' % payload)
     for i in range(0, int(len(payload_list)-1)):
@@ -256,12 +252,6 @@ def build_list(archivo, paysize):
         frame = m.Frame(data_id, 0, payload)
         frame_list.append(frame)
         data_id = data_id + 1
-
-    # print('%d is the id of the frame' % frame.getID())
-    # print('%d is the length of the file' % file_length)
-    # print('%d is the number of chunks' % num)
-
-    # the last packet should have end flag to 1
     payload = payload_list[-1]
     frame = m.Frame(data_id, 1, payload)
     frame_list.append(frame)
