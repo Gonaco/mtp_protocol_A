@@ -65,7 +65,7 @@ def splitData(archivo, chunk_len):
     packets = math.ceil(file_len/chunk_len)
 
     lista = []
-    for i in range(0, packets):
+    for i in range(0, int(packets)):
         lista.append(archivo.read(chunk_len))
 
     ##archivo.seek(PacketID * chunk_len)  # It moves the pointer to the starting point of the chunk number 'nPacket'
