@@ -145,8 +145,9 @@ def transmit(radio, radio2, archivo):
                     frame = nack_list[1]
                     print('%d we send frame' % i)
                     radio.write(frame.__str__())
-                    nack_list.pop(i)
+                    nack_list.pop(1)
                 # we send the rest of the window
+                repeat=False
                 last_sent, finished = send_window(frame_list, last_sent, partial_window, radio, finished)
             else:
                 print('we only send nacks')
@@ -156,7 +157,7 @@ def transmit(radio, radio2, archivo):
                     frame = frame_list[next_id]
                     print('%d we send frame' % next_id)
                     radio.write(frame.__str__())
-                    nack_list.pop(i)
+                    nack_list.pop(1)
         # after we send, we look for nacks
         if radio2.available():
             print('we have things to read')
@@ -181,10 +182,12 @@ def transmit(radio, radio2, archivo):
                 print('I sent last so I will check for ack')
                 # if I don't have nacks, I only care if I finished
                 # if rx send ack we stop running, if we didn't finish, just write next window
+                id_last = frame_list[-1].getID()
                 if rcv.getTyp() == 1:
                     print('there is ack')
                     # I store the ID of the last ACK rx set me
-                    # id_last = rcv.getID()
+
+                    rcv.getID()
                     run = False
     return id_last
 
