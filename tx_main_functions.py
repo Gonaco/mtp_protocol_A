@@ -273,4 +273,5 @@ def send_window(frame_list, last_sent, window_size, radio, finished):
             last_sent = last_sent+1
             finished = True
             time.sleep(2)
+    time.sleep(2)
     return last_sent, finished
