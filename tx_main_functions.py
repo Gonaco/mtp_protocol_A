@@ -2,8 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import RPi.GPIO as GPIO
-
-GPIO.setmode(GPIO.BCM)
 from lib_nrf24 import NRF24
 import time
 import spidev
@@ -11,10 +9,11 @@ import message_functions as m
 import packetManagement as p
 import re
 import math
+GPIO.setmode(GPIO.BCM)
 
 
 def setup():
-    print("\n-setup-\n")  ##Debbuging issues.
+    print("\n-setup-\n")  # Debbuging issues.
     pipes = [[0xe7, 0xe7, 0xe7, 0xe7, 0xe7], [0xc2, 0xc2, 0xc2, 0xc2, 0xc2]]  # addresses for TX/RX channels
 
     # radio2 = NRF24(GPIO, spidev.SpiDev())
@@ -51,7 +50,7 @@ def setup():
     # timeout = time.time() + 0.1
     # return radio, radio2
 
-    GPIO.setup([0,1,17,27], GPIO.OUT, initial=GPIO.LOW)
+    GPIO.setup([0, 1, 17, 27], GPIO.OUT, initial=GPIO.LOW)
 
     ears = NRF24(GPIO, spidev.SpiDev())
     mouth = NRF24(GPIO, spidev.SpiDev())
@@ -98,21 +97,17 @@ def setup():
         print ("NRF24L01+ not found.")
         return
 
-    
     mouth.printDetails()
-
     mouth.startListening()
     mouth.stopListening()
-
     ears.startListening()
-    
     timeout = time.time() + 0.1
     return mouth, ears
 
 
-##################DEBUG CODE BELOW############################
+# #################DEBUG CODE BELOW############################
 def transmit(radio, radio2, archivo):
-    print("\n-transmit-\n")  ##Debbuging issues.
+    print("\n-transmit-\n")  # Debbuging issues.
     run = True
     paysize = 30  # may change
     repeat = False
@@ -128,7 +123,7 @@ def transmit(radio, radio2, archivo):
     finished = False
     id_last = frame_list[-1].getID()
     print('before starting the run loop')
-    #time.sleep(15)
+    # time.sleep(15)
     while run:
         if not repeat:
             last_sent, finished = send_window(frame_list, last_sent, window_size, radio, finished)
@@ -141,14 +136,14 @@ def transmit(radio, radio2, archivo):
                 for i in range(0, nack_len):
                     # we send nack
                     print(nack_list[0])
-                    #next_id = int(nack_list[i])
+                    # next_id = int(nack_list[i])
                     next_id = nack_list[0]
                     frame = frame_list[int(next_id)]
                     print('%d we send frame' % i)
                     radio.write(frame.__str__())
                     nack_list.pop(0)
                 # we send the rest of the window
-                repeat=False
+                repeat = False
                 last_sent, finished = send_window(frame_list, last_sent, partial_window, radio, finished)
             else:
                 print('we only send nacks')
@@ -156,7 +151,7 @@ def transmit(radio, radio2, archivo):
                     # we send the first 10 nacks and eliminate them from the list
                     next_id = nack_list[0]
                     frame = frame_list[int(next_id)]
-                    print('%d we send frame' % next_id)
+                    print('%s we send frame' % next_id)
                     radio.write(frame.__str__())
                     nack_list.pop(0)
         # after we send, we look for nacks
@@ -196,15 +191,15 @@ def transmit(radio, radio2, archivo):
 
 
 def synchronized(radio, radio2, pipe):
-    print("\n-synchronized-\n")  #Debbuging issues.
+    print("\n-synchronized-\n")  # Debbuging issues.
     done = False
     # print(sync.extractHeader())
     while not done:
         print('sending sync')
-        m.sendSYNC(0, radio)
         num = 0
+        m.sendSYNC(0, radio)
         radio2.startListening()
-        while not radio2.available(pipe) and num < 400: # WHY A TIMER (400) HERE?
+        while not radio2.available(pipe) and num < 400:  # WHY A TIMER (400) HERE?
             time.sleep(1 / 1000.0)
             num = num + 1
 
@@ -214,17 +209,18 @@ def synchronized(radio, radio2, pipe):
             radio2.read(rcv_buffer, radio2.getDynamicPayloadSize())
             rcv = m.Packet()
             rcv.mssg2Pckt(rcv_buffer)
-            if rcv.getTyp() == 1:
-                if rcv.getID() == 0:
-                    done = True
+            if rcv.getTyp() == 1 and rcv.getID() == 0:
+                radio2.stopListening()
+                done = True
         else:
             print('did not receive ack')
 
 
 def end_connection(radio, radio2, pipe, last_id):
-    print("\n-end_connection-\n")  ##Debbuging issues.
+    print("\n-end_connection-\n")  # Debbuging issues.
     done = False
     while not done:
+        print('sending ack')
         num = 0
         m.sendACK(0, radio)
         radio2.startListening()
@@ -237,35 +233,33 @@ def end_connection(radio, radio2, pipe, last_id):
             radio2.read(rcv_buffer, radio2.getDynamicPayloadSize())
             rcv = m.Packet()
             rcv.mssg2Pckt(rcv_buffer)
-            if rcv.getTyp() == 1:
-                # we have the id of the last packet an rx will send un an ack with the next id
-                if rcv.getID() == last_id + 1:
-                    radio2.stopListening()
-                    done = True
+            if rcv.getTyp() == 1 and rcv.getID() == last_id:
+                radio2.stopListening()
+                done = True
         else:
             print('did not receive ack')
 
 
 def build_list(archivo, paysize):
-    print("\n-build_list-\n")  ##Debbuging issues.
+    print("\n-build_list-\n")  # Debbuging issues.
     data_id = 0
     frame_list = []
-    #data = archivo.read()
-    #file_length = len(data)
-    #print('%d is the length of the file' % file_length)
+    # data = archivo.read()
+    # file_length = len(data)
+    # print('%d is the length of the file' % file_length)
     payload_list = []
-    #num = math.ceil(file_length / paysize)
+    # num = math.ceil(file_length / paysize)
     payload_list = p.splitData(archivo, paysize)
-    #print('%s is the payload returned by carol' % payload)
+    # print('%s is the payload returned by carol' % payload)
     for i in range(0, int(len(payload_list)-1)):
-        payload=payload_list[i]
+        payload = payload_list[i]
         frame = m.Frame(data_id, 0, payload)
         frame_list.append(frame)
         data_id = data_id + 1
 
-   # print('%d is the id of the frame' % frame.getID())
-    #print('%d is the length of the file' % file_length)
-    #print('%d is the number of chunks' % num)
+    # print('%d is the id of the frame' % frame.getID())
+    # print('%d is the length of the file' % file_length)
+    # print('%d is the number of chunks' % num)
 
     # the last packet should have end flag to 1
     payload = payload_list[-1]
@@ -275,7 +269,7 @@ def build_list(archivo, paysize):
 
 
 def send_window(frame_list, last_sent, window_size, radio, finished):
-    print("\n-send_window-\n")  ##Debbuging issues.
+    print("\n-send_window-\n")  # Debbuging issues.
     if (last_sent + window_size) < len(frame_list):
         print('we send a window')
         for i in range(0, window_size):
