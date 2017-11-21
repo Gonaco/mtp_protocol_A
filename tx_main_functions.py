@@ -140,9 +140,10 @@ def transmit(radio, radio2, archivo):
                 # we send a mix of Nack and next ids
                 for i in range(0, nack_len):
                     # we send nack
-                    print(nack_list[1])
+                    print(nack_list[0])
                     #next_id = int(nack_list[i])
-                    frame = nack_list[1]
+                    next_id = nack_list[0]
+                    frame = frame_list[next_id]
                     print('%d we send frame' % i)
                     radio.write(frame.__str__())
                     nack_list.pop(0)
@@ -153,7 +154,7 @@ def transmit(radio, radio2, archivo):
                 print('we only send nacks')
                 for i in range(0, window_size):
                     # we send the first 10 nacks and eliminate them from the list
-                    next_id = nack_list[i]
+                    next_id = nack_list[0]
                     frame = frame_list[next_id]
                     print('%d we send frame' % next_id)
                     radio.write(frame.__str__())
