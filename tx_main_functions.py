@@ -139,7 +139,7 @@ def transmit(radio, radio2, archivo):
                     # next_id = int(nack_list[i])
                     next_id = nack_list[0]
                     frame = frame_list[int(next_id)]
-                    print('%d we send frame' % next_id)
+                    print('%s we send frame' % next_id)
                     radio.write(frame.__str__())
                     nack_list.pop(0)
                 # we send the rest of the window
@@ -184,8 +184,6 @@ def transmit(radio, radio2, archivo):
                 if rcv.getTyp() == 1:
                     print('there is ack')
                     # I store the ID of the last ACK rx set me
-
-                    rcv.getID()
                     run = False
     return id_last
 
