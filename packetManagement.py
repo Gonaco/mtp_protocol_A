@@ -37,12 +37,12 @@ def rebuildData(p_id, string, last_w_id, storedFrames, team):
 
 ## This function appends a given string to a file saved as filename (without including the .txt)
 def writeFile(chunk, filename):
-    print('\n-writeFile-\n')
-    ##finalFILE = open(filename + ".txt", 'a+')
+    
+    print('\n-writeFile-\n') #Debugging issues
+    
+    finalFILE = open(filename + ".txt", 'a+')
     ##finalFILE.write(string)
     ##finalFILE.close()
-
-    finalFILE = open(filename + '.txt', 'a+')
 
     if chunk.__contains__('\n'):
         aux = chunk.split('\n')
