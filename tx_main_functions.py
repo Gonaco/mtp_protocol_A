@@ -106,7 +106,7 @@ def setup():
 
 
 # #################DEBUG CODE BELOW############################
-def transmit(radio, radio2, archivo):
+def transmit(radio, radio2, archivo, pipe):
     print("\n-transmit-\n")  # Debbuging issues.
     run = True
     paysize = 30  # may change
@@ -155,7 +155,7 @@ def transmit(radio, radio2, archivo):
                         nack_list.pop(0)
             last_window = last_window+1
             # after we send, we look for nacks
-            if radio2.available():
+            if radio2.available(pipe):
                 print('we have things to read')
                 rcv_buffer = []
                 radio2.read(rcv_buffer, radio2.getDynamicPayloadSize())
@@ -166,41 +166,53 @@ def transmit(radio, radio2, archivo):
                     repeat=True
                     nack_list = process_nacks(rcv, nack_list)
         if finished:
-            if radio2.available():
-                print('we have things to read')
-                rcv_buffer = []
-                radio2.read(rcv_buffer, radio2.getDynamicPayloadSize())
-                rcv = m.Packet()
-                rcv.mssg2Pckt(rcv_buffer)
-                # wether I finished or not I want to look for nacks
-                if rcv.getTyp() == 2:
-                    nack_list = process_nacks(rcv, nack_list)
-                    nack_len = len(nack_list)
-                    if nack_len < window_size:
-                        print('we do not send full window')
-                        for i in range(0, nack_len):
-                            # we send nack
-                            print(nack_list[0])
-                            next_id = nack_list[0]
-                            frame = frame_list[int(next_id)]
-                            print('%s we send frame' % next_id)
-                            radio.write(frame.__str__())
-                    else:
-                        print('we send full window')
-                        for i in range(0, window_size):
-                            # we send the first 10 nacks and eliminate them from the list
-                            next_id = nack_list[0]
-                            frame = frame_list[int(next_id)]
-                            print('%s we send frame' % next_id)
-                            radio.write(frame.__str__())
-                            nack_list.pop(0)
-                print('I sent last so I will check for ack')
-                time.sleep(2)
-                # if I don't have nacks, I only care if I finished
-                # if rx send ack we stop running, if we didn't finish, just write next window
-                if rcv.getTyp() == 1 and rcv.getID() == last_window:
-                    print('there is ack')
-                    run = False
+            num = 0
+            while not radio2.available(pipe) and num < 400:
+                time.sleep(1 / 1000.0)
+                num = num + 1
+            if num < 400:
+                #we reecived something
+                if radio2.available(pipe):
+                    print('we have things to read')
+                    rcv_buffer = []
+                    radio2.read(rcv_buffer, radio2.getDynamicPayloadSize())
+                    rcv = m.Packet()
+                    rcv.mssg2Pckt(rcv_buffer)
+                    # wether I finished or not I want to look for nacks
+                    if rcv.getTyp() == 2:
+                        nack_list = process_nacks(rcv, nack_list)
+                        nack_len = len(nack_list)
+                        if nack_len < window_size:
+                            print('we do not send full window')
+                            for i in range(0, nack_len):
+                                # we send nack
+                                print(nack_list[0])
+                                next_id = nack_list[0]
+                                frame = frame_list[int(next_id)]
+                                print('%s we send frame' % next_id)
+                                radio.write(frame.__str__())
+                        else:
+                            print('we send full window')
+                            for i in range(0, window_size):
+                                # we send the first 10 nacks and eliminate them from the list
+                                next_id = nack_list[0]
+                                frame = frame_list[int(next_id)]
+                                print('%s we send frame' % next_id)
+                                radio.write(frame.__str__())
+                                nack_list.pop(0)
+                    print('I sent last so I will check for ack')
+                    time.sleep(2)
+                    # if I don't have nacks, I only care if I finished
+                    # if rx send ack we stop running, if we didn't finish, just write next window
+                    if rcv.getTyp() == 1 and rcv.getID() == last_window:
+                        print('there is ack')
+                        run = False
+            else:
+                #timeot
+                frame = frame_list[-1]
+                print('%d we send frame' % last_sent)
+                radio.write(frame.__str__())
+
     return id_last
 
 
