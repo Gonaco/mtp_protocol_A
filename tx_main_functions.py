@@ -145,7 +145,7 @@ def transmit(radio, radio2, archivo):
                     frame = nack_list[1]
                     print('%d we send frame' % i)
                     radio.write(frame.__str__())
-                    nack_list.pop(1)
+                    nack_list.pop(0)
                 # we send the rest of the window
                 repeat=False
                 last_sent, finished = send_window(frame_list, last_sent, partial_window, radio, finished)
@@ -157,7 +157,7 @@ def transmit(radio, radio2, archivo):
                     frame = frame_list[next_id]
                     print('%d we send frame' % next_id)
                     radio.write(frame.__str__())
-                    nack_list.pop(1)
+                    nack_list.pop(0)
         # after we send, we look for nacks
         if radio2.available():
             print('we have things to read')
