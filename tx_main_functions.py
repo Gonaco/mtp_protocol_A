@@ -111,16 +111,16 @@ def setup():
 
 
 ##################DEBUG CODE BELOW############################
-def transmit(radio, radio2, file):
+def transmit(radio, radio2, archivo):
     print("\n-transmit-\n")  ##Debbuging issues.
     run = True
-    paysize = 27  # may change
+    paysize = 30  # may change
     repeat = False
     window_id = 1
     window_size = 10  # may change
     last_sent = -1
     # data = file.read()
-    frame_list = build_list(file, paysize)
+    frame_list = build_list(archivo, paysize)
     radio2.startListening()
     nack_list = []
     nack_len = 0
@@ -128,6 +128,7 @@ def transmit(radio, radio2, file):
     finished = False
     id_last = frame_list[-1].getID()
     print('before starting the run loop')
+    #time.sleep(15)
     while run:
         if not repeat:
             last_sent, finished = send_window(frame_list, last_sent, window_size, radio, finished)
@@ -137,22 +138,27 @@ def transmit(radio, radio2, file):
             if nack_len < window_size:
                 print('we have mix window')
                 # we send a mix of Nack and next ids
-                for i in range(0, len(nack_list)):
+                for i in range(0, nack_len):
                     # we send nack
-                    next_id = nack_list[i]
-                    frame = frame_list[next_id]
+                    print(nack_list[0])
+                    #next_id = int(nack_list[i])
+                    next_id = nack_list[0]
+                    frame = frame_list[int(next_id)]
+                    print('%d we send frame' % i)
                     radio.write(frame.__str__())
-                    nack_list.pop(i)
+                    nack_list.pop(0)
                 # we send the rest of the window
+                repeat=False
                 last_sent, finished = send_window(frame_list, last_sent, partial_window, radio, finished)
             else:
                 print('we only send nacks')
                 for i in range(0, window_size):
                     # we send the first 10 nacks and eliminate them from the list
-                    next_id = nack_list[i]
-                    frame = frame_list[next_id]
+                    next_id = nack_list[0]
+                    frame = frame_list[int(next_id)]
+                    print('%d we send frame' % next_id)
                     radio.write(frame.__str__())
-                    nack_list.pop(i)
+                    nack_list.pop(0)
         # after we send, we look for nacks
         if radio2.available():
             print('we have things to read')
@@ -167,17 +173,22 @@ def transmit(radio, radio2, file):
                 repeat = True
                 # read payload and store IDs in list
                 nack_string = rcv.getPayload()
+                print('this is the string of nacks we receive %s' % nack_string)
                 temp_nack_list = re.split(',', nack_string)
-                temp_nack_list.pop(len(nack_list) - 1)
+                temp_nack_list.pop(-1)
                 nack_list = nack_list + temp_nack_list
+                print(nack_list[0])
+
             elif finished:
                 print('I sent last so I will check for ack')
                 # if I don't have nacks, I only care if I finished
                 # if rx send ack we stop running, if we didn't finish, just write next window
+                id_last = frame_list[-1].getID()
                 if rcv.getTyp() == 1:
                     print('there is ack')
                     # I store the ID of the last ACK rx set me
-                    # id_last = rcv.getID()
+
+                    rcv.getID()
                     run = False
     return id_last
 
@@ -233,21 +244,29 @@ def end_connection(radio, radio2, pipe, last_id):
             print('did not receive ack')
 
 
-def build_list(file, paysize):
+def build_list(archivo, paysize):
     print("\n-build_list-\n")  ##Debbuging issues.
     data_id = 0
     frame_list = []
-    data = file.read()
-    file_length = len(data)
-    payload = ''
-    num = math.ceil(file_length / paysize)
-    for i in range(0, int(num - 1)):
-        payload = p.splitData(data_id, file)
+    #data = archivo.read()
+    #file_length = len(data)
+    #print('%d is the length of the file' % file_length)
+    payload_list = []
+    #num = math.ceil(file_length / paysize)
+    payload_list = p.splitData(archivo, paysize)
+    #print('%s is the payload returned by carol' % payload)
+    for i in range(0, int(len(payload_list)-1)):
+        payload=payload_list[i]
         frame = m.Frame(data_id, 0, payload)
-        data_id = + 1
         frame_list.append(frame)
+        data_id = data_id + 1
+
+   # print('%d is the id of the frame' % frame.getID())
+    #print('%d is the length of the file' % file_length)
+    #print('%d is the number of chunks' % num)
+
     # the last packet should have end flag to 1
-    payload = p.splitData(data_id, file)
+    payload = payload_list[-1]
     frame = m.Frame(data_id, 1, payload)
     frame_list.append(frame)
     return frame_list
@@ -259,13 +278,14 @@ def send_window(frame_list, last_sent, window_size, radio, finished):
         print('we send a window')
         for i in range(0, window_size):
             frame = frame_list[last_sent + 1]
+            print('%d we send frame' % last_sent)
             radio.write(frame.__str__())
-            last_sent = +1
+            last_sent = last_sent+1
     else:
         print('we send last window')
         for i in range(last_sent + 1, len(frame_list)):
             frame = frame_list[last_sent + 1]
             radio.write(frame.__str__())
-            last_sent = +1
+            last_sent = last_sent+1
             finished = True
     return last_sent, finished

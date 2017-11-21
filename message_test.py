@@ -59,15 +59,16 @@ def main(argv):
     # print(rcv.getID())
     # print(rcv.payload)
 
-    control = m.ControlFrame(m.C_TEAM)
+    control = m.ControlFrame(m.D_TEAM)
     print(control)
+    print(bin(ord(control.__str__())))
     rcv = []
     rcv.append(int(control.c2byt(),2))
     rcvc = m.ControlFrame()
     rcvc.mssg2Pckt(rcv)
     print(rcvc)
 
-    data = m.ACK(m.B_TEAM, 0, "Hola peña")
+    data = m.DataFrame(m.B_TEAM, 0, "Hola peña")
     print(data)
     print(data.getPayload())
     print(data.d2byt())

@@ -1,5 +1,4 @@
 # coding=utf-8
-import compressionFunctions as cf
 from math import ceil
 import zlib
 import sys
@@ -26,6 +25,7 @@ filename = "input - copia.txt"
 
 file = open(filename, 'r')
 text = file.read()
+lines = list(e + "\n" for e in text.split("\n")[:-1])
 size_raw = sys.getsizeof(text)
 file.close()
 
@@ -33,14 +33,7 @@ file.close()
 
 # Break 1MB text file to 100 10kB chunks
 num_blocks = 100;
-#text_array = cf.breakTextInBlocks(filename, num_blocks)
 
-
-lines = []  # Declare an empty list named "lines"
-with open(filename, 'rt') as in_file:  # Open file lorem.txt for reading of text data.
-    for line in in_file:  # For each line of text store in a string variable named "line", and
-        lines.append(line)  # add that line to our list of lines.
-text_array = []
 num_lines = len(lines)
 num_lines_per_block = int(ceil(float(num_lines) / float(num_blocks)))
 num_lines_last_block = num_lines - (num_blocks - 1) * num_lines_per_block
