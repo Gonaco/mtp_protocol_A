@@ -185,18 +185,17 @@ def transmit(radio, radio2, file):
 def synchronized(radio, radio2, pipe):
     print("\n-synchronized-\n")  #Debbuging issues.
     done = False
-    sync = m.SYNC(0)
-    num = 0
     # print(sync.extractHeader())
     while not done:
         print('sending sync')
-        radio.write(sync.__str__())
-
+        m.sendSYNC(0, radio)
+        num = 0
         radio2.startListening()
         while not radio2.available(pipe) and num < 400: # WHY A TIMER (400) HERE?
             time.sleep(1 / 1000.0)
             num = num + 1
-        if num != 400:
+
+        if num < 400:
             print("we received something before time out")
             rcv_buffer = []
             radio2.read(rcv_buffer, radio2.getDynamicPayloadSize())
@@ -212,14 +211,14 @@ def synchronized(radio, radio2, pipe):
 def end_connection(radio, radio2, pipe, last_id):
     print("\n-end_connection-\n")  ##Debbuging issues.
     done = False
-    ack = m.ACK(0)  # for ending connection we send ACK with ID 0
-    radio.write(ack.__str__())
-    radio2.startListening()
     while not done:
+        num = 0
+        m.sendACK(0, radio)
+        radio2.startListening()
         while not radio2.available(pipe) and num < 400:
             time.sleep(1 / 1000.0)
             num = num + 1
-        if num != 400:
+        if num < 400:
             print("we received something before time out")
             rcv_buffer = []
             radio2.read(rcv_buffer, radio2.getDynamicPayloadSize())
@@ -230,6 +229,8 @@ def end_connection(radio, radio2, pipe, last_id):
                 if rcv.getID() == last_id + 1:
                     radio2.stopListening()
                     done = True
+        else:
+            print('did not receive ack')
 
 
 def build_list(file, paysize):
