@@ -37,12 +37,12 @@ def rebuildData(p_id, string, last_w_id, storedFrames, team):
 
 ## This function appends a given string to a file saved as filename (without including the .txt)
 def writeFile(chunk, filename):
-    
-    print('\n-writeFile-\n') #Debugging issues
-    
-    finalFILE = open(filename + ".txt", 'a+')
+    print('\n-writeFile-\n')
+    ##finalFILE = open(filename + ".txt", 'a+')
     ##finalFILE.write(string)
     ##finalFILE.close()
+
+    finalFILE = open(filename + '.txt', 'a+')
 
     if chunk.__contains__('\n'):
         aux = chunk.split('\n')
@@ -60,13 +60,20 @@ def splitData(archivo, chunk_len):
     print("\n-splitData-\n")  ##Debbuging issues.
 
     file_len = len(archivo.read())  # Size of the file in bytes
+    print('Size of the file in bytes: ' + file_len)
     ##chunk_len = 30  # Size of the chunk in bytes
+    print('Size of the chunk in bytes: ' + chunk_len)
 
-    packets = math.ceil(file_len/chunk_len)
+    aux = float(file_len)/chunk_len
+    packets = math.ceil(aux)
+    print('Number of packets: ' + packets)
 
     lista = []
     for i in range(0, int(packets)):
-        lista.append(archivo.read(chunk_len))
+        archivo.seek(i*chunk_len)
+        chunk = archivo.read(chunk_len)
+        lista.append(chunk)
+
 
     ##archivo.seek(PacketID * chunk_len)  # It moves the pointer to the starting point of the chunk number 'nPacket'
     ##chunk = archivo.read(chunk_len)  # It reads 'cunk_len' bytes from the previous pointer
