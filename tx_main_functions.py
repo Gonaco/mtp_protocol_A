@@ -206,7 +206,7 @@ def transmit(radio, radio2, archivo, pipe):
                     #time.sleep(2)
                     # if I don't have nacks, I only care if I finished
                     # if rx send ack we stop running, if we didn't finish, just write next window
-                    if rcv.getTyp() == 1 and rcv.getID() == last_window:
+                    if rcv.getTyp() == 1 and rcv.getEnd() == 1:
                         print('there is ack')
                         run = False
             else:
@@ -248,7 +248,7 @@ def end_connection(radio, radio2, pipe, last_id):
     while not done:
         print('sending ack')
         num = 0
-        m.sendACK(0, radio)
+        m.sendACK(0, 0, radio)
         radio2.startListening()
         while not radio2.available(pipe) and num < 400:
             time.sleep(1 / 1000.0)
