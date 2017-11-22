@@ -185,14 +185,25 @@ class Frame(Packet):
 
         
 def sendSYNC(ID, radio):
+
+    print("\n-sendSYNC-\n")
     sync = SYNC(ID)
+
+    print(sync)
     radio.write(sync.__str__())
 
 def sendACK(ID, end, radio):
+
+    print("\n-sendACK-\n")
     ack = ACK(ID, end)
+
+    print(ack)
     radio.write(ack.__str__())
 
 def sendNACK(ID, lost_IDs_array, radio):
+
+    print("\n-sendNACK-\n")
+    
     payload = ""
     for i in range(0, len(lost_IDs_array)):
         payload = payload + str(lost_IDs_array[i]) + ","
@@ -201,6 +212,8 @@ def sendNACK(ID, lost_IDs_array, radio):
     print(nack.getTyp())
     print(nack.getID())
     print(nack.getPayload())
+
+    print(nack)
     radio.write(nack.__str__())
 
 # NETWORK MODE
