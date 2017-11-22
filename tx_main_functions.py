@@ -165,6 +165,7 @@ def transmit(radio, radio2, archivo, pipe):
                 if rcv.getTyp() == 2:
                     repeat=True
                     nack_list = process_nacks(rcv, nack_list)
+                rcv=''
         if finished:
             num = 0
             while not radio2.available(pipe) and num < 400:
@@ -211,6 +212,7 @@ def transmit(radio, radio2, archivo, pipe):
                     if rcv.getTyp() == 1 and rcv.getEnd() == 1:
                         print('there is ack')
                         run = False
+                    rcv=''
             else:
                 #timeot
                 frame = frame_list[-1]
