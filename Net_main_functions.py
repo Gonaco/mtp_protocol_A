@@ -68,10 +68,10 @@ def setup():
 
     ears.setRetries(15, 15)
     ears.setPayloadSize(32)     # SURE?
-    ears.setChannel(RF_CHANNEL)
+    ears.setChannel(RF_CH)
     mouth.setRetries(15, 15)
     mouth.setPayloadSize(32)    # SURE?
-    mouth.setChannel(RF_CHANNEL)
+    mouth.setChannel(RF_CH)
 
     ears.setDataRate(NRF24.BR_2MBPS)
     ears.setPALevel(NRF24.PA_MAX)

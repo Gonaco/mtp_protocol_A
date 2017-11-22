@@ -1,4 +1,4 @@
-import Net_main_functions.py as nw
+import Net_main_functions as nw
 
 ears, mouth = nw.setup()
 
