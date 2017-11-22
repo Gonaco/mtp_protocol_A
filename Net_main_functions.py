@@ -17,24 +17,45 @@ import packetManagement as pm
 # NETWORK CONSTANTS
 PAYLOAD_LENGTH = 31
 HEADER_LENGTH = 1
-TDATA = TACK =  0.2                         # Data and ACK frames timeout (in seconds)
+TDATA_MAX = TACK_MAX = 0.2                         # Data and ACK frames timeout (in seconds)
+TDATA = TACK = 0.0005                                     # Waiting time in order to transmit
 TCTRL = TINIT = 0                           # Control frame and initialization random timeouts (in seconds)
 TMAX = 120                                  # Max time for network mode (in seconds)
+START_TIME = 0
+
+
 PLOAD_SIZE = 32                             # Payload size corresponding to data in one frame (32 B max)
 HDR_SIZE = 1                                # Header size inside payload frame
 
 # TRANSCEIVER CONSTANTS
-RF_CH = [0x50, 0x64]                        # UL & DL channels
+RF_CH = 0x64                        # UL & DL channels
 PWR_LVL = NRF24.PA_HIGH                     # Transceiver output (HIGH = -6 dBm + 20 dB)
 BRATE = NRF24.BR_250KBPS                    # 250 kbps bit rate
 
-TCTRL = random.uniform(1, 2)
+SEND_ACK1 = 0
+SEND_ACK2 = 0
+SEND_ACK3 = 0
+
+PIPES = [[0xe7, 0xe7, 0xe7, 0xe7, 0xe7], [0xc2, 0xc2, 0xc2, 0xc2, 0xc2]]  # addresses for TX/RX channels
+EARS_PIPE = [1]
+
+ACTIVE_TEAM = m.A_TEAM
+
+PKTS_RCVD = 0
+
+last_w_id_B = -1
+last_w_id_C = -1
+last_w_id_D = -1
+
+F_CMPLTD = 0
+
+ACKED = {m.B_TEAM : 0, m.C_TEAM : 0, m.D_TEAM : 0}
+
+storedFrames = {"-2N": "DEFAULT"}  # NO ENTIENDO ESTO
 
 def setup():
 
     print("\n-setup-\n")
-
-    pipes = [[0xe7, 0xe7, 0xe7, 0xe7, 0xe7], [0xc2, 0xc2, 0xc2, 0xc2, 0xc2]]  # addresses for TX/RX channels
 
     GPIO.setup([0,1,17,27], GPIO.OUT, initial=GPIO.LOW)
 
@@ -44,10 +65,10 @@ def setup():
     mouth.begin(0, 17)  # Set spi-cs pin0, and rf24-CE pin 27
 
     ears.setRetries(15, 15)
-    ears.setPayloadSize(32)
+    ears.setPayloadSize(32)     # SURE?
     ears.setChannel(0x60)
     mouth.setRetries(15, 15)
-    mouth.setPayloadSize(32)
+    mouth.setPayloadSize(32)    # SURE?
     mouth.setChannel(0x65)
 
     ears.setDataRate(NRF24.BR_2MBPS)
@@ -62,8 +83,8 @@ def setup():
     mouth.enableDynamicPayloads()
     mouth.enableAckPayload()
 
-    mouth.openWritingPipe(pipes[0])
-    ears.openReadingPipe(1, pipes[1])
+    mouth.openWritingPipe(PIPES[1])
+    ears.openReadingPipe(1, PIPES[1])
 
     if not mouth.isPVariant():
         # If radio configures correctly, we confirmed a "plus" (ie "variant") nrf24l01+
@@ -93,52 +114,63 @@ def setup():
 def listen(ears, timer):
     print("\n-Listening-\n")
 
-    while (not ears.available(pipe) and time.time() < (start_time + timer)):
+    while (not ears.available(EARS_PIPE) and time.time() < (START_TIME + timer)):
         #Do nothing
         pass
 
-    if ears.available(pipe):
+    if ears.available(EARS_PIPE):
         return True
     else:
         return False
 
 def network_mode(ears, mouth, files):
 
-    while True:                 # IN REALITY TILL 2 MIN
+    print("\n-Network Mode-\n")
 
-        pm.splitData()
+    START_TIME = time.time()
+
+    random.seed(int(START_TIME))
+
+    print(START_TIME)
+    
+    beginning = True
+
+    texts = {m.B_TEAM : files[0], m.C_TEAM: files[1], m.D_TEAM: files[2]}
+
+    for team in texts:
+        split_str = pm.splitData(files.get(team), PAYLOAD_LENGTH)
+        texts[team] = split_str
+
+    while (time.time() < START_TIME + TMAX) and (F_CMPLTD != 6):
         
-        TINIT = random.uniform(5, 10)
-        if (listen(ears, TINIT)):
+        if beginning:
+            TINIT = random.uniform(5, 10)
+            timer = TINIT
+            beginning = False
+
+        elif ACTIVE_TEAM == m.D_TEAM:
+
+            timer = 0
+            
+        else:
+            TCTRL = random.uniform(1, 2)
+            timer = TCTRL
+    
+        
+        if (listen(ears, timer)):
             # Something received -> Passive Mode
+            
             passive()
+            
         else:
             # Something received -> Active Mode
-            active()
+            
+            active(texts)
+            # ACTIVE_TEAM = m.B_TEAM
 
         
 
 
-##################DEBUG CODE BELOW############################
-# def network_mode(f):
-#     run = True
-#     while run:
-#         radio.startListening()
-#         paysize = 31
-#         frame_list_B = build_list(f[0], paysize)
-#         id_last_B = frame_list_B[-1].getID()
-#         frame_list_C = build_list(f[1], paysize)
-#         id_last_C = frame_list_C[-1].getID()
-#         frame_list_D = build_list(f[2], paysize)
-#         id_last_D = frame_list_D[-1].getID()
-#         pipe=[1]
-#         TMAX = 120
-#         TX_CMPLT = 0
-#         RX_CMPLT = 0
-#         TCTRLMAX = 1
-
-#         listen(radio,TINIT)
-#         start_time = time.time()
 #         while (TX_CMPLT < 3 and RX_CMPLT < 3 and time.time() < (start_time + TMAX)):
 #             if (not radio.available):
 #                 TX_CMPLT = active(f)
@@ -158,52 +190,59 @@ def network_mode(ears, mouth, files):
 #                 passive()
 
 
-def active(f):
+def active(t):
     # In this function, our furby has won the medium so it will send the first control frame.
     # Then, it will wait for the three teams to send as back their corresponding control fram acknowleding us.
     # If it has received 2 or more ACKs it wil start sending Data Frames
 
     print("\n-Active Mode-\n")
-    # paysize = 31
-    # files = {'B': f[0], 'C': f[1], 'D': f[2]}
-    completed_files = 0
-    TACK = 25 / 1000.0
+
+    ACTIVE_TEAM = m.A_TEAM
+    
+    # completed_files = 0
     data_id = 0
     print("Sending our Control Frame\n")
-    control = m.ControlFrame()  # FILL WITH ACK FOR THE RX PKTS
-    radio.write(control.__str__())
+    control = m.ControlFrame(ack1=SEND_ACK1, ack2=SEND_ACK2, ack3=SEND_ACK3)  # FILL WITH ACK FOR THE RX PKTS
+    mouth.write(control.__str__())
+
+    # Reset the ACKS
+    SEND_ACK1 = 0
+    SEND_ACK2 = 0
+    SEND_ACK3 = 0
+    
     # Let's see if anyone answers back...
     answers = 0
-    start_time = time.time()
+    
     # If we've received AT LEAST TWICE the frame that we've sent, we sent ALL the data frames
-    while (answers != 3 and time.time() < (start_time + TACK)):  # I THINK THAT BEFORE THIS WHILE OR INSIDE IT, WE SHOULD CHECK THE RADIO.AVAILABLE IN ORDET TO NOT READ NOTHING
-        recv_buffer = []
-        radio.read(recv_buffer, radio.getDynamicPayloadSize())  # CHECK IT
-        rcv = m.ControlFrame()
-        rcv.strMssg2Pckt(recv_buffer)
-        if (rcv.getTx() == m.A_TEAM):
-            answers += 1
+    while (answers != 3 and time.time() < (start_time + TACK)):
+        
+        if ears.available(EARS_PIPE):
+            recv_buffer = []
+            ears.read(recv_buffer, ears.getDynamicPayloadSize())  # CHECK IT
+            rcv = m.ControlFrame()
+            rcv.strMssg2Pckt(recv_buffer)
+            if (rcv.getTx() == m.A_TEAM):
+                answers += 1
+                
     if (answers < 2):
-        return 0
+        print("NOT ENOUGH ANSWERS")
+        return
+    
     else:
-        for team in files:
-            data = files.get(team).read()
-            if synchronized():  # WHY SYNCHRONIZED FUNCTION??
-                print("Sending the file for team", team)
-                for i in range(0, len(data), paysize):
-                    if (i + paysize) < len(data):
-                        buf = data[i:i + paysize]
-                        print("sending full packets")
-                    else:
-                        buf = data[i:]
-                        print("FILE COMPLETED")
-                        completed_files += 1
-                    frame = m.DataFrame(team, data_id, buf)
-                    radio.write(frame.__str__())
-                    print("Sent:")
-                    print(frame)
-        data_id += 1
-        return completed_files
+        for team in t:
+            team_data = t[team]
+
+            if ACKED[team] < len(team_data):
+
+                frame = m.DataFrame(team, ACKED[team], team_data[ACKED[team]])    
+                mouth.write(frame.__str__())
+                print("Sent:")
+                print(frame)
+            else:
+                print("File Completed")
+                F_CMPLTD += 1
+                
+            time.sleep(TDATA)
 
 
 def passive():
@@ -213,118 +252,103 @@ def passive():
 
     print("\n-Passive Mode-\n")
 
-    last_w_id_B = -1
-    last_w_id_C = -1
-    last_w_id_D = -1
-    storedFrames = {"-2N": "DEFAULT"}
-    team = "A"
-    active = "B" #We are supposing that the first time to send us a Data Fram is teamB, if not, it will be changed
-    acked_B = 0
-    acked_C = 0
-    acked_D = 0
+    # storedFrames = {"-2N": "DEFAULT"}  # NO ENTIENDO ESTO
+    # team = "A"
+    # active = "B" #We are supposing that the first time to send us a Data Fram is teamB, if not, it will be changed
+
+    PKTS_RCVD = 0
+
+    # Taking the packet
     recv_buffer = []
-    radio.read(recv_buffer, radio.getDynamicPayloadSize()) #CHECK IT
+    ears.read(recv_buffer, ears.getDynamicPayloadSize()) #CHECK IT
+
     rcv = m.ControlFrame()
-    rcv.strMssg2Pckt(recv_buffer)
-    print("we received other team's Control Frame")
-    TDATA = 25 / 1000.0
-    # Depending on Who has send us the Control Frame, our ACK could be in any place
-    if rcv.getTx() == m.B_TEAM:
-        print("Team B is active mode")
-        active = "B"
-        if(rcv.ack3 == 1): #B is acknowleding our data frame
-            acked_B += 1
-            rcv.ack1 = 0
-            rcv.ack2 = 0
-            rcv.ack3 = 1
+    if rcv.mssg2Pckt(recv_buffer):  # Check if is a Control Frame or a Data Frame
+        
+        ACTIVE_TEAM = rcv.getTx()
 
-    elif rcv.getTx() == m.C_TEAM:
-        print("Team C is active mode")
-        active = "C"
-        if (rcv.ack2 == 1):  # C is acknowleding our data frame
-            acked_C += 1
-            rcv.ack1 = 0
-            rcv.ack2 = 1
-            rcv.ack3 = 0
 
-    elif rcv.getTx() == m.D_TEAM:
-        print("Team D is active mode")
-        active = "D"
-        if(rcv.ack1 == 1): #D is acknowleding our data frame
-            acked_D += 1
+        print("we received other team's Control Frame")
+        # TDATA = 25 / 1000.0
+
+        # Depending on Who has send us the Control Frame, our ACK could be in any place    
+        if rcv.getTx() == m.B_TEAM:
+            print("Team B is active")
+            if(rcv.ack1 == 1): #B is acknowleding our data frame
+                ACKED[m.B_TEAM] += 1
             rcv.ack1 = 1
             rcv.ack2 = 0
             rcv.ack3 = 0
 
-    radio.write(rcv.__str__()) #Send the ACK
+        elif rcv.getTx() == m.C_TEAM:
+            print("Team C is active")
+            if (rcv.ack1 == 1):  # C is acknowleding our data frame
+                ACKED[m.C_TEAM] += 1
+            rcv.ack1 = 1
+            rcv.ack2 = 0
+            rcv.ack3 = 0
 
-    listen(radio,TDATA) #Waiting 25ms for our data packet
-    if (radio.available):
-        #We are gonna write down what we have received
-        recv_buffer = []
-        radio.read(recv_buffer, radio.getDynamicPayloadSize())  # CHECK IT
-        rcv = m.DataFrame
-        rcv.strMssg2Pckt(recv_buffer)
-        if(rcv.getRx() == team): #If the Data Fram is for us, we write it down
-            if(active == "B"):
-                storedFrames, last_w_id_B = pm.rebuildData(rcv.getPos(), rcv.getPayload(), last_w_id_B, storedFrames, active)
-            elif(active == "C"):
-                storedFrames, last_w_id_C = pm.rebuildData(rcv.getPos(), rcv.getPayload(), last_w_id_C, storedFrames, active)
-            elif(active == "D"):
-                storedFrames, last_w_id_D = pm.rebuildData(rcv.getPos(), rcv.getPayload(), last_w_id_D, storedFrames, active)
-    return acked_B, acked_C, acked_D, last_w_id_B, last_w_id_C, last_w_id_D
+        elif rcv.getTx() == m.D_TEAM:
+            print("Team D is active")
+            if(rcv.ack1 == 1): #D is acknowleding our data frame
+                ACKED[m.D_TEAM] += 1
+            rcv.ack1 = 1
+            rcv.ack2 = 0
+            rcv.ack3 = 0
+
+        time.sleep(random.uniform(0, T_ACK))
+        mouth.write(rcv.__str__()) #Send the ACK
 
 
-def build_list(file, paysize):
-    print("\n-build_list-\n")  ##Debbuging issues.
-    data_id = 0
-    frame_list = []
-    data = file.read()
-    file_length = len(data)
-    payload = ''
-    num = math.ceil(file_length / paysize)
-    for i in range(0, int(num - 1)):
-        payload = s.splitData(data_id, file)
-        frame = m.Frame(data_id, 0, payload)
-        data_id = + 1
-        frame_list.append(frame)
-    # the last packet should have end flag to 1
-    payload = s.splitData(data_id, file)
-    frame = m.Frame(data_id, 1, payload)
-    frame_list.append(frame)
-    return frame_list
+        while time.time() < (START_TIME + TDATA_MAX):
+            if ears.available(EARS_PIPE):
+                receivingData()
+                
+            
+    # else:
 
-def synchronized(radio, radio2, pipe):
-    print("\n-synchronized-\n")  # Debbuging issues.
-    done = False
-    sync = m.SYNC(0)
-    num = 0
-    # print(sync.extractHeader())
-    while not done:
-        radio.write(sync.__str__())
-        radio2.startListening()
-        # while not radio2.available(pipe) and num < 400: # WHY A TIMER (400) HERE?
-        # time.sleep(1 / 1000.0)
-        # num = num + 1
-        # if num != 400:
-        # print("we received something before time out")
-        # rcv_buffer = []
-        # radio2.read(rcv_buffer, radio2.getDynamicPayloadSize())
-        # rcv = m.Packet()
-        # rcv.mssg2Pckt(rcv_buffer)
-        # if rcv.getTyp() == 1:
-        #     if rcv.getID() == 0:
-        #         done = True
+    #     print("Data Received")
 
-        while not radio2.available(pipe):
-            # do nothing
-            pass
+    #     rcv = m.DataFrame()
+        
+    #     if rcv.mssg2Pckt(recv_buffer):
+    #         receivingData()
+    #     else:
+    #         print("ERROR. THIS PACKET IS NOT RECOGNIZED")
+        
+        
+                
+                
+    # return acked_B, acked_C, acked_D, last_w_id_B, last_w_id_C, last_w_id_D
 
-        print("we received something before time out")
-        rcv_buffer = []
-        radio2.read(rcv_buffer, radio2.getDynamicPayloadSize())
-        rcv = m.Packet()
-        rcv.mssg2Pckt(rcv_buffer)
-        if rcv.getTyp() == 1:
-            if rcv.getID() == 0:
-                done = True
+def receivingData():
+    
+    # We are gonna write down what we have received
+    
+    recv_buffer = []
+    ears.read(recv_buffer, ears.getDynamicPayloadSize())  # CHECK IT
+    rcv = m.DataFrame()
+    if rcv.mssg2Pckt(recv_buffer):
+
+        if(rcv.getRx() == m.A_TEAM): #If the Data Frame is for us, we write it down
+
+            if(ACTIVE_TEAM == m.B_TEAM):
+                storedFrames, last_w_id_B = pm.rebuildData(rcv.getPos(), rcv.getPayload(), last_w_id_B, storedFrames, ACTIVE_TEAM)
+                SEND_ACK1 = 1
+
+            elif(ACTIVE_TEAM == m.C_TEAM):
+                storedFrames, last_w_id_C = pm.rebuildData(rcv.getPos(), rcv.getPayload(), last_w_id_C, storedFrames, ACTIVE_TEAM)
+                SEND_ACK2 = 1
+
+            elif(ACTIVE_TEAM == m.D_TEAM):
+                storedFrames, last_w_id_D = pm.rebuildData(rcv.getPos(), rcv.getPayload(), last_w_id_D, storedFrames, ACTIVE_TEAM)
+                SEND_ACK3 = 1
+
+        else:
+            print("PACKET FOR OTHER TEAM")
+            return
+
+    else:
+
+        print("ERROR. THIS PACKET IS NOT RECOGNIZED")
+        return
