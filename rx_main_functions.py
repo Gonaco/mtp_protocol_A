@@ -170,6 +170,7 @@ def receive(radio, radio2, pipe, frame_received):
                     num_frames_lost = len(frames2resend_id)
                     print('estoy en last frame y tengo que enviar nack')
                     m.sendNACK(window_id, frames2resend_id, radio2)
+                    print(window_id)
 
             if rcv.getEnd() == 1 and not last_frame:
                 final_id = rcv.getID()
