@@ -270,6 +270,8 @@ def build_list(archivo, paysize):
     frame_list = []
     payload_list = []
     payload_list = p.splitData(archivo, paysize)
+    print('Just after split data, I print first payload')
+    payload_list[0]
     # print('%s is the payload returned by carol' % payload)
     for i in range(0, int(len(payload_list)-1)):
         payload = payload_list[i]
