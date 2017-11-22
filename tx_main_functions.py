@@ -124,7 +124,9 @@ def transmit(radio, radio2, archivo, pipe):
     id_last = frame_list[-1].getID()
     print('before starting the run loop')
     while run:
+        print('after while run')
         if not finished:
+            print('if not finished')
             if not repeat:
                 last_sent, finished = send_window(frame_list, last_sent, window_size, radio, finished)
             else:
@@ -167,6 +169,7 @@ def transmit(radio, radio2, archivo, pipe):
                     nack_list = process_nacks(rcv, nack_list)
                 rcv=''
         if finished:
+            print('if finished')
             num = 0
             while not radio2.available(pipe) and num < 400:
                 time.sleep(1 / 1000.0)
