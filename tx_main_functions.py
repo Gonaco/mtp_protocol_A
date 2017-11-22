@@ -13,6 +13,7 @@ GPIO.setmode(GPIO.BCM)
 
 RF_CH = [0x00, 0x32]
 BR = NRF24.BR_250KBPS
+PA = NRF24.PA_MIN
 
 def setup():
     print("\n-setup-\n")  # Debbuging issues.
@@ -35,10 +36,10 @@ def setup():
     ears.setPayloadSize(32)
     ears.setChannel(RF_CH[1])
 
-    ears.setDataRate(NRF24.BR_2MBPS)
-    ears.setPALevel(NRF24.PA_MIN)
-    mouth.setDataRate(NRF24.BR_2MBPS)
-    mouth.setPALevel(NRF24.PA_MIN)
+    ears.setDataRate(BR)
+    ears.setPALevel(PA)
+    mouth.setDataRate(BR)
+    mouth.setPALevel(PA)
 
     mouth.setAutoAck(False)
     mouth.enableDynamicPayloads()  # mouth.setPayloadSize(32) for setting a fixed payload
