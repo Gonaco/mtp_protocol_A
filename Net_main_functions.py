@@ -162,12 +162,12 @@ def network_mode(ears, mouth, files):
         if (listen(ears, timer)):
             # Something received -> Passive Mode
             
-            passive()
+            passive(ears, mouth)
             
         else:
             # Something received -> Active Mode
             
-            active(texts)
+            active(texts,ears,mouth)
             # ACTIVE_TEAM = m.B_TEAM
 
         
@@ -192,7 +192,7 @@ def network_mode(ears, mouth, files):
 #                 passive()
 
 
-def active(t):
+def active(t,ears,mouth):
     # In this function, our furby has won the medium so it will send the first control frame.
     # Then, it will wait for the three teams to send as back their corresponding control fram acknowleding us.
     # If it has received 2 or more ACKs it wil start sending Data Frames
@@ -247,7 +247,7 @@ def active(t):
             time.sleep(TDATA)
 
 
-def passive():
+def passive(ears,mouth):
     # In this function, another team's furby has won the medium
     # We will resend the control frame that we've receive changing the ACK bit that corresponds to our team
     # Stay listening for our data frame
