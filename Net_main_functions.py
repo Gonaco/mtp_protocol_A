@@ -73,9 +73,9 @@ def setup():
     mouth.setPayloadSize(32)    # SURE?
     mouth.setChannel(RF_CH)
 
-    ears.setDataRate(NRF24.BR_2MBPS)
+    ears.setDataRate(NRF24.BR_250KBPS)
     ears.setPALevel(NRF24.PA_MIN)
-    mouth.setDataRate(NRF24.BR_2MBPS)
+    mouth.setDataRate(NRF24.BR_250KBPS)
     mouth.setPALevel(NRF24.PA_MIN)
 
     ears.setAutoAck(False)
