@@ -122,13 +122,6 @@ def receive(radio, radio2, pipe, frame_received):
         count = count + 1
         print ("the counter value is %s" % count)
 
-        """if first_frame:
-            for i in range(0, (2*window_size)-1, 1):
-                original_frames_id.append(i)  # Generate the first 2 original frames ID windows
-            storedFrames, last_w_id = pm.rebuildData(frame_received.getID(), frame_received.getPayload(), last_w_id, storedFrames, team)
-            original_frames_id.insert(frame_received.getID(), -1)
-            first_frame = False"""
-
         if not first_frame:
             while not radio.available(pipe):
                 time.sleep(1 / 1000.0)
@@ -149,7 +142,7 @@ def receive(radio, radio2, pipe, frame_received):
                 frames2resend_id = []
                 frames2resend_id = find_lost_frames(original_frames_id[window_size*(window_id-1): count-1])
                 if len(frames2resend_id) == 0:
-                    m.sendACK(window_id, radio2)
+                    m.sendACK(window_id, 0, radio2)
                 else:
                     m.sendNACK(window_id, frames2resend_id, radio2)
 
@@ -158,25 +151,27 @@ def receive(radio, radio2, pipe, frame_received):
                 for i in range((window_size*window_id), window_size*(window_id+1)-1, 1):
                     original_frames_id.append(i)  # Generate the original frames ID for the the i+1 window
 
-            if rcv.getEnd() == 1 and not last_frame:
-                final_id = rcv.getID()
-                original_frames_id = original_frames_id[0:final_id-1]  # Set the length of original_frames_id
-                last_frame = True
-
-                frames2resend_id = find_lost_frames(original_frames_id[window_size*(window_id-1): len(original_frames_id)])
+            if last_frame and count == num_frames_lost:
+                frames2resend_id = find_lost_frames(original_frames_id[window_size*(window_id-1): len(original_frames_id)-1])
                 if len(frames2resend_id) == 0:  # All frames are received
-                    run = False
                     print("The entire message is received")
+                    m.sendACK(window_id, 1, radio2)
+                    run = False
                 else:
                     count = 0
                     num_frames_lost = len(frames2resend_id)
                     m.sendNACK(window_id, frames2resend_id, radio2)
 
-            if last_frame and count == num_frames_lost:
-                frames2resend_id = find_lost_frames(original_frames_id[window_size*(window_id-1): len(original_frames_id)])
+            if rcv.getEnd() == 1 and not last_frame:
+                final_id = rcv.getID()
+                original_frames_id = original_frames_id[0:final_id]  # Set the length of original_frames_id
+                last_frame = True
+
+                frames2resend_id = find_lost_frames(original_frames_id[window_size*(window_id-1): len(original_frames_id)-1])
                 if len(frames2resend_id) == 0:  # All frames are received
-                    run = False
                     print("The entire message is received")
+                    m.sendACK(window_id, 1, radio2)
+                    run = False
                 else:
                     count = 0
                     num_frames_lost = len(frames2resend_id)
@@ -218,7 +213,7 @@ def handshake(radio, radio2, pipe, packet_id):
             if wait:
                 timer = timer + 1
                 if timer == 400:  # TIMEOUT
-                    m.sendACK(packet_id, radio2)
+                    m.sendACK(packet_id, 0, radio2)
                     print("Resend ACK")
                     timer = 0
 
@@ -229,12 +224,12 @@ def handshake(radio, radio2, pipe, packet_id):
         print(rcv)
         if rcv.getTyp() == 0 and rcv.getID() == 0:
             print("sync message received")
-            m.sendACK(packet_id, radio2)
+            m.sendACK(packet_id, 0, radio2)
             wait = True
         elif rcv.getTyp() == 1 and rcv.getID() == 0:
             print("ACK message received")
             for j in range(1, 10, 1):
-                m.sendACK(packet_id, radio2)
+                m.sendACK(packet_id, 1, radio2)
                 while timer2 < 400:
                     time.sleep(1 / 1000.0)
                     timer2 = timer2 + 1
