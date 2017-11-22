@@ -209,6 +209,7 @@ def handshake(radio, radio2, pipe, packet_id):
     done = False
     wait = False
     timer = 0
+    timer2 = 0
     frame_received = []
     while not done:
         while not radio.available(pipe):
@@ -232,7 +233,12 @@ def handshake(radio, radio2, pipe, packet_id):
             wait = True
         elif rcv.getTyp() == 1 and rcv.getID() == 0:
             print("ACK message received")
-            m.sendACK(packet_id, radio2)
+            for j in range(1, 10, 1):
+                m.sendACK(packet_id, radio2)
+                while timer2 < 400:
+                    time.sleep(1 / 1000.0)
+                    timer2 = timer2 + 1
+                timer2 = 0
             done = True
         elif rcv.getTyp() == 3 and rcv.getID() == 0:
             print("I have got the first frame")
