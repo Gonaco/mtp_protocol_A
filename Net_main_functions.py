@@ -36,6 +36,9 @@ SEND_ACK1 = 0
 SEND_ACK2 = 0
 SEND_ACK3 = 0
 
+ACKED = {m.B_TEAM : 0, m.C_TEAM : 0, m.D_TEAM : 0}
+
+
 PIPES = [[0xe7, 0xe7, 0xe7, 0xe7, 0xe7], [0xc2, 0xc2, 0xc2, 0xc2, 0xc2]]  # addresses for TX/RX channels
 EARS_PIPE = [1]
 
@@ -48,8 +51,7 @@ last_w_id_C = -1
 last_w_id_D = -1
 
 F_CMPLTD = 0
-
-ACKED = {m.B_TEAM : 0, m.C_TEAM : 0, m.D_TEAM : 0}
+# POS_MAX = 
 
 storedFrames = {"-2N": "DEFAULT"}  # NO ENTIENDO ESTO
 
@@ -66,10 +68,10 @@ def setup():
 
     ears.setRetries(15, 15)
     ears.setPayloadSize(32)     # SURE?
-    ears.setChannel(0x60)
+    ears.setChannel(RF_CHANNEL)
     mouth.setRetries(15, 15)
     mouth.setPayloadSize(32)    # SURE?
-    mouth.setChannel(0x65)
+    mouth.setChannel(RF_CHANNEL)
 
     ears.setDataRate(NRF24.BR_2MBPS)
     ears.setPALevel(NRF24.PA_MAX)
@@ -252,10 +254,6 @@ def passive():
 
     print("\n-Passive Mode-\n")
 
-    # storedFrames = {"-2N": "DEFAULT"}  # NO ENTIENDO ESTO
-    # team = "A"
-    # active = "B" #We are supposing that the first time to send us a Data Fram is teamB, if not, it will be changed
-
     PKTS_RCVD = 0
 
     # Taking the packet
@@ -264,9 +262,11 @@ def passive():
 
     rcv = m.ControlFrame()
     if rcv.mssg2Pckt(recv_buffer):  # Check if is a Control Frame or a Data Frame
+
+        print(rcv)
         
         ACTIVE_TEAM = rcv.getTx()
-
+        NEXT_TEAM = rcv.getNxt()
 
         print("we received other team's Control Frame")
         # TDATA = 25 / 1000.0
@@ -329,6 +329,8 @@ def receivingData():
     ears.read(recv_buffer, ears.getDynamicPayloadSize())  # CHECK IT
     rcv = m.DataFrame()
     if rcv.mssg2Pckt(recv_buffer):
+
+        print(rcv)
 
         if(rcv.getRx() == m.A_TEAM): #If the Data Frame is for us, we write it down
 
