@@ -61,10 +61,10 @@ def setup():
 
     mouth.setRetries(15, 15)
     mouth.setPayloadSize(32)
-    mouth.setChannel(0x60)
+    mouth.setChannel(0x00)
     ears.setRetries(15, 15)
     ears.setPayloadSize(32)
-    ears.setChannel(0x65)
+    ears.setChannel(0x32)
 
     ears.setDataRate(NRF24.BR_2MBPS)
     ears.setPALevel(NRF24.PA_MIN)
@@ -184,6 +184,7 @@ def transmit(radio, radio2, archivo, pipe):
                     radio2.read(rcv_buffer, radio2.getDynamicPayloadSize())
                     rcv = m.Packet()
                     rcv.mssg2Pckt(rcv_buffer)
+                    print(rcv)
                     print('I received a packet of type %s' % rcv.getTyp())
                     print('The ID of the packet is %s' % rcv.getID())
                     # wether I finished or not I want to look for nacks
