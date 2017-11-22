@@ -205,15 +205,25 @@ def sendNACK(ID, lost_IDs_array, radio):
     print("\n-sendNACK-\n")
     
     payload = ""
+    overload = []
+    
     for i in range(0, len(lost_IDs_array)):
         payload = payload + str(lost_IDs_array[i]) + ","
+        if len(payload) == FRAME_PAYLOAD_BYTES_LENGTH:
+            overload = lost_IDs_array[i+1:]
+            break
+        
     nack = NACK(ID,payload)
+
     print(nack.getTyp())
     print(nack.getID())
     print(nack.getPayload())
-
     print(nack)
+
     radio.write(nack.__str__())
+
+    return overload
+
 
 # NETWORK MODE
 
