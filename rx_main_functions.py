@@ -107,7 +107,9 @@ def receive(radio, radio2, pipe, frame_received):
     print("\n-receive-\n")
     first_frame = True
     last_frame = False
+    review = False
     run = True
+    timer = 0
     count = 0
     final_id = 0
     num_frames_lost = 0
@@ -125,6 +127,12 @@ def receive(radio, radio2, pipe, frame_received):
         if not first_frame:
             while not radio.available(pipe):
                 time.sleep(1 / 1000.0)
+                if review:
+                    timer = timer + 1
+                    if timer == 400:  # TIMEOUT
+                        count = num_frames_lost
+                        timer = 0
+
 
             print("I have got a frame")
             recv_buffer = []
@@ -167,6 +175,7 @@ def receive(radio, radio2, pipe, frame_received):
                 final_id = rcv.getID()
                 original_frames_id = original_frames_id[0:final_id]  # Set the length of original_frames_id
                 last_frame = True
+                review = True
 
                 frames2resend_id = find_lost_frames(original_frames_id[window_size*(window_id-1): len(original_frames_id)-1])
                 if len(frames2resend_id) == 0:  # All frames are received
