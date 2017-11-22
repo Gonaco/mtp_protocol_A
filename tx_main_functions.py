@@ -279,6 +279,9 @@ def build_list(archivo, paysize):
     payload = payload_list[-1]
     frame = m.Frame(data_id, 1, payload)
     frame_list.append(frame)
+    print('I created the list, this is the payload of the first frame')
+    print(frame_list[0].getPayload())
+    time.sleep(2)
     return frame_list
 
 
