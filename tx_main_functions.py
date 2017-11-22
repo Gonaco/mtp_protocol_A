@@ -106,12 +106,12 @@ def setup():
 
 
 # #################DEBUG CODE BELOW############################
-def transmit(radio, radio2, archivo):
+def transmit(radio, radio2, archivo, pipe):
     print("\n-transmit-\n")  # Debbuging issues.
     run = True
     paysize = 30  # may change
     repeat = False
-    window_id = 1
+    last_window = -1
     window_size = 10  # may change
     last_sent = -1
     # data = file.read()
@@ -123,75 +123,102 @@ def transmit(radio, radio2, archivo):
     finished = False
     id_last = frame_list[-1].getID()
     print('before starting the run loop')
-    # time.sleep(15)
     while run:
-        if not repeat:
-            last_sent, finished = send_window(frame_list, last_sent, window_size, radio, finished)
-        else:
-            print('we have nacks')
-            nack_len = len(nack_list)
-            if nack_len < window_size:
-                print('we have mix window')
-                # we send a mix of Nack and next ids
-                for i in range(0, nack_len):
-                    # we send nack
-                    print(nack_list[0])
-                    # next_id = int(nack_list[i])
-                    next_id = nack_list[0]
-                    frame = frame_list[int(next_id)]
-                    print('%d we send frame' % i)
-                    radio.write(frame.__str__())
-                    nack_list.pop(0)
-                # we send the rest of the window
-                repeat = False
-                last_sent, finished = send_window(frame_list, last_sent, partial_window, radio, finished)
+        if not finished:
+            if not repeat:
+                last_sent, finished = send_window(frame_list, last_sent, window_size, radio, finished)
             else:
-                print('we only send nacks')
-                for i in range(0, window_size):
-                    # we send the first 10 nacks and eliminate them from the list
-                    next_id = nack_list[0]
-                    frame = frame_list[int(next_id)]
-                    print('%s we send frame' % next_id)
-                    radio.write(frame.__str__())
-                    nack_list.pop(0)
-        # after we send, we look for nacks
-        if radio2.available():
-            print('we have things to read')
-            rcv_buffer = []
-            radio2.read(rcv_buffer, radio2.getDynamicPayloadSize())
-            rcv = m.Packet()
-            rcv.mssg2Pckt(rcv_buffer)
-            # wether I finished or not I want to look for nacks
-            if rcv.getTyp() == 2:
-                print('nacks arrived')
-                # nack received
-                repeat = True
-                # read payload and store IDs in list
-                nack_string = rcv.getPayload()
-                print('this is the string of nacks we receive %s' % nack_string)
-                temp_nack_list = re.split(',', nack_string)
-                temp_nack_list.pop(-1)
-                nack_list = nack_list + temp_nack_list
-                print(nack_list[0])
+                print('we have nacks')
+                nack_len = len(nack_list)
+                if nack_len < window_size:
+                    print('we have mix window')
+                    # we send a mix of Nack and next ids
+                    for i in range(0, nack_len):
+                        # we send nack
+                        print(nack_list[0])
+                        next_id = nack_list[0]
+                        frame = frame_list[int(next_id)]
+                        print('%s we send frame' % next_id)
+                        radio.write(frame.__str__())
+                        nack_list.pop(0)
+                    # we send the rest of the window
+                    repeat = False
+                    last_sent, finished = send_window(frame_list, last_sent, partial_window, radio, finished)
+                else:
+                    print('we only send nacks')
+                    for i in range(0, window_size):
+                        # we send the first 10 nacks and eliminate them from the list
+                        next_id = nack_list[0]
+                        frame = frame_list[int(next_id)]
+                        print('%s we send frame' % next_id)
+                        radio.write(frame.__str__())
+                        nack_list.pop(0)
+            last_window = last_window+1
+            # after we send, we look for nacks
+            if radio2.available(pipe):
+                print('we have things to read')
+                rcv_buffer = []
+                radio2.read(rcv_buffer, radio2.getDynamicPayloadSize())
+                rcv = m.Packet()
+                rcv.mssg2Pckt(rcv_buffer)
+                # wether I finished or not I want to look for nacks
+                if rcv.getTyp() == 2:
+                    repeat=True
+                    nack_list = process_nacks(rcv, nack_list)
+        if finished:
+            num = 0
+            while not radio2.available(pipe) and num < 400:
+                time.sleep(1 / 1000.0)
+                num = num + 1
+            if num < 400:
+                #we reecived something
+                if radio2.available(pipe):
+                    print('we have things to read')
+                    rcv_buffer = []
+                    radio2.read(rcv_buffer, radio2.getDynamicPayloadSize())
+                    rcv = m.Packet()
+                    rcv.mssg2Pckt(rcv_buffer)
+                    # wether I finished or not I want to look for nacks
+                    if rcv.getTyp() == 2:
+                        nack_list = process_nacks(rcv, nack_list)
+                        nack_len = len(nack_list)
+                        if nack_len < window_size:
+                            print('we do not send full window')
+                            for i in range(0, nack_len):
+                                # we send nack
+                                print(nack_list[0])
+                                next_id = nack_list[0]
+                                frame = frame_list[int(next_id)]
+                                print('%s we send frame' % next_id)
+                                radio.write(frame.__str__())
+                        else:
+                            print('we send full window')
+                            for i in range(0, window_size):
+                                # we send the first 10 nacks and eliminate them from the list
+                                next_id = nack_list[0]
+                                frame = frame_list[int(next_id)]
+                                print('%s we send frame' % next_id)
+                                radio.write(frame.__str__())
+                                nack_list.pop(0)
+                    print('I sent last so I will check for ack')
+                    time.sleep(2)
+                    # if I don't have nacks, I only care if I finished
+                    # if rx send ack we stop running, if we didn't finish, just write next window
+                    if rcv.getTyp() == 1 and rcv.getID() == last_window:
+                        print('there is ack')
+                        run = False
+            else:
+                #timeot
+                frame = frame_list[-1]
+                print('%d we send last frame again')
+                radio.write(frame.__str__())
 
-            elif finished:
-                print('I sent last so I will check for ack')
-                # if I don't have nacks, I only care if I finished
-                # if rx send ack we stop running, if we didn't finish, just write next window
-                id_last = frame_list[-1].getID()
-                if rcv.getTyp() == 1:
-                    print('there is ack')
-                    # I store the ID of the last ACK rx set me
-
-                    rcv.getID()
-                    run = False
     return id_last
 
 
 def synchronized(radio, radio2, pipe):
     print("\n-synchronized-\n")  # Debbuging issues.
     done = False
-    # print(sync.extractHeader())
     while not done:
         print('sending sync')
         num = 0
@@ -200,7 +227,6 @@ def synchronized(radio, radio2, pipe):
         while not radio2.available(pipe) and num < 400:  # WHY A TIMER (400) HERE?
             time.sleep(1 / 1000.0)
             num = num + 1
-
         if num < 400:
             print("we received something before time out")
             rcv_buffer = []
@@ -242,27 +268,22 @@ def build_list(archivo, paysize):
     print("\n-build_list-\n")  # Debbuging issues.
     data_id = 0
     frame_list = []
-    # data = archivo.read()
-    # file_length = len(data)
-    # print('%d is the length of the file' % file_length)
     payload_list = []
-    # num = math.ceil(file_length / paysize)
     payload_list = p.splitData(archivo, paysize)
+    print('Just after split data, I print first payload')
+    payload_list[0]
     # print('%s is the payload returned by carol' % payload)
     for i in range(0, int(len(payload_list)-1)):
         payload = payload_list[i]
         frame = m.Frame(data_id, 0, payload)
         frame_list.append(frame)
         data_id = data_id + 1
-
-    # print('%d is the id of the frame' % frame.getID())
-    # print('%d is the length of the file' % file_length)
-    # print('%d is the number of chunks' % num)
-
-    # the last packet should have end flag to 1
     payload = payload_list[-1]
     frame = m.Frame(data_id, 1, payload)
     frame_list.append(frame)
+    print('I created the list, this is the payload of the first frame')
+    print(frame_list[0].getPayload())
+    time.sleep(2)
     return frame_list
 
 
@@ -282,4 +303,19 @@ def send_window(frame_list, last_sent, window_size, radio, finished):
             radio.write(frame.__str__())
             last_sent = last_sent+1
             finished = True
+            #This is to leave time for the rx to answer
+            time.sleep(0.4)
+    time.sleep(2)
     return last_sent, finished
+
+def process_nacks(rcv, nack_list):
+    print('nacks arrived')
+    # nack received
+    # read payload and store IDs in list
+    nack_string = rcv.getPayload()
+    print('this is the string of nacks we receive %s' % nack_string)
+    time.sleep(2)
+    temp_nack_list = re.split(',', nack_string)
+    temp_nack_list.pop(-1)
+    nack_list = nack_list + temp_nack_list
+    return nack_list
