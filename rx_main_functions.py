@@ -208,7 +208,7 @@ def handshake(radio, radio2, pipe, packet_id):
             wait = True
         elif rcv.getTyp() == 1 and rcv.getID() == 0:
             print("ACK message received")
-            for j in range(1, 10, 1):
+            for j in range(0, 50, 1):
                 m.sendACK(packet_id, 1, radio2)
                 while timer2 < 400:
                     time.sleep(1 / 1000.0)
