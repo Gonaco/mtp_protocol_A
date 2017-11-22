@@ -178,6 +178,7 @@ def transmit(radio, radio2, archivo, pipe):
                     radio2.read(rcv_buffer, radio2.getDynamicPayloadSize())
                     rcv = m.Packet()
                     rcv.mssg2Pckt(rcv_buffer)
+                    print('I received a packet of type %s' % rcv.getTyp())
                     # wether I finished or not I want to look for nacks
                     if rcv.getTyp() == 2:
                         nack_list = process_nacks(rcv, nack_list)
