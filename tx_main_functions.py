@@ -213,6 +213,8 @@ def transmit(radio, radio2, archivo, pipe):
                         print('there is ack')
                         run = False
                     rcv=''
+                    if rcv.getTyp() == 0:
+                        time.sleep(10)
             else:
                 #timeot
                 frame = frame_list[-1]
