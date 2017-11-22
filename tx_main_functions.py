@@ -173,7 +173,7 @@ def transmit(radio, radio2, archivo, pipe):
                 num = num + 1
             if num < 400:
                 print('after if')
-                print(rcv.getTyp())
+                #print(rcv.getTyp())
                 #we reecived something
                 if radio2.available(pipe):
                     print('we have things to read')
