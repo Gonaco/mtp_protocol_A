@@ -6,47 +6,15 @@ import message_functions as m
 import packetManagement as pm
 GPIO.setmode(GPIO.BCM)
 
+RF_CH = [0x00, 0x32]
+BR = NRF24.BR_250KBPS
+PA = NRF24.PA_MIN
 
 def setup():
 
     print("\n-setup-\n")
 
     pipes = [[0xe7, 0xe7, 0xe7, 0xe7, 0xe7], [0xc2, 0xc2, 0xc2, 0xc2, 0xc2]]  # addresses for TX/RX channels
-
-    # radio = NRF24(GPIO, spidev.SpiDev())
-    # radio2 = NRF24(GPIO, spidev.SpiDev())
-    # radio.begin(1, 17) # Set spi-cs pin1, and rf24-CE pin 17
-    # radio2.begin(0, 27) # Set spi-cs pin0, and rf24-CE pin 27
-
-    # radio.setRetries(15,15)
-    # radio.setPayloadSize(32)
-    # radio.setChannel(0x60)
-    # radio2.setRetries(15,15)
-    # radio2.setPayloadSize(32)
-    # radio2.setChannel(0x60)
-
-    # radio.setDataRate(NRF24.BR_2MBPS)
-    # radio.setPALevel(NRF24.PA_MAX)
-    # radio2.setDataRate(NRF24.BR_2MBPS)
-    # radio2.setPALevel(NRF24.PA_MAX)
-
-    # radio.setAutoAck(False)
-    # radio.enableDynamicPayloads() # radio.setPayloadSize(32) for setting a fixed payload
-    # radio.enableAckPayload()
-    # radio2.setAutoAck(False)
-    # radio2.enableDynamicPayloads()
-    # radio2.enableAckPayload()
-
-    # radio2.openWritingPipe(pipes[0])
-    # radio.openReadingPipe(1, pipes[1])
-
-    # radio2.startListening()
-    # radio2.stopListening()
-
-    # radio2.printDetails()
-
-    # radio.startListening()
-    # return radio, radio2
 
     GPIO.setup([0,1,17,27], GPIO.OUT, initial=GPIO.LOW)
 
@@ -57,15 +25,15 @@ def setup():
 
     ears.setRetries(15, 15)
     ears.setPayloadSize(32)
-    ears.setChannel(0x00)
+    ears.setChannel(RF_CH[0])
     mouth.setRetries(15, 15)
     mouth.setPayloadSize(32)
-    mouth.setChannel(0x32)
+    mouth.setChannel(RF_CH[1])
 
-    ears.setDataRate(NRF24.BR_2MBPS)
-    ears.setPALevel(NRF24.PA_MIN)
-    mouth.setDataRate(NRF24.BR_2MBPS)
-    mouth.setPALevel(NRF24.PA_MIN)
+    ears.setDataRate(BR)
+    ears.setPALevel(PA)
+    mouth.setDataRate(BR)
+    mouth.setPALevel(PA)
 
     ears.setAutoAck(False)
     ears.enableDynamicPayloads()  # ears.setPayloadSize(32) for setting a fixed payload
