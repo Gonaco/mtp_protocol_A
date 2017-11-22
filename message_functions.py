@@ -153,8 +153,8 @@ class ACK(Packet):
 
     # Class Constructor
     
-    def __init__(self, ID): # TO Change No Payload and Test if it sends with no payload
-        header = Header(ACK_TYPE,ID,0)
+    def __init__(self, ID, end): # TO Change No Payload and Test if it sends with no payload
+        header = Header(ACK_TYPE,ID,end)
         Packet.__init__(self,header,'')
 
 class NACK(Packet):
@@ -188,8 +188,8 @@ def sendSYNC(ID, radio):
     sync = SYNC(ID)
     radio.write(sync.__str__())
 
-def sendACK(ID, radio):
-    ack = ACK(ID)
+def sendACK(ID, end, radio):
+    ack = ACK(ID, end)
     radio.write(ack.__str__())
 
 def sendNACK(ID, lost_IDs_array, radio):
@@ -273,6 +273,11 @@ class DataFrame:
         self.pos = int(head[0][3:],2)
 
         self.payload = mssg_string[1:]
+
+        if self.typ != DATA_FRAME_TYPE:
+            return False
+        
+        return True
         
     # def send(self,transceiver):
     #     transceiver.write(self.__str__())
@@ -335,4 +340,9 @@ class ControlFrame:
         self.ack2 = int(head[0][6],2)
         self.ack3 = int(head[0][7],2)
         
-        self.payload = mssg_string[1:]
+        # self.payload = mssg_string[1:]
+
+        if self.typ != CONTROL_FRAME_TYPE:
+            return False
+
+        return True

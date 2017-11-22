@@ -178,6 +178,8 @@ def transmit(radio, radio2, archivo, pipe):
                     radio2.read(rcv_buffer, radio2.getDynamicPayloadSize())
                     rcv = m.Packet()
                     rcv.mssg2Pckt(rcv_buffer)
+                    print('I received a packet of type %s' % rcv.getTyp())
+                    print('The ID of the packet is %s' % rcv.getID())
                     # wether I finished or not I want to look for nacks
                     if rcv.getTyp() == 2:
                         nack_list = process_nacks(rcv, nack_list)
@@ -201,10 +203,10 @@ def transmit(radio, radio2, archivo, pipe):
                                 radio.write(frame.__str__())
                                 nack_list.pop(0)
                     print('I sent last so I will check for ack')
-                    time.sleep(2)
+                    #time.sleep(2)
                     # if I don't have nacks, I only care if I finished
                     # if rx send ack we stop running, if we didn't finish, just write next window
-                    if rcv.getTyp() == 1 and rcv.getID() == last_window:
+                    if rcv.getTyp() == 1 and rcv.getEnd() == 1:
                         print('there is ack')
                         run = False
             else:
@@ -246,7 +248,7 @@ def end_connection(radio, radio2, pipe, last_id):
     while not done:
         print('sending ack')
         num = 0
-        m.sendACK(0, radio)
+        m.sendACK(0, 0, radio)
         radio2.startListening()
         while not radio2.available(pipe) and num < 400:
             time.sleep(1 / 1000.0)
@@ -283,7 +285,7 @@ def build_list(archivo, paysize):
     frame_list.append(frame)
     print('I created the list, this is the payload of the first frame')
     print(frame_list[0].getPayload())
-    time.sleep(2)
+    #time.sleep(2)
     return frame_list
 
 
@@ -305,7 +307,7 @@ def send_window(frame_list, last_sent, window_size, radio, finished):
             finished = True
             #This is to leave time for the rx to answer
             time.sleep(0.4)
-    time.sleep(2)
+    #time.sleep(2)
     return last_sent, finished
 
 def process_nacks(rcv, nack_list):
@@ -314,7 +316,7 @@ def process_nacks(rcv, nack_list):
     # read payload and store IDs in list
     nack_string = rcv.getPayload()
     print('this is the string of nacks we receive %s' % nack_string)
-    time.sleep(2)
+    #time.sleep(2)
     temp_nack_list = re.split(',', nack_string)
     temp_nack_list.pop(-1)
     nack_list = nack_list + temp_nack_list

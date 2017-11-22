@@ -60,13 +60,13 @@ def splitData(archivo, chunk_len):
     print("\n-splitData-\n")  ##Debbuging issues.
 
     file_len = len(archivo.read())  # Size of the file in bytes
-    print('Size of the file in bytes: ' + file_len)
+    print('Size of the file in bytes: %s' % file_len)
     ##chunk_len = 30  # Size of the chunk in bytes
-    print('Size of the chunk in bytes: ' + chunk_len)
+    print('Size of the chunk in bytes: %s' % chunk_len)
 
     aux = float(file_len)/chunk_len
     packets = math.ceil(aux)
-    print('Number of packets: ' + packets)
+    print('Number of packets: %s' % packets)
 
     lista = []
     for i in range(0, int(packets)):
