@@ -67,9 +67,9 @@ def setup():
     ears.setChannel(0x65)
 
     ears.setDataRate(NRF24.BR_2MBPS)
-    ears.setPALevel(NRF24.PA_MAX)
+    ears.setPALevel(NRF24.PA_MIN)
     mouth.setDataRate(NRF24.BR_2MBPS)
-    mouth.setPALevel(NRF24.PA_MAX)
+    mouth.setPALevel(NRF24.PA_MIN)
 
     mouth.setAutoAck(False)
     mouth.enableDynamicPayloads()  # mouth.setPayloadSize(32) for setting a fixed payload
