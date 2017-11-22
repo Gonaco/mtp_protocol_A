@@ -296,7 +296,7 @@ def passive(ears,mouth):
             rcv.ack2 = 0
             rcv.ack3 = 0
 
-        time.sleep(random.uniform(0, T_ACK))
+        time.sleep(random.uniform(0, TACK))
         mouth.write(rcv.__str__()) #Send the ACK
 
 
