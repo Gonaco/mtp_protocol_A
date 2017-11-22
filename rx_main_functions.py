@@ -160,6 +160,7 @@ def receive(radio, radio2, pipe, frame_received):
                 else:
                     count = 0
                     num_frames_lost = len(frames2resend_id)
+                    print('estoy en last frame y tengo que enviar nack')
                     m.sendNACK(window_id, frames2resend_id, radio2)
 
             if rcv.getEnd() == 1 and not last_frame:
@@ -175,6 +176,7 @@ def receive(radio, radio2, pipe, frame_received):
                 else:
                     count = 0
                     num_frames_lost = len(frames2resend_id)
+                    print('acabo de pasar a last frame y tengo que enviar nack')
                     m.sendNACK(window_id, frames2resend_id, radio2)
 
         else:
