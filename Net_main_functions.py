@@ -73,10 +73,10 @@ def setup():
     mouth.setPayloadSize(32)    # SURE?
     mouth.setChannel(RF_CH)
 
-    ears.setDataRate(NRF24.BR_250KBPS)
-    ears.setPALevel(NRF24.PA_MIN)
-    mouth.setDataRate(NRF24.BR_250KBPS)
-    mouth.setPALevel(NRF24.PA_MIN)
+    ears.setDataRate(BRATE)
+    ears.setPALevel(PWR_LVL)
+    mouth.setDataRate(BRATE)
+    mouth.setPALevel(PWR_LVL)
 
     ears.setAutoAck(False)
     ears.enableDynamicPayloads()  # ears.setPayloadSize(32) for setting a fixed payload
@@ -276,7 +276,7 @@ def passive():
             print("Team B is active")
             if(rcv.ack1 == 1): #B is acknowleding our data frame
                 ACKED[m.B_TEAM] += 1
-            rcv.ack1 = 1
+            rcv.ack1 = 0
             rcv.ack2 = 0
             rcv.ack3 = 0
 
@@ -284,7 +284,7 @@ def passive():
             print("Team C is active")
             if (rcv.ack1 == 1):  # C is acknowleding our data frame
                 ACKED[m.C_TEAM] += 1
-            rcv.ack1 = 1
+            rcv.ack1 = 0
             rcv.ack2 = 0
             rcv.ack3 = 0
 
@@ -292,7 +292,7 @@ def passive():
             print("Team D is active")
             if(rcv.ack1 == 1): #D is acknowleding our data frame
                 ACKED[m.D_TEAM] += 1
-            rcv.ack1 = 1
+            rcv.ack1 = 0
             rcv.ack2 = 0
             rcv.ack3 = 0
 
