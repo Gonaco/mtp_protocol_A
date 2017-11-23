@@ -140,7 +140,7 @@ def network_mode(ears, mouth, files):
     texts = {m.B_TEAM : files[0], m.C_TEAM: files[1], m.D_TEAM: files[2]}
 
     for team in texts:
-        split_str = pm.splitData(files[team], PAYLOAD_LENGTH)
+        split_str = pm.splitData(texts[team], PAYLOAD_LENGTH)
         texts[team] = split_str
 
     while (time.time() < START_TIME + TMAX) and (F_CMPLTD != 6):
