@@ -12,12 +12,19 @@ timer = 1
 
 while True:
     
-    nw.active(ears,mouth)
-    if (nw.listen(ears, timer)):
-        print ("ACK received")
+    # nw.active(ears,mouth)
+    # if (nw.listen(ears, timer)):
+    #     print ("ACK received")
 
-    else:
-        print("Timeout")
+    # else:
+    #     print("Timeout")
+
+    if ears.available(nw.EARS_PIPE):
+
+        data = []
+
+        ears.read(data, ears.getDynamicPayloadSize())
+        print(str(data))
 
 # f = open("tx_file.txt", 'r')
 
