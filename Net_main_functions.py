@@ -71,7 +71,7 @@ def setup():
     ears.setChannel(RF_CH)
     mouth.setRetries(15, 15)
     mouth.setPayloadSize(32)    # SURE?
-    mouth.setChannel(RF_CH)
+    mouth.setChannel(0x00)
 
     ears.setDataRate(BRATE)
     ears.setPALevel(PWR_LVL)
