@@ -15,7 +15,7 @@ def rebuildData(p_id, string, last_w_id, storedFrames, team):
     filename = "RXfile_" + team
     if (p_id == last_w_id + 1):  #The received packet is the one we should write.
 
-        writeFile(string, filename)  #We write 'string' in 'filename'
+        writeFile(string, filename, p_id)  #We write 'string' in 'filename'
         last_w_id = last_w_id + 1  #Update the last writen packet ID
 
         p_id = p_id + 1
@@ -36,22 +36,25 @@ def rebuildData(p_id, string, last_w_id, storedFrames, team):
 
 
 ## This function appends a given string to a file saved as filename (without including the .txt)
-def writeFile(chunk, filename):
+def writeFile(chunk, filename, p_id):
     print('\n-writeFile-\n')
     ##finalFILE = open(filename + ".txt", 'a+')
     ##finalFILE.write(string)
     ##finalFILE.close()
+    
+    if p_id != 0:
+        finalFILE = open(filename + '.txt', 'a+')
+        if chunk.__contains__('\n'):
+            aux = chunk.split('\n')
+            trozos = len(aux)
 
-    finalFILE = open(filename + '.txt', 'a+')
-
-    if chunk.__contains__('\n'):
-        aux = chunk.split('\n')
-        trozos = len(aux)
-
-        for j in range(0, trozos-1):
-            finalFILE.write(aux[j] + '\n')
-        finalFILE.write(aux[-1])
-    else:
+            for j in range(0, trozos-1):
+                finalFILE.write(aux[j] + '\n')
+            finalFILE.write(aux[-1])
+        else:
+            finalFILE.write(chunk)
+     else:
+        finalFILE = open(filename + '.txt', 'w')
         finalFILE.write(chunk)
 
 
