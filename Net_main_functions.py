@@ -29,7 +29,7 @@ HDR_SIZE = 1                                # Header size inside payload frame
 
 # TRANSCEIVER CONSTANTS
 RF_CH = 0x64                        # UL & DL channels
-PWR_LVL = NRF24.PA_HIGH                     # Transceiver output (HIGH = -6 dBm + 20 dB)
+PWR_LVL = NRF24.PA_MIN                     # Transceiver output (HIGH = -6 dBm + 20 dB)
 BRATE = NRF24.BR_250KBPS                    # 250 kbps bit rate
 
 SEND_ACK1 = 0
@@ -298,7 +298,7 @@ def passive(ears,mouth):
 
         time.sleep(random.uniform(0, TACK))
         mouth.write(rcv.__str__()) #Send the ACK
-
+        print("ACK sent")
 
         while time.time() < (START_TIME + TDATA_MAX):
             if ears.available(EARS_PIPE):
