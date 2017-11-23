@@ -63,8 +63,8 @@ def setup():
 
     ears = NRF24(GPIO, spidev.SpiDev())  # EARS
     mouth = NRF24(GPIO, spidev.SpiDev())  # MOUTH
-    ears.begin(1, 27)  # Set spi-cs pin1, and rf24-CE pin 17
-    mouth.begin(0, 17)  # Set spi-cs pin0, and rf24-CE pin 27
+    ears.begin(1, 17)  # Set spi-cs pin1, and rf24-CE pin 17
+    mouth.begin(0, 27)  # Set spi-cs pin0, and rf24-CE pin 27
 
     ears.setRetries(15, 15)
     ears.setPayloadSize(32)     # SURE?
