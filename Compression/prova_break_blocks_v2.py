@@ -17,14 +17,14 @@ def toc():
     else:
         print( "Toc: start time not set")
 
+filename = "input - copia.txt"
 #filename = "SampleTextFile_1000kb.txt"
 #filename = "input-short.txt"
-filename = "input16.txt"
+#filename = "input16.txt"
 filename_rx = "received.txt"
 
-
 tic()
-Compi_tx = compression.DifferentialCompressor()
+Compi_tx = compression.LZWCompressor()
 Compi_tx.loadText(filename)
 Compi_tx.compress()
 compressed_data = Compi_tx.compressed_text
@@ -32,10 +32,10 @@ toc()
 
 
 tic()
-Compi_rx = compression.DifferentialCompressor()
+Compi_rx = compression.LZWCompressor()
 Compi_rx.compressed_text = compressed_data
 Compi_rx.uncompress()
 Compi_rx.writeDisk(filename_rx)
 print('Checking file:')
-print(Compi_rx.checkCompression(filename, filename_rx))
+#print(Compi_rx.checkCompression(filename, filename_rx))
 toc()
