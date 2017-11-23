@@ -6,7 +6,8 @@ import zlib
 import sys
 import base64
 import abc
-
+import numpy as np
+import io
 
 # Abstract class
 class Compressor:
@@ -28,48 +29,107 @@ class Compressor:
         return
 
     @abc.abstractmethod
-    def uncompress(self, filename_rx):
+    def uncompress(self):
         """Uncompress received data stream"""
         return
 
-    @abc.abstractmethod
     def loadText(self, filename):
-        """Load text file"""
+        file = io.open(filename, mode="r", encoding="utf-16")
+        self.uncompressed_text = file.read()
+        file.close()
         return
 
-    @abc.abstractmethod
-    def loadCompressedData(self, received_data):
-        """"Load received data"""
+
+    def writeDisk(self, filename):
+        file = io.open(filename, mode="w", encoding="utf-16")
+        file.write(self.uncompressed_text)
+        file.close()
         return
 
-    @abc.abstractmethod
-    def getCompressedData(self):
-        """Get compresed data"""
-        return
+    def checkCompression(self,filename1,filename2):
+        file = io.open(filename1, mode="r", encoding="utf-16")
+        text1 = file.read()
+        file.close()
+        file = io.open(filename2, mode="r", encoding="utf-16")
+        text2 = file.read()
+        file.close()
 
-    @abc.abstractmethod
-    def check(self, input_file):
-        """Check if received text is correct"""
-        return
+        return text1==text2
 
 
 # Inheriting from the above abstract class
 class DifferentialCompressor(Compressor):
-
     uncompressed_text = None
     compressed_text = None
 
     def compress(self):
-        # TODO
+        i = 0
+        ii = 0
+        num_comp = 0
+        lines = self.uncompressed_text.split('\n')
+        lines = lines[0:-1]
+        line = lines[0]
+        comps_res = np.array([], dtype=np.bool).reshape(0, len(line))
+        for line in lines:
+            char_line = np.array(list(line))
+            i = i + 1
+            ii = 0
+            for line2 in lines:
+                ii = ii + 1
+                if (ii >= i):  # pendent a optimitzar per fer tots amb tots
+                    char_line2 = np.array(list(line2))
+                    comp_res = char_line == char_line2
+                    comps_res = np.vstack((comps_res, comp_res))
+                    print(line2)
+                    num_comp = num_comp + 1
+        print(num_comp)
+        results = np.mean(comps_res, axis=0)
+        where = np.where(results < 0.3)[0]
+        where_str = where.astype(np.str)
+        # enviar numericament millor?
+        # optimitzar string?
+        str_indices = ''
+        for str in where_str:
+            str_indices = str_indices + str + u"¬"
+        str_indices = str_indices[0:-1]
+        str_send = ''
+
+        for line in lines:
+            char_line = np.array(list(line))
+            char_line_send = char_line[where]
+            for elem in char_line_send:
+                str_send = str_send + elem
+            str_send = str_send + u'¬'
+        to_tx = lines[0] + '\n&' + str_indices + '&' + str_send
+        to_tx = to_tx[0:-1]
+        self.compressed_text = to_tx
+
         return self.compressed_text
 
-    def uncompress(self, filename_rx):
-        # TODO
-        return
+    def uncompress(self):
+        lines = self.compressed_text.split('&')
+        original = lines[0]
+        positions = lines[1].split(u'¬')
+        lines = lines[2].split(u'¬')
+        print("DECOMPRESSING!!!!")
+        print(original)
+        text_f = ''
+        for line in lines:
+            line = list(line)
+            next_line = original
+            next_line = list(next_line)
+            i = 0
+            for pos in positions:
+                intpos = int(pos)
+                next_line[intpos] = line[i]
+                i = i + 1
+            next_line = "".join(next_line)
+            print(next_line)
+            text_f = text_f + (next_line)
+        print("Decompression ended!")
+        self.uncompressed_text = text_f
+        return self.uncompressed_text
 
-    def loadText(self, filename):
-        # TODO
-        return
 
     def loadCompressedData(self, received_data):
         self.compressed_text = received_data
@@ -79,8 +139,7 @@ class DifferentialCompressor(Compressor):
         return self.compressed_text
 
     def check(self, input_file):
-        # TODO
-        return
+        return self.uncompressed_text==self.compressed_text
 
 
 
@@ -147,25 +206,6 @@ class LZWCompressor(Compressor):
 
         received_file.close()
         return
-
-    def loadText(self, filename):
-        file = open(filename, 'r')
-        self.uncompressed_text = file.read()
-        file.close()
-        return
-
-    def loadCompressedData(self, received_data):
-        self.compressed_text = received_data
-        return
-
-    def getCompressedData(self):
-        return self.compressed_text
-
-    def check(self, input_file):
-        # TODO
-        return
-
-
 
 
 
