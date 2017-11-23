@@ -78,6 +78,8 @@ def receive(radio, radio2, pipe, frame_received):
     review = False
     run = True
     timer = 0
+    timer3 = 0
+    timer4 = 0
     count = 0
     final_id = 0
     num_frames_lost = 0
@@ -131,7 +133,13 @@ def receive(radio, radio2, pipe, frame_received):
                 frames2resend_id = find_lost_frames(original_frames_id)
                 if len(frames2resend_id) == 0:  # All frames are received
                     print("The entire message is received")
-                    m.sendACK(window_id, 1, radio2)
+                    print ("the final original_frame_id is %s" % original_frames_id)
+                    for j in range(0, 50, 1):
+                        m.sendACK(window_id, 1, radio2)
+                        while timer3 < 400:
+                            time.sleep(1 / 1000.0)
+                            timer3 = timer3 + 1
+                        timer3 = 0
                     run = False
                 else:
                     count = 0
@@ -149,7 +157,13 @@ def receive(radio, radio2, pipe, frame_received):
                 frames2resend_id = find_lost_frames(original_frames_id)
                 if len(frames2resend_id) == 0:  # All frames are received
                     print("The entire message is received")
-                    m.sendACK(window_id, 1, radio2)
+                    print ("the final original_frame_id is %s" % original_frames_id)
+                    for j in range(0, 50, 1):
+                        m.sendACK(window_id, 1, radio2)
+                        while timer4 < 400:
+                            time.sleep(1 / 1000.0)
+                            timer4 = timer4 + 1
+                        timer4 = 0
                     run = False
                 else:
                     count = 0
