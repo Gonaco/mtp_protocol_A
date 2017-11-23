@@ -29,7 +29,7 @@ HDR_SIZE = 1                                # Header size inside payload frame
 
 # TRANSCEIVER CONSTANTS
 RF_CH = 0x64                        # UL & DL channels
-PWR_LVL = NRF24.PA_HIGH                     # Transceiver output (HIGH = -6 dBm + 20 dB)
+PWR_LVL = NRF24.PA_MIN                     # Transceiver output (HIGH = -6 dBm + 20 dB)
 BRATE = NRF24.BR_250KBPS                    # 250 kbps bit rate
 
 SEND_ACK1 = 0
@@ -40,7 +40,7 @@ ACKED = {m.B_TEAM : 0, m.C_TEAM : 0, m.D_TEAM : 0}
 
 
 PIPES = [[0xe7, 0xe7, 0xe7, 0xe7, 0xe7], [0xc2, 0xc2, 0xc2, 0xc2, 0xc2]]  # addresses for TX/RX channels
-EARS_PIPE = [1]
+EARS_PIPE = [0]
 
 ACTIVE_TEAM = m.A_TEAM
 
@@ -80,13 +80,13 @@ def setup():
 
     ears.setAutoAck(False)
     ears.enableDynamicPayloads()  # ears.setPayloadSize(32) for setting a fixed payload
-    ears.enableAckPayload()
+    # ears.enableAckPayload()
     mouth.setAutoAck(False)
     mouth.enableDynamicPayloads()
-    mouth.enableAckPayload()
+    # mouth.enableAckPayload()
 
     mouth.openWritingPipe(PIPES[1])
-    ears.openReadingPipe(1, PIPES[1])
+    ears.openReadingPipe(1, PIPES[0])
 
     if not mouth.isPVariant():
         # If radio configures correctly, we confirmed a "plus" (ie "variant") nrf24l01+
@@ -140,7 +140,7 @@ def network_mode(ears, mouth, files):
     texts = {m.B_TEAM : files[0], m.C_TEAM: files[1], m.D_TEAM: files[2]}
 
     for team in texts:
-        split_str = pm.splitData(files.get(team), PAYLOAD_LENGTH)
+        split_str = pm.splitData(texts[team], PAYLOAD_LENGTH)
         texts[team] = split_str
 
     while (time.time() < START_TIME + TMAX) and (F_CMPLTD != 6):
@@ -173,26 +173,8 @@ def network_mode(ears, mouth, files):
         
 
 
-#         while (TX_CMPLT < 3 and RX_CMPLT < 3 and time.time() < (start_time + TMAX)):
-#             if (not radio.available):
-#                 TX_CMPLT = active(f)
-#                 # WAIT_CONTROL
-#                 listen(radio,TCTRLMAX) #We have to implement a Tmax to wait until the next team send us its Control Frame
-#                 if(radio.available):
-#                     ack_B,ack_C,ack_D, writen_B, writen_C, writen_D = passive()
-#                     if(TX_CMPLT == 3 and ack_B == id_last_B  and ack_C == id_last_C and ack_D == id_last_D and writen_B ==  and writen_C ==  and writen_D == ):
-#                         print("\n-THE END-\n")
-#                         return 0 #If we have send all the files, received confirmation for all of them and writen down everything...We are done!
-#                 else:
-#                     listen(radio,TCTRL)
-#                     if (radio.available):
-#                         passive()
-#                     #The else case is that the timer run out and we can send our control frame again, so start the while again
-#             else:
-#                 passive()
-
-
-def active(t,ears,mouth):
+# def active(t,ears,mouth):
+def active(ears,mouth):
     # In this function, our furby has won the medium so it will send the first control frame.
     # Then, it will wait for the three teams to send as back their corresponding control fram acknowleding us.
     # If it has received 2 or more ACKs it wil start sending Data Frames
@@ -204,7 +186,8 @@ def active(t,ears,mouth):
     # completed_files = 0
     data_id = 0
     print("Sending our Control Frame\n")
-    control = m.ControlFrame(ack1=SEND_ACK1, ack2=SEND_ACK2, ack3=SEND_ACK3)  # FILL WITH ACK FOR THE RX PKTS
+    # control = m.ControlFrame(m.B_TEAM, SEND_ACK1, SEND_ACK2, SEND_ACK3)  # FILL WITH ACK FOR THE RX PKTS
+    control = m.ControlFrame()
     mouth.write(control.__str__())
 
     # Reset the ACKS
@@ -297,10 +280,13 @@ def passive(ears,mouth):
             rcv.ack3 = 0
 
         time.sleep(random.uniform(0, TACK))
-        mouth.write(rcv.__str__()) #Send the ACK
+        # mouth.write(rcv.__str__()) #Send the ACK
 
+        mouth.write("Christian putamo")
+        print("ACK sent")
 
         while time.time() < (START_TIME + TDATA_MAX):
+            print("Waiting for Data")
             if ears.available(EARS_PIPE):
                 receivingData()
                 
@@ -324,6 +310,7 @@ def passive(ears,mouth):
 def receivingData():
     
     # We are gonna write down what we have received
+    print("\n-Receiving Data-\n")
     
     recv_buffer = []
     ears.read(recv_buffer, ears.getDynamicPayloadSize())  # CHECK IT
