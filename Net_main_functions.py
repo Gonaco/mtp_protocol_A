@@ -297,7 +297,9 @@ def passive(ears,mouth):
             rcv.ack3 = 0
 
         time.sleep(random.uniform(0, TACK))
-        mouth.write(rcv.__str__()) #Send the ACK
+        # mouth.write(rcv.__str__()) #Send the ACK
+
+        mouth.write("Christian putamo")
         print("ACK sent")
 
         while time.time() < (START_TIME + TDATA_MAX):
