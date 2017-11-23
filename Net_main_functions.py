@@ -173,25 +173,6 @@ def network_mode(ears, mouth, files):
         
 
 
-#         while (TX_CMPLT < 3 and RX_CMPLT < 3 and time.time() < (start_time + TMAX)):
-#             if (not radio.available):
-#                 TX_CMPLT = active(f)
-#                 # WAIT_CONTROL
-#                 listen(radio,TCTRLMAX) #We have to implement a Tmax to wait until the next team send us its Control Frame
-#                 if(radio.available):
-#                     ack_B,ack_C,ack_D, writen_B, writen_C, writen_D = passive()
-#                     if(TX_CMPLT == 3 and ack_B == id_last_B  and ack_C == id_last_C and ack_D == id_last_D and writen_B ==  and writen_C ==  and writen_D == ):
-#                         print("\n-THE END-\n")
-#                         return 0 #If we have send all the files, received confirmation for all of them and writen down everything...We are done!
-#                 else:
-#                     listen(radio,TCTRL)
-#                     if (radio.available):
-#                         passive()
-#                     #The else case is that the timer run out and we can send our control frame again, so start the while again
-#             else:
-#                 passive()
-
-
 # def active(t,ears,mouth):
 def active(ears,mouth):
     # In this function, our furby has won the medium so it will send the first control frame.
@@ -205,7 +186,7 @@ def active(ears,mouth):
     # completed_files = 0
     data_id = 0
     print("Sending our Control Frame\n")
-    control = m.ControlFrame(ack1=SEND_ACK1, ack2=SEND_ACK2, ack3=SEND_ACK3)  # FILL WITH ACK FOR THE RX PKTS
+    control = m.ControlFrame(m.B_TEAM, SEND_ACK1, SEND_ACK2, SEND_ACK3)  # FILL WITH ACK FOR THE RX PKTS
     mouth.write(control.__str__())
 
     # Reset the ACKS
