@@ -13,16 +13,13 @@ timer = 1
 
 while True:
     
-    # nw.active(ears,mouth)
-    # if (nw.listen(ears, timer)):
-    #     print ("ACK received")
+    nw.active(ears,mouth)
+    time.sleep(0.001)
+    if (nw.listen(ears, timer)):
+        print ("ACK received")
 
-    # else:
-    #     print("Timeout")
-
-    
-    mouth.write("Christian Putamo")
-    time.sleep(1)
+    else:
+        print("Timeout")
     
 
 # f = open("tx_file.txt", 'r')
