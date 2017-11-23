@@ -21,7 +21,7 @@ def rebuildData(p_id, string, last_w_id, storedFrames, team):
         p_id = p_id + 1
         while storedFrames.has_key(str(p_id) + team):  #We check if the packet p_id+1 and the following consecutive ones are in the dictionary.
             string = storedFrames[str(p_id) + team]  #We extract the 'string' number 'p_id'
-            writeFile(string, filename)  #We write 'string' in 'filename'
+            writeFile(string, filename, p_id)  #We write 'string' in 'filename'
             del storedFrames[str(p_id) + team]  #Remove from the dictionary the string we have just writen
             last_w_id = last_w_id + 1  #Update the last writen packet ID
             p_id = p_id + 1  #Increase the packet ID to see in the next iteration if it is in diccionary
