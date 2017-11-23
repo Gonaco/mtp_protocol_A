@@ -1,4 +1,5 @@
 import Net_main_functions as nw
+import time
 
 ears, mouth = nw.setup()
 
@@ -19,12 +20,10 @@ while True:
     # else:
     #     print("Timeout")
 
-    if ears.available(nw.EARS_PIPE):
-
-        data = []
-
-        ears.read(data, ears.getDynamicPayloadSize())
-        print(str(data))
+    
+    mouth.write("Christian Putamo")
+    time.sleep(1)
+    
 
 # f = open("tx_file.txt", 'r')
 
