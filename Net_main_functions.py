@@ -80,10 +80,10 @@ def setup():
 
     ears.setAutoAck(False)
     ears.enableDynamicPayloads()  # ears.setPayloadSize(32) for setting a fixed payload
-    ears.enableAckPayload()
+    # ears.enableAckPayload()
     mouth.setAutoAck(False)
     mouth.enableDynamicPayloads()
-    mouth.enableAckPayload()
+    # mouth.enableAckPayload()
 
     mouth.openWritingPipe(PIPES[1])
     ears.openReadingPipe(1, PIPES[0])
