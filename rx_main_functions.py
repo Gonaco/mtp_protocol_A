@@ -114,7 +114,7 @@ def receive(radio, radio2, pipe, frame_received):
             storedFrames, last_w_id = pm.rebuildData(rcv.getID(), rcv.getPayload(), last_w_id, storedFrames, team)
 
             # In each iteration set to -1 the value of this array located in the received frame ID position
-            original_frames_id.insert(rcv.getID(), -1)
+            original_frames_id[rcv.getID()] = -1
 
             if count % window_size == 0:
                 frames2resend_id = []
@@ -175,9 +175,8 @@ def receive(radio, radio2, pipe, frame_received):
             for i in range(0, (2 * window_size), 1):
                 original_frames_id.append(i)  # Generate the first 2 original frames ID windows
             print ("the frame is %s" % frame_received.getID())
-            storedFrames, last_w_id = pm.rebuildData(frame_received.getID(), frame_received.getPayload(),
-                                                     last_w_id, storedFrames, team)
-            original_frames_id.insert(frame_received.getID(), -1)
+            storedFrames, last_w_id = pm.rebuildData(frame_received.getID(), frame_received.getPayload(), last_w_id, storedFrames, team)
+            original_frames_id[frame_received.getID()] = -1
             first_frame = False
 
     return final_id
