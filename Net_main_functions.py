@@ -40,7 +40,7 @@ ACKED = {m.B_TEAM : 0, m.C_TEAM : 0, m.D_TEAM : 0}
 
 
 PIPES = [[0xe7, 0xe7, 0xe7, 0xe7, 0xe7], [0xc2, 0xc2, 0xc2, 0xc2, 0xc2]]  # addresses for TX/RX channels
-EARS_PIPE = [1]
+EARS_PIPE = [0]
 
 ACTIVE_TEAM = m.A_TEAM
 
@@ -86,7 +86,7 @@ def setup():
     mouth.enableAckPayload()
 
     mouth.openWritingPipe(PIPES[1])
-    ears.openReadingPipe(1, PIPES[1])
+    ears.openReadingPipe(1, PIPES[0])
 
     if not mouth.isPVariant():
         # If radio configures correctly, we confirmed a "plus" (ie "variant") nrf24l01+
