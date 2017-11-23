@@ -59,7 +59,7 @@ def setup():
 
     print("\n-setup-\n")
 
-    GPIO.setup([0,1,17,27], GPIO.OUT, initial=GPIO.LOW)
+    GPIO.setup([0,1,17,27], GPIO.OUT, initial=1)
 
     ears = NRF24(GPIO, spidev.SpiDev())  # EARS
     mouth = NRF24(GPIO, spidev.SpiDev())  # MOUTH
