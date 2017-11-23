@@ -59,7 +59,7 @@ def setup():
 
     print("\n-setup-\n")
 
-    GPIO.setup([0,1,17,27], GPIO.OUT, initial=1)
+    GPIO.setup([0,1,17,27], GPIO.OUT, initial=GPIO.LOW)
 
     ears = NRF24(GPIO, spidev.SpiDev())  # EARS
     mouth = NRF24(GPIO, spidev.SpiDev())  # MOUTH
@@ -324,6 +324,7 @@ def passive(ears,mouth):
 def receivingData():
     
     # We are gonna write down what we have received
+    print("\n-Receiving Data-\n")
     
     recv_buffer = []
     ears.read(recv_buffer, ears.getDynamicPayloadSize())  # CHECK IT
