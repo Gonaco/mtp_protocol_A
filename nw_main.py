@@ -7,6 +7,7 @@ timer = 5
 while True:
     if (nw.listen(ears, timer)):
         nw.passive(ears,mouth)
+        exit()
     else:
         print("Timeout")
 

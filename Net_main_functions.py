@@ -301,7 +301,7 @@ def passive(ears,mouth):
         print("ACK sent")
 
         while time.time() < (START_TIME + TDATA_MAX):
-            exit()
+            print("Waiting for Data")
             if ears.available(EARS_PIPE):
                 receivingData()
                 
