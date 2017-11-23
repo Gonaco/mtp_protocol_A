@@ -46,12 +46,12 @@ class Compressor:
         file.close()
         return
 
-    def check(self,filename1,filename2):
+    def checkCompression(self,filename1,filename2):
         file = io.open(filename1, mode="r", encoding="utf-16")
         text1 = file.read()
         file.close()
-        text2 = io.open(filename2, mode="r", encoding="utf-16")
-        file.write(self.uncompressed_text)
+        file = io.open(filename2, mode="r", encoding="utf-16")
+        text2 = file.read()
         file.close()
 
         return text1==text2

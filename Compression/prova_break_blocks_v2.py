@@ -37,5 +37,5 @@ Compi_rx.compressed_text = compressed_data
 Compi_rx.uncompress()
 Compi_rx.writeDisk(filename_rx)
 print('Checking file:')
-Compi_rx.check(filename, filename_rx)
+print(Compi_rx.checkCompression(filename, filename_rx))
 toc()
