@@ -186,7 +186,8 @@ def active(ears,mouth):
     # completed_files = 0
     data_id = 0
     print("Sending our Control Frame\n")
-    control = m.ControlFrame(m.B_TEAM, SEND_ACK1, SEND_ACK2, SEND_ACK3)  # FILL WITH ACK FOR THE RX PKTS
+    # control = m.ControlFrame(m.B_TEAM, SEND_ACK1, SEND_ACK2, SEND_ACK3)  # FILL WITH ACK FOR THE RX PKTS
+    control = m.ControlFrame()
     mouth.write(control.__str__())
 
     # Reset the ACKS
