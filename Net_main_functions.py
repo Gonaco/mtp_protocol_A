@@ -20,7 +20,8 @@ from threading import Thread
 PAYLOAD_LENGTH = 31
 HEADER_LENGTH = 1
 TDATA_MAX = TACK_MAX = 0.2                         # Data and ACK frames timeout (in seconds)
-TDATA = TACK = 0.0005                                     # Waiting time in order to transmit
+# TDATA = TACK = 0.0005                                     # Waiting time in order to transmit
+TDATA = TACK = 0.005
 TCTRL = TINIT = 0                           # Control frame and initialization random timeouts (in seconds)
 TMAX = 120                                  # Max time for network mode (in seconds)
 START_TIME = 0
