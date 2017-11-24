@@ -129,12 +129,6 @@ def receive(radio, radio2, pipe, frame_received):
                 frames2resend_id = find_lost_frames(original_frames_id[last_w_id:])
                 if len(frames2resend_id) == 0:  # All frames are received
                     print("The entire message is received")
-                    '''print ("original_frame_id %s" % original_frames_id)
-                    print ("frames2resend_id %s" % frames2resend_id)
-                    print ("last_w_id %s" % last_w_id)
-                    print ("final_id %s" % final_id)
-                    print ("len(original_frame_id) %s" % len(original_frames_id))
-                    time.sleep(5)'''
                     for j in range(0, 10, 1):
                         m.sendACK(window_id, 1, radio2)
                         while timer3 < 400:
@@ -157,12 +151,6 @@ def receive(radio, radio2, pipe, frame_received):
                 frames2resend_id = find_lost_frames(original_frames_id[last_w_id:])
                 if len(frames2resend_id) == 0:  # All frames are received
                     print("The entire message is received the firs time")
-                    '''print ("original_frame_id %s" % original_frames_id)
-                    print ("frames2resend_id %s" % frames2resend_id)
-                    print ("last_w_id %s" % last_w_id)
-                    print ("final_id %s" % final_id)
-                    print ("len(original_frame_id) %s" % len(original_frames_id))
-                    time.sleep(5)'''
                     for j in range(0, 10, 1):
                         m.sendACK(window_id, 1, radio2)
                         while timer4 < 400:
@@ -173,7 +161,6 @@ def receive(radio, radio2, pipe, frame_received):
                 else:
                     count = 0
                     num_frames_lost = len(frames2resend_id)
-                    print('acabo de pasar a last frame y tengo que enviar nack')
                     m.sendNACK(window_id, frames2resend_id, radio2)
 
         else:
