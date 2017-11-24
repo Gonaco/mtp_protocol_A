@@ -30,7 +30,7 @@ PLOAD_SIZE = 32                             # Payload size corresponding to data
 HDR_SIZE = 1                                # Header size inside payload frame
 
 # TRANSCEIVER CONSTANTS
-RF_CH = 0x64                        # UL & DL channels
+RF_CH = 0x32                        # UL & DL channels
 PWR_LVL = NRF24.PA_MIN                     # Transceiver output (HIGH = -6 dBm + 20 dB)
 BRATE = NRF24.BR_250KBPS                    # 250 kbps bit rate
 
