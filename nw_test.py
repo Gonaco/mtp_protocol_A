@@ -20,7 +20,6 @@ if not ears.isPVariant():
     ears.printDetails()
     # (or we could always just print details anyway, even on good setup, for debugging)
     print ("NRF24L01+ not found.")
-    return
 ears.printDetails()
 ears.startListening()
 
