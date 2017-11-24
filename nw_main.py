@@ -1,7 +1,29 @@
 import Net_main_functions as nw
 import time
 
-ears, mouth = nw.setup()
+# ears, mouth = nw.setup()
+
+GPIO.setup([0,1,17,27], GPIO.OUT, initial=GPIO.LOW)
+mouth = NRF24(GPIO, spidev.SpiDev())  # MOUTH
+mouth.begin(0, 17)  # Set spi-cs pin0, and rf24-CE pin 27
+mouth.setRetries(15, 15)
+mouth.setPayloadSize(32)    # SURE?
+mouth.setChannel(RF_CH)
+mouth.setDataRate(BRATE)
+mouth.setPALevel(PWR_LVL)
+mouth.setAutoAck(False)
+mouth.enableDynamicPayloads()
+mouth.openWritingPipe(PIPES[0])
+if not mouth.isPVariant():
+    # If radio configures correctly, we confirmed a "plus" (ie "variant") nrf24l01+
+    # Else print diagnostic stuff & exit.
+    mouth.printDetails()
+    # (or we could always just print details anyway, even on good setup, for debugging)
+    print ("NRF24L01+ not found.")
+    return
+mouth.startListening()
+mouth.stopListening()
+mouth.printDetails()
 
 timer = 1
 
