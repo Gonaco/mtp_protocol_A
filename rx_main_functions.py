@@ -129,7 +129,7 @@ def receive(radio, radio2, pipe, frame_received):
                 for i in range((window_size*(window_id+5)), window_size*(window_id+6), 1):
                     original_frames_id.append(i)
 
-            if last_frame and count == num_frames_lost:
+            elif last_frame and count == num_frames_lost:
                 frames2resend_id = find_lost_frames(original_frames_id[last_w_id:])
                 if len(frames2resend_id) == 0:  # All frames are received
                     print("The entire message is received")
@@ -148,7 +148,7 @@ def receive(radio, radio2, pipe, frame_received):
                     m.sendNACK(window_id, frames2resend_id, radio2)
                     print(window_id)
 
-            if rcv.getEnd() == 1 and not last_frame:
+            elif rcv.getEnd() == 1 and not last_frame:
                 final_id = rcv.getID()
                 original_frames_id = original_frames_id[0:final_id+1]  # Set the length of original_frames_id
                 last_frame = True
