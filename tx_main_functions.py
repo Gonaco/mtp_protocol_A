@@ -82,7 +82,7 @@ def transmit(radio, radio2, archivo, pipe):
     paysize = 30  # may change
     repeat = False
     last_window = -1
-    window_size = 10  # may change
+    window_size = 3  # may change
     last_sent = -1
     # data = file.read()
     frame_list = build_list(archivo, paysize)

@@ -32,7 +32,8 @@ def rebuildData(p_id, string, last_w_id, storedFrames, team):
         ## We cannot write the received packet yet.
         ## -> We add it to the dictionary
         storedFrames.update({str(p_id) + team: string})
-
+        
+    print(storedFrames)
     ## We return the dictionary and the last writen id (updated versions)
     return storedFrames, last_w_id
 
