@@ -198,7 +198,7 @@ def active(ears,mouth):
     answers = 0
     
     # If we've received AT LEAST TWICE the frame that we've sent, we sent ALL the data frames
-    while (answers != 3 and time.time() < (start_time + TACK)):
+    while (answers != 3 and time.time() < (START_TIME + TACK)):
         
         if ears.available(EARS_PIPE):
             recv_buffer = []
