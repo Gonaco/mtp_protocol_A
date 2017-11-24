@@ -27,28 +27,10 @@ RF_CH = 0x64                        # UL & DL channels
 PWR_LVL = NRF24.PA_MIN                     # Transceiver output (HIGH = -6 dBm + 20 dB)
 BRATE = NRF24.BR_250KBPS                    # 250 kbps bit rate
 
-SEND_ACK1 = 0
-SEND_ACK2 = 0
-SEND_ACK3 = 0
-
-ACKED = {m.B_TEAM : 0, m.C_TEAM : 0, m.D_TEAM : 0}
-
 
 PIPES = [[0xe7, 0xe7, 0xe7, 0xe7, 0xe7], [0xc2, 0xc2, 0xc2, 0xc2, 0xc2]]  # addresses for TX/RX channels
 EARS_PIPE = [1]
 
-ACTIVE_TEAM = m.A_TEAM
-
-PKTS_RCVD = 0
-
-last_w_id_B = -1
-last_w_id_C = -1
-last_w_id_D = -1
-
-F_CMPLTD = 0
-# POS_MAX = 
-
-storedFrames = {"-2N": "DEFAULT"}  # NO ENTIENDO ESTO
 
 
 
