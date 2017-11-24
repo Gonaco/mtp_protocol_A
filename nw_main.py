@@ -81,7 +81,7 @@ timer = 1
 
 while True:
 
-    mouth.write("abcdefghijklmnñopqrstuvwxyz")
+    mouth.write("abcdefghijklmnopqrstuvwxyz")
     
 
 # f = open("tx_file.txt", 'r')
