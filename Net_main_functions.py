@@ -194,39 +194,39 @@ def active(ears,mouth):
     SEND_ACK2 = 0
     SEND_ACK3 = 0
     
-    # Let's see if anyone answers back...
-    answers = 0
+    # # Let's see if anyone answers back...
+    # answers = 0
     
-    # If we've received AT LEAST TWICE the frame that we've sent, we sent ALL the data frames
-    while (answers != 3 and time.time() < (start_time + TACK)):
+    # # If we've received AT LEAST TWICE the frame that we've sent, we sent ALL the data frames
+    # while (answers != 3 and time.time() < (start_time + TACK)):
         
-        if ears.available(EARS_PIPE):
-            recv_buffer = []
-            ears.read(recv_buffer, ears.getDynamicPayloadSize())  # CHECK IT
-            rcv = m.ControlFrame()
-            rcv.strMssg2Pckt(recv_buffer)
-            if (rcv.getTx() == m.A_TEAM):
-                answers += 1
+    #     if ears.available(EARS_PIPE):
+    #         recv_buffer = []
+    #         ears.read(recv_buffer, ears.getDynamicPayloadSize())  # CHECK IT
+    #         rcv = m.ControlFrame()
+    #         rcv.strMssg2Pckt(recv_buffer)
+    #         if (rcv.getTx() == m.A_TEAM):
+    #             answers += 1
                 
-    if (answers < 1):
-        print("NO ANSWER")
-        return
+    # if (answers < 1):
+    #     print("NO ANSWER")
+    #     return
     
-    else:
-        for team in t:
-            team_data = t[team]
+    # else:
+    #     for team in t:
+    #         team_data = t[team]
 
-            if ACKED[team] < len(team_data):
+    #         if ACKED[team] < len(team_data):
 
-                frame = m.DataFrame(team, ACKED[team], team_data[ACKED[team]])    
-                mouth.write(frame.__str__())
-                print("Sent:")
-                print(frame)
-            else:
-                print("File Completed")
-                F_CMPLTD += 1
+    #             frame = m.DataFrame(team, ACKED[team], team_data[ACKED[team]])    
+    #             mouth.write(frame.__str__())
+    #             print("Sent:")
+    #             print(frame)
+    #         else:
+    #             print("File Completed")
+    #             F_CMPLTD += 1
                 
-            time.sleep(TDATA)
+    #         time.sleep(TDATA)
 
 
 def passive(ears,mouth):
