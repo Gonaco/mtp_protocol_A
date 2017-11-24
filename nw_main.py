@@ -14,7 +14,9 @@ timer = 1
 while True:
     
     # nw.active(ears,mouth)
-    mouth.write("Christian putamo")
+    message = "Christian putamo"
+    mouth.write(message)
+    print(message)
     time.sleep(0.001)
     if (nw.listen(ears, timer)):
         print ("ACK received")
