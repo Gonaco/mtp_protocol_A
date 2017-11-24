@@ -114,7 +114,7 @@ def receive(radio, radio2, pipe, frame_received):
 
             if count % window_size == 0 and count != 0 and not last_frame:
                 frames2resend_id = []
-                frames2resend_id = find_lost_frames(original_frames_id[0: count])
+                frames2resend_id = find_lost_frames(original_frames_id[last_w_id: count])
                 if len(frames2resend_id) == 0:
                     m.sendACK(window_id, 0, radio2)
                 else:
@@ -126,16 +126,16 @@ def receive(radio, radio2, pipe, frame_received):
                 #    original_frames_id.append(i)
 
             elif last_frame and count == num_frames_lost and count != 0:
-                frames2resend_id = find_lost_frames(original_frames_id)
+                frames2resend_id = find_lost_frames(original_frames_id[last_w_id:])
                 if len(frames2resend_id) == 0:  # All frames are received
                     print("The entire message is received")
-                    print ("original_frame_id %s" % original_frames_id)
+                    '''print ("original_frame_id %s" % original_frames_id)
                     print ("frames2resend_id %s" % frames2resend_id)
                     print ("last_w_id %s" % last_w_id)
                     print ("final_id %s" % final_id)
                     print ("len(original_frame_id) %s" % len(original_frames_id))
-                    time.sleep(5)
-                    for j in range(0, 50, 1):
+                    time.sleep(5)'''
+                    for j in range(0, 10, 1):
                         m.sendACK(window_id, 1, radio2)
                         while timer3 < 400:
                             time.sleep(1 / 1000.0)
@@ -154,16 +154,16 @@ def receive(radio, radio2, pipe, frame_received):
                 last_frame = True
                 review = True
 
-                frames2resend_id = find_lost_frames(original_frames_id)
+                frames2resend_id = find_lost_frames(original_frames_id[last_w_id:])
                 if len(frames2resend_id) == 0:  # All frames are received
                     print("The entire message is received the firs time")
-                    print ("original_frame_id %s" % original_frames_id)
+                    '''print ("original_frame_id %s" % original_frames_id)
                     print ("frames2resend_id %s" % frames2resend_id)
                     print ("last_w_id %s" % last_w_id)
                     print ("final_id %s" % final_id)
                     print ("len(original_frame_id) %s" % len(original_frames_id))
-                    time.sleep(5)
-                    for j in range(0, 50, 1):
+                    time.sleep(5)'''
+                    for j in range(0, 10, 1):
                         m.sendACK(window_id, 1, radio2)
                         while timer4 < 400:
                             time.sleep(1 / 1000.0)
@@ -226,7 +226,7 @@ def handshake(radio, radio2, pipe, packet_id):
             wait = True
         elif rcv.getTyp() == 1 and rcv.getID() == 0:
             print("ACK message received")
-            for j in range(0, 50, 1):
+            for j in range(0, 10, 1):
                 m.sendACK(packet_id, 1, radio2)
                 while timer2 < 400:
                     time.sleep(1 / 1000.0)
