@@ -33,10 +33,8 @@ class Compressor:
         """Uncompress received data stream"""
         return
 
+    @abc.abstractmethod
     def loadText(self, filename):
-        file = io.open(filename, mode="r", encoding="utf-16")
-        self.uncompressed_text = file.read()
-        file.close()
         return
 
 
@@ -61,6 +59,12 @@ class Compressor:
 class DifferentialCompressor(Compressor):
     uncompressed_text = None
     compressed_text = None
+
+    def loadText(self, filename):
+        file = io.open(filename, mode="r", encoding="utf-16")
+        self.uncompressed_text = file.read()
+        file.close()
+        return
 
     def compress(self):
         i = 0
@@ -151,6 +155,12 @@ class LZWCompressor(Compressor):
 
     num_blocks = 100;
 
+    def loadText(self, filename):
+        file = io.open(filename, 'r')
+        self.uncompressed_text = file.read()
+        file.close()
+        return
+
     def setNumBlocks(self, num_blocks):
         self.num_blocks = num_blocks
         return
@@ -172,7 +182,7 @@ class LZWCompressor(Compressor):
                 block_text = ''.join(lines[first_line_of_block:first_line_of_block + num_lines_per_block])
 
             # Compress block and get size
-            block_text_compressed = zlib.compress(block_text)
+            block_text_compressed = zlib.compress(block_text.encode('utf-16'))
             block_text_compressed_size = sys.getsizeof(block_text_compressed)
             # print ( "Size of block " + str(i) + ": " + str(sys.getsizeof(block_text_compressed)) )
 
@@ -188,28 +198,19 @@ class LZWCompressor(Compressor):
             self.compressed_text = base64.b64encode(entire_compression_data)
         return self.compressed_text
 
-    def uncompress(self, filename_rx):
+    def uncompress(self):
         received_data = base64.b64decode(self.compressed_text)
-
-        received_filename = "received.txt"
-        received_file = open(received_filename, 'w')
 
         for i in range(len(received_data)):
             received_text_block_compressed = received_data[i:]
             try:
-                received_text_block_uncompressed = zlib.decompress(received_text_block_compressed)
+                received_text_block_uncompressed = zlib.decompress(received_text_block_compressed).decode('utf-16')
             except:
                 if i == 0:
                     print ("Can't uncompress if value is: " + str(i))
             else:
-                received_file.write(received_text_block_uncompressed)
-
-        received_file.close()
-        return
-
-
-
-
-
-
-
+                if i == 0:
+                    self.uncompressed_text = received_text_block_uncompressed
+                else:
+                    self.uncompressed_text = self.uncompressed_text + received_text_block_uncompressed
+        return self.uncompressed_text
