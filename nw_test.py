@@ -1,3 +1,11 @@
+import RPi.GPIO as GPIO
+
+GPIO.setmode(GPIO.BCM)
+from lib_nrf24 import NRF24
+import time
+import spidev
+import random
+
 import Net_main_functions as nw
 import time
 
