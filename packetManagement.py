@@ -46,7 +46,7 @@ def writeFile(chunk, filename, p_id):
     ##finalFILE.close()
 
     if p_id != 0:
-        finalFILE = open(filename + '.txt', 'a+')
+        finalFILE = open(filename + '.txt', 'a+b')
         if chunk.__contains__('\n'):
             aux = chunk.split('\n')
             trozos = len(aux)
@@ -57,7 +57,7 @@ def writeFile(chunk, filename, p_id):
         else:
             finalFILE.write(chunk)
     else:
-        finalFILE = open(filename + '.txt', 'w')
+        finalFILE = open(filename + '.txt', 'wb')
         finalFILE.write(chunk)
 
 

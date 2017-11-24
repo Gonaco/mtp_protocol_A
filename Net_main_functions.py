@@ -14,6 +14,8 @@ import datetime
 import message_functions as m
 import packetManagement as pm
 
+from threading import Thread
+
 # NETWORK CONSTANTS
 PAYLOAD_LENGTH = 31
 HEADER_LENGTH = 1
@@ -40,7 +42,7 @@ ACKED = {m.B_TEAM : 0, m.C_TEAM : 0, m.D_TEAM : 0}
 
 
 PIPES = [[0xe7, 0xe7, 0xe7, 0xe7, 0xe7], [0xc2, 0xc2, 0xc2, 0xc2, 0xc2]]  # addresses for TX/RX channels
-EARS_PIPE = [1]
+EARS_PIPE = [0]
 
 ACTIVE_TEAM = m.A_TEAM
 
@@ -66,10 +68,10 @@ def setup():
     ears.begin(1, 27)  # Set spi-cs pin1, and rf24-CE pin 17
     mouth.begin(0, 17)  # Set spi-cs pin0, and rf24-CE pin 27
 
-    ears.setRetries(15, 15)
+    # ears.setRetries(15, 15)
     ears.setPayloadSize(32)     # SURE?
     ears.setChannel(RF_CH)
-    mouth.setRetries(15, 15)
+    # mouth.setRetries(15, 15)
     mouth.setPayloadSize(32)    # SURE?
     mouth.setChannel(RF_CH)
 
@@ -113,6 +115,13 @@ def setup():
 
     return ears, mouth
 
+
+
+def subSend(r,s):
+    r.write(s)
+
+
+    
 def listen(ears, timer):
     print("\n-Listening-\n")
 
@@ -177,45 +186,47 @@ def active(ears,mouth):
     # control = m.ControlFrame(m.B_TEAM, SEND_ACK1, SEND_ACK2, SEND_ACK3)  # FILL WITH ACK FOR THE RX PKTS
     control = m.ControlFrame()
     mouth.write(control.__str__())
+    # send_thrd = Thread (target = subSend, args = (mouth,control.__str__()))
+    # send_thrd.start()
 
     # Reset the ACKS
     SEND_ACK1 = 0
     SEND_ACK2 = 0
     SEND_ACK3 = 0
     
-    # # Let's see if anyone answers back...
-    # answers = 0
+    # Let's see if anyone answers back...
+    answers = 0
     
-    # # If we've received AT LEAST TWICE the frame that we've sent, we sent ALL the data frames
-    # while (answers != 3 and time.time() < (start_time + TACK)):
+    # If we've received AT LEAST TWICE the frame that we've sent, we sent ALL the data frames
+    while (answers != 3 and time.time() < (start_time + TACK)):
         
-    #     if ears.available(EARS_PIPE):
-    #         recv_buffer = []
-    #         ears.read(recv_buffer, ears.getDynamicPayloadSize())  # CHECK IT
-    #         rcv = m.ControlFrame()
-    #         rcv.strMssg2Pckt(recv_buffer)
-    #         if (rcv.getTx() == m.A_TEAM):
-    #             answers += 1
+        if ears.available(EARS_PIPE):
+            recv_buffer = []
+            ears.read(recv_buffer, ears.getDynamicPayloadSize())  # CHECK IT
+            rcv = m.ControlFrame()
+            rcv.strMssg2Pckt(recv_buffer)
+            if (rcv.getTx() == m.A_TEAM):
+                answers += 1
                 
-    # if (answers < 2):
-    #     print("NOT ENOUGH ANSWERS")
-    #     return
+    if (answers < 1):
+        print("NO ANSWER")
+        return
     
-    # else:
-    #     for team in t:
-    #         team_data = t[team]
+    else:
+        for team in t:
+            team_data = t[team]
 
-    #         if ACKED[team] < len(team_data):
+            if ACKED[team] < len(team_data):
 
-    #             frame = m.DataFrame(team, ACKED[team], team_data[ACKED[team]])    
-    #             mouth.write(frame.__str__())
-    #             print("Sent:")
-    #             print(frame)
-    #         else:
-    #             print("File Completed")
-    #             F_CMPLTD += 1
+                frame = m.DataFrame(team, ACKED[team], team_data[ACKED[team]])    
+                mouth.write(frame.__str__())
+                print("Sent:")
+                print(frame)
+            else:
+                print("File Completed")
+                F_CMPLTD += 1
                 
-    #         time.sleep(TDATA)
+            time.sleep(TDATA)
 
 
 def passive(ears,mouth):
@@ -225,14 +236,14 @@ def passive(ears,mouth):
 
     print("\n-Passive Mode-\n")
 
-    PKTS_RCVD = 0
+    # PKTS_RCVD = 0
 
     # Taking the packet
     recv_buffer = []
     ears.read(recv_buffer, ears.getDynamicPayloadSize()) #CHECK IT
     print(recv_buffer)
     rcv = m.ControlFrame()
-    print(rcv._str__()+"xoxo")
+    print(rcv)
     if rcv.mssg2Pckt(recv_buffer):  # Check if is a Control Frame or a Data Frame
 
         print(rcv)
@@ -270,8 +281,10 @@ def passive(ears,mouth):
 
         time.sleep(random.uniform(0, TACK))
         mouth.write(rcv.__str__()) #Send the ACK
+        # send_thrd = Thread (target = subSend, args = (mouth,rcv.__str__()))
+        # send_thrd.start()
+        
 
-        # mouth.write("Christian putamo")
         print("ACK sent")
 
         while time.time() < (START_TIME + TDATA_MAX):
