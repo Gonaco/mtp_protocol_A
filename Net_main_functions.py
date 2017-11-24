@@ -232,7 +232,7 @@ def passive(ears,mouth):
     ears.read(recv_buffer, ears.getDynamicPayloadSize()) #CHECK IT
     print(recv_buffer)
     rcv = m.ControlFrame()
-    print(rcv)
+    print(rcv._str__()+"xoxo")
     if rcv.mssg2Pckt(recv_buffer):  # Check if is a Control Frame or a Data Frame
 
         print(rcv)
