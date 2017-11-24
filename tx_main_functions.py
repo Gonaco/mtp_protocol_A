@@ -115,7 +115,9 @@ def transmit(radio, radio2, archivo, pipe):
                         nack_list.pop(0)
                     # we send the rest of the window
                     repeat = False
+                    partial_window=window_size-nack_len
                     last_sent, finished = send_window(frame_list, last_sent, partial_window, radio, finished)
+                    partial_window=0
                 else:
                     #print('we only send nacks')
                     for i in range(0, window_size):
