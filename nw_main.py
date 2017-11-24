@@ -13,7 +13,8 @@ timer = 1
 
 while True:
     
-    nw.active(ears,mouth)
+    # nw.active(ears,mouth)
+    mouth.write("Christian putamo")
     time.sleep(0.001)
     if (nw.listen(ears, timer)):
         print ("ACK received")
