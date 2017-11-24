@@ -126,7 +126,8 @@ def subSend(r,s):
 def listen(ears, timer):
     print("\n-Listening-\n")
 
-    while (not ears.available(EARS_PIPE) and time.time() < (START_TIME + timer)):
+    tmr_bgn = time.time()
+    while (not ears.available(EARS_PIPE) and time.time() < (tmr_bgn + timer)):
         #Do nothing
         pass
 
@@ -197,6 +198,7 @@ def active(ears,mouth):
     
     # Let's see if anyone answers back...
     answers = 0
+    tmr_bgn = time.time()
     
     # If we've received AT LEAST TWICE the frame that we've sent, we sent ALL the data frames
     while (answers != 3 and time.time() < (START_TIME + TACK)):
@@ -289,7 +291,7 @@ def passive(ears,mouth):
         
 
         print("ACK sent")
-
+        tmr_bgn = time.time()
         while time.time() < (START_TIME + TDATA_MAX):
             print("Waiting for Data")
             if ears.available(EARS_PIPE):
