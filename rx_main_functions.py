@@ -116,7 +116,7 @@ def receive(radio, radio2, pipe, frame_received):
             # In each iteration set to -1 the value of this array located in the received frame ID position
             original_frames_id[rcv.getID()] = -1
 
-            if count % window_size == 0:
+            if count % window_size == 0 and count != 0:
                 frames2resend_id = []
                 frames2resend_id = find_lost_frames(original_frames_id[last_w_id: count])
                 if len(frames2resend_id) == 0:
