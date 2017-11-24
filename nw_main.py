@@ -2,8 +2,7 @@
 import Net_main_functions as nw
 import time
 
-# ears, mouth = nw.setup()
-
+ears, mouth = nw.setup()
 
 timer = 1
 
