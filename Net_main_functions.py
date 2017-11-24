@@ -198,9 +198,10 @@ def active(ears,mouth):
     answers = 0
     
     # If we've received AT LEAST TWICE the frame that we've sent, we sent ALL the data frames
-    while (answers != 3 and time.time() < (start_time + TACK)):
+    while (answers != 3 and time.time() < (START_TIME + TACK)):
         
         if ears.available(EARS_PIPE):
+            print("Receiving ACK?")
             recv_buffer = []
             ears.read(recv_buffer, ears.getDynamicPayloadSize())  # CHECK IT
             rcv = m.ControlFrame()
@@ -213,20 +214,21 @@ def active(ears,mouth):
         return
     
     else:
-        for team in t:
-            team_data = t[team]
+        print("Sending")
+    #     for team in t:
+    #         team_data = t[team]
 
-            if ACKED[team] < len(team_data):
+    #         if ACKED[team] < len(team_data):
 
-                frame = m.DataFrame(team, ACKED[team], team_data[ACKED[team]])    
-                mouth.write(frame.__str__())
-                print("Sent:")
-                print(frame)
-            else:
-                print("File Completed")
-                F_CMPLTD += 1
+    #             frame = m.DataFrame(team, ACKED[team], team_data[ACKED[team]])    
+    #             mouth.write(frame.__str__())
+    #             print("Sent:")
+    #             print(frame)
+    #         else:
+    #             print("File Completed")
+    #             F_CMPLTD += 1
                 
-            time.sleep(TDATA)
+    #         time.sleep(TDATA)
 
 
 def passive(ears,mouth):
