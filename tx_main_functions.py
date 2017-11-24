@@ -138,7 +138,7 @@ def transmit(radio, radio2, archivo, pipe):
                     repeat=True
                     nack_list = process_nacks(rcv, nack_list)
                 rcv=''
-        if finished:
+        else:
             print('if finished')
             num = 0
             while not radio2.available(pipe) and num < 400:
