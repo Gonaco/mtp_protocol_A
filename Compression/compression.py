@@ -47,10 +47,21 @@ class Compressor:
     def checkCompression(self,filename1,filename2):
         file = io.open(filename1, mode="r", encoding="utf-16")
         text1 = file.read()
+        lines1 = text1.split('\n')
+        lines1 = lines1[0:-1]
         file.close()
         file = io.open(filename2, mode="r", encoding="utf-16")
         text2 = file.read()
+        lines2 = text2.split('\n')
+        lines2 = lines2[0:-1]
+        i=0
+        samelines = 0
+        for line in lines1:
+            if line !=lines2[i]:
+                break
+            i = i+1
         file.close()
+        print()
 
         return text1==text2
 
@@ -84,7 +95,6 @@ class DifferentialCompressor(Compressor):
                     char_line2 = np.array(list(line2))
                     comp_res = char_line == char_line2
                     comps_res = np.vstack((comps_res, comp_res))
-                    print(line2)
                     num_comp = num_comp + 1
         print(num_comp)
         results = np.mean(comps_res, axis=0)
@@ -116,7 +126,6 @@ class DifferentialCompressor(Compressor):
         positions = lines[1].split(u'¬')
         lines = lines[2].split(u'¬')
         print("DECOMPRESSING!!!!")
-        print(original)
         text_f = ''
         for line in lines:
             line = list(line)
@@ -125,10 +134,13 @@ class DifferentialCompressor(Compressor):
             i = 0
             for pos in positions:
                 intpos = int(pos)
+                computed_len = len(line)
+                print(computed_len)
+                if i>=computed_len or computed_len==0:
+                    break
                 next_line[intpos] = line[i]
                 i = i + 1
             next_line = "".join(next_line)
-            print(next_line)
             text_f = text_f + (next_line)
         print("Decompression ended!")
         self.uncompressed_text = text_f
