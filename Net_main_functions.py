@@ -86,7 +86,7 @@ def setup():
     # mouth.enableAckPayload()
 
     mouth.openWritingPipe(PIPES[0])
-    ears.openReadingPipe(1, PIPES[0])
+    ears.openReadingPipe(0, PIPES[1])
 
     if not mouth.isPVariant():
         # If radio configures correctly, we confirmed a "plus" (ie "variant") nrf24l01+
