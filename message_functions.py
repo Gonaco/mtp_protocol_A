@@ -215,10 +215,10 @@ def sendNACK(ID, lost_IDs_array, radio):
         
     nack = NACK(ID,payload)
 
-    print(nack.getTyp())
-    print(nack.getID())
-    print(nack.getPayload())
-    print(nack)
+   # print(nack.getTyp())
+    #print(nack.getID())
+    #print(nack.getPayload())
+    #print(nack)
 
     radio.write(nack.__str__())
 

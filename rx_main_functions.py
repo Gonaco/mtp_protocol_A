@@ -103,14 +103,10 @@ def receive(radio, radio2, pipe, frame_received):
                         count = num_frames_lost
                         timer = 0
 
-
-            print("I have got a frame")
             recv_buffer = []
             radio.read(recv_buffer, radio.getDynamicPayloadSize())
             rcv = m.Packet()
             rcv.mssg2Pckt(recv_buffer)
-
-            print ("the frame is %s" % rcv.getID())
             storedFrames, last_w_id = pm.rebuildData(rcv.getID(), rcv.getPayload(), last_w_id, storedFrames, team)
 
             # In each iteration set to -1 the value of this array located in the received frame ID position
@@ -118,7 +114,7 @@ def receive(radio, radio2, pipe, frame_received):
 
             if count % window_size == 0 and count != 0 and not last_frame:
                 frames2resend_id = []
-                frames2resend_id = find_lost_frames(original_frames_id[last_w_id: count])
+                frames2resend_id = find_lost_frames(original_frames_id[0: count])
                 if len(frames2resend_id) == 0:
                     m.sendACK(window_id, 0, radio2)
                 else:
@@ -126,14 +122,19 @@ def receive(radio, radio2, pipe, frame_received):
 
                 window_id = window_id + 1
 
-                for i in range((window_size*(window_id+5)), window_size*(window_id+6), 1):
-                    original_frames_id.append(i)
+                #for i in range((window_size*(window_id+5)), window_size*(window_id+6), 1):
+                #    original_frames_id.append(i)
 
-            elif last_frame and count == num_frames_lost:
-                frames2resend_id = find_lost_frames(original_frames_id[last_w_id:])
+            elif last_frame and count == num_frames_lost and count != 0:
+                frames2resend_id = find_lost_frames(original_frames_id)
                 if len(frames2resend_id) == 0:  # All frames are received
                     print("The entire message is received")
-                    print ("the final original_frame_id is %s" % original_frames_id)
+                    print ("original_frame_id %s" % original_frames_id)
+                    print ("frames2resend_id %s" % frames2resend_id)
+                    print ("last_w_id %s" % last_w_id)
+                    print ("final_id %s" % final_id)
+                    print ("len(original_frame_id) %s" % len(original_frames_id))
+                    time.sleep(5)
                     for j in range(0, 50, 1):
                         m.sendACK(window_id, 1, radio2)
                         while timer3 < 400:
@@ -144,7 +145,6 @@ def receive(radio, radio2, pipe, frame_received):
                 else:
                     count = 0
                     num_frames_lost = len(frames2resend_id)
-                    print('estoy en last frame y tengo que enviar nack')
                     m.sendNACK(window_id, frames2resend_id, radio2)
                     print(window_id)
 
@@ -154,10 +154,15 @@ def receive(radio, radio2, pipe, frame_received):
                 last_frame = True
                 review = True
 
-                frames2resend_id = find_lost_frames(original_frames_id[last_w_id:])
+                frames2resend_id = find_lost_frames(original_frames_id)
                 if len(frames2resend_id) == 0:  # All frames are received
-                    print("The entire message is received")
-                    print ("the final original_frame_id is %s" % original_frames_id)
+                    print("The entire message is received the firs time")
+                    print ("original_frame_id %s" % original_frames_id)
+                    print ("frames2resend_id %s" % frames2resend_id)
+                    print ("last_w_id %s" % last_w_id)
+                    print ("final_id %s" % final_id)
+                    print ("len(original_frame_id) %s" % len(original_frames_id))
+                    time.sleep(5)
                     for j in range(0, 50, 1):
                         m.sendACK(window_id, 1, radio2)
                         while timer4 < 400:
@@ -172,7 +177,7 @@ def receive(radio, radio2, pipe, frame_received):
                     m.sendNACK(window_id, frames2resend_id, radio2)
 
         else:
-            for i in range(0, (7 * window_size), 1):
+            for i in range(0, 200, 1):
                 original_frames_id.append(i)  # Generate the first 7 original frames ID windows
             print ("the frame is %s" % frame_received.getID())
             storedFrames, last_w_id = pm.rebuildData(frame_received.getID(), frame_received.getPayload(), last_w_id, storedFrames, team)
