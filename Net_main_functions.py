@@ -201,6 +201,7 @@ def active(ears,mouth):
     while (answers != 3 and time.time() < (START_TIME + TACK)):
         
         if ears.available(EARS_PIPE):
+            print("Receiving ACK?")
             recv_buffer = []
             ears.read(recv_buffer, ears.getDynamicPayloadSize())  # CHECK IT
             rcv = m.ControlFrame()
