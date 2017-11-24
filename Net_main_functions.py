@@ -125,52 +125,40 @@ def listen(ears, timer):
     else:
         return False
 
-def network_mode(ears, mouth, files):
-
-    print("\n-Network Mode-\n")
-
-    START_TIME = time.time()
-
-    random.seed(int(START_TIME))
-
-    print(START_TIME)
+def receivingData():
     
-    beginning = True
-
-    texts = {m.B_TEAM : files[0], m.C_TEAM: files[1], m.D_TEAM: files[2]}
-
-    for team in texts:
-        split_str = pm.splitData(texts[team], PAYLOAD_LENGTH)
-        texts[team] = split_str
-
-    while (time.time() < START_TIME + TMAX) and (F_CMPLTD != 6):
-        
-        if beginning:
-            TINIT = random.uniform(5, 10)
-            timer = TINIT
-            beginning = False
-
-        elif ACTIVE_TEAM == m.D_TEAM:
-
-            timer = 0
-            
-        else:
-            TCTRL = random.uniform(1, 2)
-            timer = TCTRL
+    # We are gonna write down what we have received
+    print("\n-Receiving Data-\n")
     
-        
-        if (listen(ears, timer)):
-            # Something received -> Passive Mode
-            
-            passive(ears, mouth)
-            
-        else:
-            # Something received -> Active Mode
-            
-            active(texts,ears,mouth)
-            # ACTIVE_TEAM = m.B_TEAM
+    recv_buffer = []
+    ears.read(recv_buffer, ears.getDynamicPayloadSize())  # CHECK IT
+    rcv = m.DataFrame()
+    if rcv.mssg2Pckt(recv_buffer):
 
-        
+        print(rcv)
+
+        if(rcv.getRx() == m.A_TEAM): #If the Data Frame is for us, we write it down
+
+            if(ACTIVE_TEAM == m.B_TEAM):
+                storedFrames, last_w_id_B = pm.rebuildData(rcv.getPos(), rcv.getPayload(), last_w_id_B, storedFrames, ACTIVE_TEAM)
+                SEND_ACK1 = 1
+
+            elif(ACTIVE_TEAM == m.C_TEAM):
+                storedFrames, last_w_id_C = pm.rebuildData(rcv.getPos(), rcv.getPayload(), last_w_id_C, storedFrames, ACTIVE_TEAM)
+                SEND_ACK2 = 1
+
+            elif(ACTIVE_TEAM == m.D_TEAM):
+                storedFrames, last_w_id_D = pm.rebuildData(rcv.getPos(), rcv.getPayload(), last_w_id_D, storedFrames, ACTIVE_TEAM)
+                SEND_ACK3 = 1
+
+        else:
+            print("PACKET FOR OTHER TEAM")
+            return
+
+    else:
+
+        print("ERROR. THIS PACKET IS NOT RECOGNIZED")
+        return
 
 
 # def active(t,ears,mouth):
@@ -195,39 +183,39 @@ def active(ears,mouth):
     SEND_ACK2 = 0
     SEND_ACK3 = 0
     
-    # Let's see if anyone answers back...
-    answers = 0
+    # # Let's see if anyone answers back...
+    # answers = 0
     
-    # If we've received AT LEAST TWICE the frame that we've sent, we sent ALL the data frames
-    while (answers != 3 and time.time() < (start_time + TACK)):
+    # # If we've received AT LEAST TWICE the frame that we've sent, we sent ALL the data frames
+    # while (answers != 3 and time.time() < (start_time + TACK)):
         
-        if ears.available(EARS_PIPE):
-            recv_buffer = []
-            ears.read(recv_buffer, ears.getDynamicPayloadSize())  # CHECK IT
-            rcv = m.ControlFrame()
-            rcv.strMssg2Pckt(recv_buffer)
-            if (rcv.getTx() == m.A_TEAM):
-                answers += 1
+    #     if ears.available(EARS_PIPE):
+    #         recv_buffer = []
+    #         ears.read(recv_buffer, ears.getDynamicPayloadSize())  # CHECK IT
+    #         rcv = m.ControlFrame()
+    #         rcv.strMssg2Pckt(recv_buffer)
+    #         if (rcv.getTx() == m.A_TEAM):
+    #             answers += 1
                 
-    if (answers < 2):
-        print("NOT ENOUGH ANSWERS")
-        return
+    # if (answers < 2):
+    #     print("NOT ENOUGH ANSWERS")
+    #     return
     
-    else:
-        for team in t:
-            team_data = t[team]
+    # else:
+    #     for team in t:
+    #         team_data = t[team]
 
-            if ACKED[team] < len(team_data):
+    #         if ACKED[team] < len(team_data):
 
-                frame = m.DataFrame(team, ACKED[team], team_data[ACKED[team]])    
-                mouth.write(frame.__str__())
-                print("Sent:")
-                print(frame)
-            else:
-                print("File Completed")
-                F_CMPLTD += 1
+    #             frame = m.DataFrame(team, ACKED[team], team_data[ACKED[team]])    
+    #             mouth.write(frame.__str__())
+    #             print("Sent:")
+    #             print(frame)
+    #         else:
+    #             print("File Completed")
+    #             F_CMPLTD += 1
                 
-            time.sleep(TDATA)
+    #         time.sleep(TDATA)
 
 
 def passive(ears,mouth):
@@ -280,9 +268,9 @@ def passive(ears,mouth):
             rcv.ack3 = 0
 
         time.sleep(random.uniform(0, TACK))
-        # mouth.write(rcv.__str__()) #Send the ACK
+        mouth.write(rcv.__str__()) #Send the ACK
 
-        mouth.write("Christian putamo")
+        # mouth.write("Christian putamo")
         print("ACK sent")
 
         while time.time() < (START_TIME + TDATA_MAX):
@@ -307,37 +295,51 @@ def passive(ears,mouth):
                 
     # return acked_B, acked_C, acked_D, last_w_id_B, last_w_id_C, last_w_id_D
 
-def receivingData():
+
+
+def network_mode(ears, mouth, files):
+
+    print("\n-Network Mode-\n")
+
+    START_TIME = time.time()
+
+    random.seed(int(START_TIME))
+
+    print(START_TIME)
     
-    # We are gonna write down what we have received
-    print("\n-Receiving Data-\n")
-    
-    recv_buffer = []
-    ears.read(recv_buffer, ears.getDynamicPayloadSize())  # CHECK IT
-    rcv = m.DataFrame()
-    if rcv.mssg2Pckt(recv_buffer):
+    beginning = True
 
-        print(rcv)
+    texts = {m.B_TEAM : files[0], m.C_TEAM: files[1], m.D_TEAM: files[2]}
 
-        if(rcv.getRx() == m.A_TEAM): #If the Data Frame is for us, we write it down
+    for team in texts:
+        split_str = pm.splitData(texts[team], PAYLOAD_LENGTH)
+        texts[team] = split_str
 
-            if(ACTIVE_TEAM == m.B_TEAM):
-                storedFrames, last_w_id_B = pm.rebuildData(rcv.getPos(), rcv.getPayload(), last_w_id_B, storedFrames, ACTIVE_TEAM)
-                SEND_ACK1 = 1
+    while (time.time() < START_TIME + TMAX) and (F_CMPLTD != 6):
+        
+        if beginning:
+            TINIT = random.uniform(5, 10)
+            timer = TINIT
+            beginning = False
 
-            elif(ACTIVE_TEAM == m.C_TEAM):
-                storedFrames, last_w_id_C = pm.rebuildData(rcv.getPos(), rcv.getPayload(), last_w_id_C, storedFrames, ACTIVE_TEAM)
-                SEND_ACK2 = 1
+        elif ACTIVE_TEAM == m.D_TEAM:
 
-            elif(ACTIVE_TEAM == m.D_TEAM):
-                storedFrames, last_w_id_D = pm.rebuildData(rcv.getPos(), rcv.getPayload(), last_w_id_D, storedFrames, ACTIVE_TEAM)
-                SEND_ACK3 = 1
-
+            timer = 0
+            
         else:
-            print("PACKET FOR OTHER TEAM")
-            return
+            TCTRL = random.uniform(1, 2)
+            timer = TCTRL
+    
+        
+        if (listen(ears, timer)):
+            # Something received -> Passive Mode
+            
+            passive(ears, mouth)
+            
+        else:
+            # Something received -> Active Mode
+            
+            active(texts,ears,mouth)
+            # ACTIVE_TEAM = m.B_TEAM
 
-    else:
-
-        print("ERROR. THIS PACKET IS NOT RECOGNIZED")
-        return
+        
