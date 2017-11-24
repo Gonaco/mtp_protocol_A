@@ -210,6 +210,7 @@ def sendNACK(ID, lost_IDs_array, radio):
     for i in range(0, len(lost_IDs_array)):
         payload = payload + str(lost_IDs_array[i]) + ","
         if len(payload) == FRAME_PAYLOAD_BYTES_LENGTH:
+            print("Overload")
             overload = lost_IDs_array[i+1:]
             break
         
