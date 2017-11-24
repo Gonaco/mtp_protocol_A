@@ -22,7 +22,6 @@ if not mouth.isPVariant():
     mouth.printDetails()
     # (or we could always just print details anyway, even on good setup, for debugging)
     print ("NRF24L01+ not found.")
-    return
 mouth.startListening()
 mouth.stopListening()
 mouth.printDetails()
