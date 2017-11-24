@@ -85,7 +85,7 @@ def setup():
     mouth.enableDynamicPayloads()
     # mouth.enableAckPayload()
 
-    mouth.openWritingPipe(PIPES[1])
+    mouth.openWritingPipe(PIPES[0])
     ears.openReadingPipe(1, PIPES[0])
 
     if not mouth.isPVariant():

@@ -5,11 +5,11 @@ ears, mouth = nw.setup()
 
 timer = 1
 
-while True:
-    if (nw.listen(ears, timer)):
-        nw.passive(ears,mouth)
-    else:
-        print("Timeout")
+# while True:
+#     if (nw.listen(ears, timer)):
+#         nw.passive(ears,mouth)
+#     else:
+#         print("Timeout")
 
 # while True:
     
@@ -23,6 +23,11 @@ while True:
 
 #     else:
 #         print("Timeout")
+
+
+while True:
+
+    mouth.write("abcdefghijklmnñopqrstuvwxyz")
     
 
 # f = open("tx_file.txt", 'r')
