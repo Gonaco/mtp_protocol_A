@@ -1,6 +1,8 @@
 import Net_main_functions as nw
 import time
 
+PIPES = [[0xe7, 0xe7, 0xe7, 0xe7, 0xe7], [0xc2, 0xc2, 0xc2, 0xc2, 0xc2]]  # addresses for TX/RX channels
+
 GPIO.setup([0,1,17,27], GPIO.OUT, initial=GPIO.LOW)
 ears = NRF24(GPIO, spidev.SpiDev())  # EARS
 ears.begin(1, 27)  # Set spi-cs pin1, and rf24-CE pin 17
@@ -25,7 +27,7 @@ ears.startListening()
 
 while True:
 
-    if ears.available([0]):
+    if ears.available([1]):
         print("Something received")
 
         recv_buffer = []

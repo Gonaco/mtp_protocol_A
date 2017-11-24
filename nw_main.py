@@ -3,6 +3,8 @@ import time
 
 # ears, mouth = nw.setup()
 
+PIPES = [[0xe7, 0xe7, 0xe7, 0xe7, 0xe7], [0xc2, 0xc2, 0xc2, 0xc2, 0xc2]]  # addresses for TX/RX channels
+
 GPIO.setup([0,1,17,27], GPIO.OUT, initial=GPIO.LOW)
 mouth = NRF24(GPIO, spidev.SpiDev())  # MOUTH
 mouth.begin(0, 17)  # Set spi-cs pin0, and rf24-CE pin 27

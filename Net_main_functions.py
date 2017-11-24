@@ -40,7 +40,7 @@ ACKED = {m.B_TEAM : 0, m.C_TEAM : 0, m.D_TEAM : 0}
 
 
 PIPES = [[0xe7, 0xe7, 0xe7, 0xe7, 0xe7], [0xc2, 0xc2, 0xc2, 0xc2, 0xc2]]  # addresses for TX/RX channels
-EARS_PIPE = [0]
+EARS_PIPE = [1]
 
 ACTIVE_TEAM = m.A_TEAM
 
