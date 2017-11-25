@@ -11,7 +11,7 @@ import math
 # The dictionary must be created outside the function, initialised as shown on this file
 # Team must be an string with the letter of the team in capital letter ("A", "B", "C", or "D")
 def rebuildData(p_id, string, last_w_id, storedFrames, team):
-    print ("\n-rebuildData-\n")  ##Debbuging issues
+    # print ("\n-rebuildData-\n")  ##Debbuging issues
 
     filename = "RXfile_" + team
     if (p_id == last_w_id + 1):  # The received packet is the one we should write.
@@ -33,14 +33,14 @@ def rebuildData(p_id, string, last_w_id, storedFrames, team):
         ## -> We add it to the dictionary
         storedFrames.update({str(p_id) + team: string})
         
-    print(storedFrames)
+    # print(storedFrames)
     ## We return the dictionary and the last writen id (updated versions)
     return storedFrames, last_w_id
 
 
 ## This function appends a given string to a file saved as filename (without including the .txt)
 def writeFile(chunk, filename, p_id):
-    print('\n-writeFile-\n')
+    # print('\n-writeFile-\n')
     ##finalFILE = open(filename + ".txt", 'a+')
     ##finalFILE.write(string)
     ##finalFILE.close()
@@ -62,16 +62,16 @@ def writeFile(chunk, filename, p_id):
 
 
 def splitData(archivo, chunk_len):
-    print("\n-splitData-\n")  ##Debbuging issues.
+    # print("\n-splitData-\n")  ##Debbuging issues.
 
     file_len = len(archivo.read())  # Size of the file in bytes
-    print('Size of the file in bytes: %s' % file_len)
+    # print('Size of the file in bytes: %s' % file_len)
     ##chunk_len = 30  # Size of the chunk in bytes
-    print('Size of the chunk in bytes: %s' % chunk_len)
+    # print('Size of the chunk in bytes: %s' % chunk_len)
 
     aux = float(file_len) / chunk_len
     packets = math.ceil(aux)
-    print('Number of packets: %s' % packets)
+    # print('Number of packets: %s' % packets)
 
     lista = []
     for i in range(0, int(packets)):
