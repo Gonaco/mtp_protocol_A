@@ -67,7 +67,7 @@ def setup():
     mouth.printDetails()
 
     ears.startListening()
-
+    print('finish set up')
     return ears, mouth
 
 

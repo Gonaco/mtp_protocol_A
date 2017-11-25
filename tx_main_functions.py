@@ -72,6 +72,7 @@ def setup():
     mouth.stopListening()
     ears.startListening()
     timeout = time.time() + 0.1
+    print('finish set up')
     return mouth, ears
 
 
