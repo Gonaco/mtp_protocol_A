@@ -79,7 +79,7 @@ def setup():
 def transmit(radio, radio2, archivo, pipe):
     print("\n-transmit-\n")  # Debbuging issues.
     run = True
-    paysize = 30  # may change
+    paysize = m.FRAME_PAYLOAD_BYTES_LENGTH  # may change
     repeat = False
     last_window = -1
     window_size = 10  # may change
