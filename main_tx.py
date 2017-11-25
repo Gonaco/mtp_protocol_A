@@ -1,7 +1,7 @@
 import tx_main_functions as f
 
 def main_tx():
-    archivo = open("Don_Quijoteaa.txt")
+    archivo = open("Don_Quijoteaa")
     radio, radio2=f.setup()
     pipe = [1]
     f.synchronized(radio, radio2, pipe)
