@@ -128,7 +128,7 @@ def receive(radio, radio2, pipe, frame_received):
             elif last_frame and count == num_frames_lost and count != 0:
                 frames2resend_id = find_lost_frames(original_frames_id[last_w_id:])
                 if len(frames2resend_id) == 0:  # All frames are received
-                    # print("The entire message is received")
+                    print("The entire message is received")
                     for j in range(0, 10, 1):
                         m.sendACK(window_id, 1, radio2)
                         while timer3 < 400:
