@@ -3,7 +3,7 @@ from lib_nrf24 import NRF24
 
 byte_length = 8
 # signature_length = byte_length
-ID_length = 8
+ID_length = 16
 typ_length = 2
 end_length = 1
 
@@ -12,8 +12,8 @@ ACK_TYPE = 1
 NACK_TYPE = 2
 FRAME = 3
 
-HEADER_BYTES_LENGTH = 2
-FRAME_PAYLOAD_BYTES_LENGTH = 30
+HEADER_BYTES_LENGTH = 3
+FRAME_PAYLOAD_BYTES_LENGTH = 29
 
 # A_TEAM_SIGN = 97                # The ASCII code of 'a'
 
@@ -91,9 +91,9 @@ class Header:
         # self.typ = int(head[1][:2], 2)
         # self.ID = int(head[1][2:]+head[2]+head[3]+head[4]+head[5][:2], 2)
         # self.end = int(head[5][2], 2)
-        self.ID = int(head[0],2)
-        self.typ = int(head[1][:2], 2)
-        self.end = int(head[1][2],2)
+        self.ID = int(head[:2],2)
+        self.typ = int(head[2][:2], 2)
+        self.end = int(head[2][2],2)
         # print(self.ID)
 
         
