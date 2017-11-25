@@ -1,6 +1,5 @@
 # https://es.wikipedia.org/wiki/Strategy_(patr%C3%B3n_de_dise%C3%B1o)#Python
 # coding=utf-8
-import compressionFunctions as cf
 from math import ceil
 import zlib
 import sys
@@ -61,8 +60,6 @@ class Compressor:
                 break
             i = i+1
         file.close()
-        print()
-
         return text1==text2
 
 
