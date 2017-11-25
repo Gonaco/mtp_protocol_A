@@ -16,7 +16,7 @@ BR = NRF24.BR_250KBPS
 PA = NRF24.PA_MIN
 
 def setup():
-    print("\n-setup-\n")  # Debbuging issues.
+    # print("\n-setup-\n")  # Debbuging issues.
     pipes = [[0xe7, 0xe7, 0xe7, 0xe7, 0xe7], [0xc2, 0xc2, 0xc2, 0xc2, 0xc2]]  # addresses for TX/RX channels
 
 
@@ -77,7 +77,7 @@ def setup():
 
 # #################DEBUG CODE BELOW############################
 def transmit(radio, radio2, archivo, pipe):
-    print("\n-transmit-\n")  # Debbuging issues.
+    # print("\n-transmit-\n")  # Debbuging issues.
     run = True
     paysize = m.FRAME_PAYLOAD_BYTES_LENGTH  # may change
     repeat = False
@@ -107,10 +107,10 @@ def transmit(radio, radio2, archivo, pipe):
                     # we send a mix of Nack and next ids
                     for i in range(0, nack_len):
                         # we send nack
-                        print(nack_list[0])
+                        # print(nack_list[0])
                         next_id = nack_list[0]
                         frame = frame_list[int(next_id)]
-                        print('%s we send frame' % next_id)
+                        # print('%s we send frame' % next_id)
                         radio.write(frame.__str__())
                         nack_list.pop(0)
                     # we send the rest of the window
@@ -130,7 +130,7 @@ def transmit(radio, radio2, archivo, pipe):
             last_window = last_window+1
             # after we send, we look for nacks
             if radio2.available(pipe):
-                print('we have things to read')
+                # print('we have things to read')
                 rcv_buffer = []
                 radio2.read(rcv_buffer, radio2.getDynamicPayloadSize())
                 rcv = m.Packet()
@@ -147,7 +147,7 @@ def transmit(radio, radio2, archivo, pipe):
                 time.sleep(1 / 1000.0)
                 num = num + 1
             if num < 400:
-                print('after if')
+                # print('after if')
                 #print(rcv.getTyp())
                 #we reecived something
                 if radio2.available(pipe):
@@ -167,7 +167,7 @@ def transmit(radio, radio2, archivo, pipe):
                             #print('we do not send full window')
                             for i in range(0, nack_len):
                                 # we send nack
-                                print(nack_list[0])
+                                # print(nack_list[0])
                                 next_id = nack_list[0]
                                 frame = frame_list[int(next_id)]
                                 #print('%s we send frame' % next_id)
@@ -181,12 +181,12 @@ def transmit(radio, radio2, archivo, pipe):
                                 #print('%s we send frame' % next_id)
                                 radio.write(frame.__str__())
                                 nack_list.pop(0)
-                    print('I sent last so I will check for ack')
+                    # print('I sent last so I will check for ack')
                     #time.sleep(2)
                     # if I don't have nacks, I only care if I finished
                     # if rx send ack we stop running, if we didn't finish, just write next window
                     if rcv.getTyp() == 1 and rcv.getEnd() == 1:
-                        print('there is ack')
+                        # print('there is ack')
                         run = False
                     if rcv.getTyp() == 0:
                         time.sleep(10)
@@ -194,17 +194,17 @@ def transmit(radio, radio2, archivo, pipe):
             else:
                 #timeot
                 frame = frame_list[-1]
-                print('%d we send last frame again')
+                # print('%d we send last frame again')
                 radio.write(frame.__str__())
 
     return id_last
 
 
 def synchronized(radio, radio2, pipe):
-    print("\n-synchronized-\n")  # Debbuging issues.
+    # print("\n-synchronized-\n")  # Debbuging issues.
     done = False
     while not done:
-        print('sending sync')
+        # print('sending sync')
         num = 0
         m.sendSYNC(0, radio)
         radio2.startListening()
@@ -212,7 +212,7 @@ def synchronized(radio, radio2, pipe):
             time.sleep(1 / 1000.0)
             num = num + 1
         if num < 400:
-            print("we received something before time out")
+            # print("we received something before time out")
             rcv_buffer = []
             radio2.read(rcv_buffer, radio2.getDynamicPayloadSize())
             rcv = m.Packet()
@@ -220,15 +220,15 @@ def synchronized(radio, radio2, pipe):
             if rcv.getTyp() == 1 and rcv.getID() == 0:
                 radio2.stopListening()
                 done = True
-        else:
-            print('did not receive ack')
+        # else:
+        #     # print('did not receive ack') 
 
 
 def end_connection(radio, radio2, pipe, last_id):
-    print("\n-end_connection-\n")  # Debbuging issues.
+    # print("\n-end_connection-\n")  # Debbuging issues.
     done = False
     while not done:
-        print('sending ack')
+        # print('sending ack')
         num = 0
         m.sendACK(0, 0, radio)
         radio2.startListening()
@@ -236,7 +236,7 @@ def end_connection(radio, radio2, pipe, last_id):
             time.sleep(1 / 1000.0)
             num = num + 1
         if num < 400:
-            print("we received something before time out")
+            # print("we received something before time out")
             rcv_buffer = []
             radio2.read(rcv_buffer, radio2.getDynamicPayloadSize())
             rcv = m.Packet()
@@ -244,12 +244,12 @@ def end_connection(radio, radio2, pipe, last_id):
             if rcv.getTyp() == 1 and rcv.getID() == last_id:
                 radio2.stopListening()
                 done = True
-        else:
-            print('did not receive ack')
+        # else:
+        #     print('did not receive ack')
 
 
 def build_list(archivo, paysize):
-    print("\n-build_list-\n")  # Debbuging issues.
+    # print("\n-build_list-\n")  # Debbuging issues.
     data_id = 0
     frame_list = []
     payload_list = []
@@ -272,7 +272,7 @@ def build_list(archivo, paysize):
 
 
 def send_window(frame_list, last_sent, window_size, radio, finished):
-    print("\n-send_window-\n")  # Debbuging issues.
+    # print("\n-send_window-\n")  # Debbuging issues.
     if (last_sent + window_size) < len(frame_list):
         #print('we send a window')
         for i in range(0, window_size):
@@ -297,7 +297,7 @@ def process_nacks(rcv, nack_list):
     # nack received
     # read payload and store IDs in list
     nack_string = rcv.getPayload()
-    print('this is the string of nacks we receive %s' % nack_string)
+    # print('this is the string of nacks we receive %s' % nack_string)
     #time.sleep(2)
     temp_nack_list = re.split(',', nack_string)
     temp_nack_list.pop(-1)
