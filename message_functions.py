@@ -133,17 +133,17 @@ class Packet:
     def mssg2Pckt(self, message_bin):
         mssg_string = ""
 
-        print(message_bin)
+        # print(message_bin)
         
         for i in range(0,len(message_bin),1):
             mssg_string = mssg_string + chr(message_bin[i])
 
-        print(mssg_string)
+        # print(mssg_string)
             
         self.header.extractHeader(mssg_string)
         self.payload = mssg_string[HEADER_BYTES_LENGTH:]
 
-        print(self.getID())
+        # print(self.getID())
         
     # def send(self,transceiver):
     #     transceiver.write(self.__str__())
@@ -186,23 +186,23 @@ class Frame(Packet):
         
 def sendSYNC(ID, radio):
 
-    print("\n-sendSYNC-\n")
+    # print("\n-sendSYNC-\n")
     sync = SYNC(ID)
 
-    print(sync)
+    # print(sync)
     radio.write(sync.__str__())
 
 def sendACK(ID, end, radio):
 
-    print("\n-sendACK-\n")
+    # print("\n-sendACK-\n")
     ack = ACK(ID, end)
 
-    print(ack)
+    # print(ack)
     radio.write(ack.__str__())
 
 def sendNACK(ID, lost_IDs_array, radio):
 
-    print("\n-sendNACK-\n")
+    # print("\n-sendNACK-\n")
     
     payload = ""
     overload = []
@@ -212,7 +212,7 @@ def sendNACK(ID, lost_IDs_array, radio):
         if len(payload + str(lost_IDs_array[i]) + ",") <= FRAME_PAYLOAD_BYTES_LENGTH:
             payload = payload + str(lost_IDs_array[i]) + ","
         else:
-            print("Overload")
+            # print("Overload")
             overload = lost_IDs_array[i+1:]
             break
         
