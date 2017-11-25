@@ -53,14 +53,18 @@ class Compressor:
         text2 = file.read()
         lines2 = text2.split('\n')
         lines2 = lines2[0:-1]
+        file.close()
         i=0
         samelines = 0
         for line in lines1:
             if line !=lines2[i]:
                 break
             i = i+1
-        file.close()
-        return text1==text2
+        lines_equal = i
+        return text1==text2,lines_equal
+
+    def getCompressionRatio(self):
+       return float(len(self.uncompressed_text))/len(self.compressed_text)
 
 
 # Inheriting from the above abstract class
@@ -147,13 +151,6 @@ class DifferentialCompressor(Compressor):
     def loadCompressedData(self, received_data):
         self.compressed_text = received_data
         return
-
-    def getCompressedData(self):
-        return self.compressed_text
-
-    def check(self, input_file):
-        return self.uncompressed_text==self.compressed_text
-
 
 
 # Inheriting from the above abstract class
