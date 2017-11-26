@@ -65,12 +65,12 @@ def writeFile(chunk, filename, p_id):
 
 ## SPLIT DATA NOW COMPRESSES THE WHOLE FILE.        
 def splitData(archivo, chunk_len):
-    if USING_COMPRESSION
+    if USING_COMPRESSION:
         Compi_tx = compression.LZWCompressor()
         Compi_tx.loadText(archivo)
         Compi_tx.compress()
         data_to_be_sent = Compi_tx.compressed_text
-    else
+    else:
         data_to_be_sent = archivo.read()
     
     ### splitting the data in packets
