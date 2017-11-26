@@ -87,7 +87,7 @@ def receive(radio, radio2, pipe, frame_received):
     storedFrames = {"-2N": "DEFAULT"}
     team = "A"
     window_id = 1
-    window_size = 3  # may change
+    window_size = 20  # may change
     original_frames_id = []
 
     while run:
