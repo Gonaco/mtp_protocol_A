@@ -113,6 +113,7 @@ def receive(radio, radio2, pipe, frame_received):
             original_frames_id[rcv.getID()] = -1
 
             if count % window_size == 0 and count != 0 and rcv.getEnd() != 1 and not last_frame:
+                print('Not last frame, check to send nacks')
                 frames2resend_id = []
                 frames2resend_id = find_lost_frames(original_frames_id[last_w_id: count])
                 if len(frames2resend_id) == 0:
@@ -137,6 +138,7 @@ def receive(radio, radio2, pipe, frame_received):
                         timer3 = 0
                     run = False
                 else:
+                    print('last received and ask to resend')
                     count = 0
                     num_frames_lost = len(frames2resend_id)
                     m.sendNACK(window_id, frames2resend_id, radio2)
@@ -150,7 +152,7 @@ def receive(radio, radio2, pipe, frame_received):
 
                 frames2resend_id = find_lost_frames(original_frames_id[last_w_id:])
                 if len(frames2resend_id) == 0:  # All frames are received
-                    # print("The entire message is received the firs time")
+                    print("The entire message is received the first time")
                     for j in range(0, 10, 1):
                         m.sendACK(window_id, 1, radio2)
                         while timer4 < 400:
@@ -159,6 +161,7 @@ def receive(radio, radio2, pipe, frame_received):
                         timer4 = 0
                     run = False
                 else:
+                    print('we just received last')
                     count = 0
                     num_frames_lost = len(frames2resend_id)
                     m.sendNACK(window_id, frames2resend_id, radio2)

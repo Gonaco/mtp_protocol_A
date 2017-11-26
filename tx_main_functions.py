@@ -150,9 +150,9 @@ def transmit(radio, radio2, archivo, pipe):
             if num < 400:
                 # print('after if')
                 #print(rcv.getTyp())
-                #we reecived something
+                #we recived something
                 if radio2.available(pipe):
-                    #print('we have things to read')
+                    print('we have things to read')
                     rcv_buffer = []
                     radio2.read(rcv_buffer, radio2.getDynamicPayloadSize())
                     rcv = m.Packet()
@@ -165,7 +165,7 @@ def transmit(radio, radio2, archivo, pipe):
                         nack_list = process_nacks(rcv, nack_list)
                         nack_len = len(nack_list)
                         if nack_len < window_size:
-                            #print('we do not send full window')
+                            print('we do not send full window')
                             for i in range(0, nack_len):
                                 # we send nack
                                 # print(nack_list[0])
@@ -174,7 +174,7 @@ def transmit(radio, radio2, archivo, pipe):
                                 #print('%s we send frame' % next_id)
                                 radio.write(frame.__str__())
                         else:
-                            #print('we send full window')
+                            print('we send full window')
                             for i in range(0, window_size):
                                 # we send the first 10 nacks and eliminate them from the list
                                 next_id = nack_list[0]
