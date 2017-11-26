@@ -199,18 +199,18 @@ def transmit(radio, radio2, archivo, pipe):
                 # print('%d we send last frame again')
                 radio.write(frame.__str__())
 
-    return id_last
+    #return id_last
 
 
 def synchronized(radio, radio2, pipe):
     # print("\n-synchronized-\n")  # Debbuging issues.
     done = False
+    num = 0
+    m.sendSYNC(0, radio)
+    radio2.startListening()
     while not done:
         # print('sending sync')
-        num = 0
-        m.sendSYNC(0, radio)
-        radio2.startListening()
-        while not radio2.available(pipe) and num < 400:  # WHY A TIMER (400) HERE?
+        while not radio2.available(pipe) and num < 400:
             time.sleep(1 / 1000.0)
             num = num + 1
         if num < 400:
@@ -222,11 +222,13 @@ def synchronized(radio, radio2, pipe):
             if rcv.getTyp() == 1 and rcv.getID() == 0:
                 radio2.stopListening()
                 done = True
-        # else:
+        else:
+            num = 0
+            m.sendSYNC(0, radio)
         #     # print('did not receive ack') 
 
 
-def end_connection(radio, radio2, pipe, last_id):
+def end_connection(radio):
     print("\n-end_connection-\n")  # Debbuging issues.
     #done = False
     #while not done:
@@ -258,8 +260,8 @@ def build_list(archivo, paysize):
     frame_list = []
     payload_list = []
     payload_list = p.splitData(archivo, paysize)
-    #print('Just after split data, I print first payload')
-    #payload_list[0]
+    print('Just after split data, I print first payload')
+    print(payload_list[0])
     # print('%s is the payload returned by carol' % payload)
     for i in range(0, int(len(payload_list)-1)):
         payload = payload_list[i]
@@ -281,8 +283,14 @@ def send_window(frame_list, last_sent, window_size, radio, finished):
         #print('we send a window')
         for i in range(0, window_size):
             frame = frame_list[last_sent + 1]
+            if frame.getEnd() == 1:
+                print('we send last window')
+                finished = True
+                radio.write(frame.__str__())
+                time.sleep(0.4)
             #print('%d we send frame' % last_sent)
-            radio.write(frame.__str__())
+            else:
+                radio.write(frame.__str__())
             last_sent = last_sent+1
     else:
         print('we send last window')
