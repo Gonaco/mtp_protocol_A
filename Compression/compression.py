@@ -33,7 +33,7 @@ class Compressor:
         return
 
     @abc.abstractmethod
-    def loadText(self, filename):
+    def loadText(self, fileptr):
         return
 
 
@@ -72,10 +72,10 @@ class DifferentialCompressor(Compressor):
     uncompressed_text = None
     compressed_text = None
 
-    def loadText(self, filename):
-        file = io.open(filename, mode="r", encoding="utf-16")
-        self.uncompressed_text = file.read()
-        file.close()
+    def loadText(self, fileptr):
+        #file = io.open(filename, mode="r", encoding="utf-16")
+        self.uncompressed_text = fileptr.read()
+        #file.close()
         return
 
     def compress(self):
@@ -161,10 +161,10 @@ class LZWCompressor(Compressor):
 
     num_blocks = 100;
 
-    def loadText(self, filename):
-        file = io.open(filename, 'r')
-        self.uncompressed_text = file.read()
-        file.close()
+    def loadText(self, fileptr):
+        #file = io.open(filename, 'r')
+        self.uncompressed_text = fileptr.read()
+        #file.close()
         return
 
     def setNumBlocks(self, num_blocks):
