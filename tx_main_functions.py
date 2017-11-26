@@ -83,7 +83,7 @@ def transmit(radio, radio2, archivo, pipe):
     paysize = m.FRAME_PAYLOAD_BYTES_LENGTH  # may change
     repeat = False
     last_window = -1
-    window_size = 50  # may change
+    window_size = 7  # may change
     last_sent = -1
     # data = file.read()
     frame_list = build_list(archivo, paysize)
@@ -234,8 +234,14 @@ def end_connection(radio):
     #while not done:
         # print('sending ack')
         #num = 0
-    for i in range(0, 10):
+    timer = 0
+    for j in range(0, 10, 1):
         m.sendACK(0, 0, radio)
+        while timer < 40:
+            time.sleep(1 / 1000.0)
+            timer = timer + 1
+        timer = 0
+
     GPIO.cleanup()
         #radio2.startListening()
         #while not radio2.available(pipe) and num < 400:
