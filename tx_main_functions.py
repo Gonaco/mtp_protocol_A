@@ -78,7 +78,7 @@ def setup():
 
 # #################DEBUG CODE BELOW############################
 def transmit(radio, radio2, archivo, pipe):
-    # print("\n-transmit-\n")  # Debbuging issues.
+    print("\n-transmit-\n")  # Debbuging issues.
     run = True
     paysize = m.FRAME_PAYLOAD_BYTES_LENGTH  # may change
     repeat = False
@@ -232,8 +232,9 @@ def end_connection(radio, radio2, pipe, last_id):
     #while not done:
         # print('sending ack')
         #num = 0
-    m.sendACK(0, 0, radio)
-
+    for i in range(0, 10):
+        m.sendACK(0, 0, radio)
+    GPIO.cleanup()
         #radio2.startListening()
         #while not radio2.available(pipe) and num < 400:
          #   time.sleep(1 / 1000.0)
@@ -284,7 +285,7 @@ def send_window(frame_list, last_sent, window_size, radio, finished):
             radio.write(frame.__str__())
             last_sent = last_sent+1
     else:
-        #print('we send last window')
+        print('we send last window')
         for i in range(last_sent + 1, len(frame_list)):
             frame = frame_list[last_sent + 1]
             radio.write(frame.__str__())
