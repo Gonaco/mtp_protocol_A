@@ -86,7 +86,7 @@ def receive(radio, radio2, pipe, frame_received):
     storedFrames = {"-2N": "DEFAULT"}
     team = "A"
     window_id = 1
-    window_size = 7  # may change
+    window_size = 10  # may change
     original_frames_id = []
 
     while run:
@@ -110,7 +110,6 @@ def receive(radio, radio2, pipe, frame_received):
             original_frames_id[rcv.getID()] = -1
 
             if count % window_size == 0 and count != 0 and rcv.getEnd() != 1 and not last_frame:
-                # print('Not last frame, check to send nacks')
                 frames2resend_id = []
                 frames2resend_id = find_lost_frames(original_frames_id[last_w_id: count])
                 if len(frames2resend_id) == 0:
@@ -129,7 +128,7 @@ def receive(radio, radio2, pipe, frame_received):
                     print("The entire message is received")
                     for j in range(0, 10, 1):
                         m.sendACK(window_id, 1, radio2)
-                        while timer2 < 400:
+                        while timer2 < 40:
                             time.sleep(1 / 1000.0)
                             timer2 = timer2 + 1
                         timer2 = 0
@@ -151,7 +150,7 @@ def receive(radio, radio2, pipe, frame_received):
                     print("The entire message is received the first time")
                     for j in range(0, 10, 1):
                         m.sendACK(window_id, 1, radio2)
-                        while timer3 < 400:
+                        while timer3 < 40:
                             time.sleep(1 / 1000.0)
                             timer3 = timer3 + 1
                         timer3 = 0
@@ -190,7 +189,7 @@ def handshake(radio, radio2, pipe):
             time.sleep(1/1000.0)
             if wait:
                 timer = timer + 1
-                if timer == 400:  # TIMEOUT
+                if timer == 400:  # TIMEOUT (may change)
                     m.sendACK(0, 0, radio2)
                     timer = 0
 
