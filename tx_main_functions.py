@@ -152,7 +152,7 @@ def transmit(radio, radio2, archivo, pipe):
                 #print(rcv.getTyp())
                 #we recived something
                 if radio2.available(pipe):
-                    #print('we have things to read')
+                    print('we have things to read')
                     time.sleep(0.5)
                     rcv_buffer = []
                     radio2.read(rcv_buffer, radio2.getDynamicPayloadSize())
@@ -183,12 +183,12 @@ def transmit(radio, radio2, archivo, pipe):
                                 #print('%s we send frame' % next_id)
                                 radio.write(frame.__str__())
                                 nack_list.pop(0)
-                    # print('I sent last so I will check for ack')
+                    print('I sent last so I will check for ack')
                     #time.sleep(2)
                     # if I don't have nacks, I only care if I finished
                     # if rx send ack we stop running, if we didn't finish, just write next window
                     if rcv.getTyp() == 1 and rcv.getEnd() == 1:
-                        # print('there is ack')
+                        print('there is ack')
                         run = False
                     if rcv.getTyp() == 0:
                         time.sleep(10)
@@ -227,25 +227,26 @@ def synchronized(radio, radio2, pipe):
 
 
 def end_connection(radio, radio2, pipe, last_id):
-    # print("\n-end_connection-\n")  # Debbuging issues.
-    done = False
-    while not done:
+    print("\n-end_connection-\n")  # Debbuging issues.
+    #done = False
+    #while not done:
         # print('sending ack')
-        num = 0
-        m.sendACK(0, 0, radio)
-        radio2.startListening()
-        while not radio2.available(pipe) and num < 400:
-            time.sleep(1 / 1000.0)
-            num = num + 1
-        if num < 400:
+        #num = 0
+    m.sendACK(0, 0, radio)
+
+        #radio2.startListening()
+        #while not radio2.available(pipe) and num < 400:
+         #   time.sleep(1 / 1000.0)
+          #  num = num + 1
+        #if num < 400:
             # print("we received something before time out")
-            rcv_buffer = []
-            radio2.read(rcv_buffer, radio2.getDynamicPayloadSize())
-            rcv = m.Packet()
-            rcv.mssg2Pckt(rcv_buffer)
-            if rcv.getTyp() == 1 and rcv.getID() == last_id:
-                radio2.stopListening()
-                done = True
+         #   rcv_buffer = []
+          #  radio2.read(rcv_buffer, radio2.getDynamicPayloadSize())
+           # rcv = m.Packet()
+            #rcv.mssg2Pckt(rcv_buffer)
+      #      if rcv.getTyp() == 1 and rcv.getID() == last_id:
+       #         radio2.stopListening()
+        #        done = True
         # else:
         #     print('did not receive ack')
 
