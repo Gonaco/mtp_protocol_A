@@ -1,9 +1,11 @@
 import math
-
+## ADDED AT RECENT REVIEW TO INCLUDE COMPRESSION
+import Compression.compression
 
 ##This is initialized by Carlos:
 ##storedFrames = {"-2N" : "DEFAULT"} ##Inicializamos el diccionario.
 
+USING_COMPRESSION = True
 
 ## DISCLAIMER
 # In network mode, we will need a last_w_id diferent for each team (!)
@@ -61,28 +63,44 @@ def writeFile(chunk, filename, p_id):
         finalFILE.write(chunk)
 
 
+## SPLIT DATA NOW COMPRESSES THE WHOLE FILE.        
 def splitData(archivo, chunk_len):
-    # print("\n-splitData-\n")  ##Debbuging issues.
+    if USING_COMPRESSION
+        Compi_tx = compression.LZWCompressor()
+        Compi_tx.loadText(archivo)
+        Compi_tx.compress()
+        data_to_be_sent = Compi_tx.compressed_text
+    else
+        data_to_be_sent = archivo.read()
+    
+    ### splitting the data in packets
+    list_to_send = []
+    for ite in xrange(0,len(data_to_be_sent),chunk_len):
+        list_to_send.append(data_to_be_sent[ite : ite + chunk_len])
+    
+    return list_to_send    
+    
+#    # print("\n-splitData-\n")  ##Debbuging issues.
+#
+#    file_len = len(archivo.read())  # Size of the file in bytes
+#    # print('Size of the file in bytes: %s' % file_len)
+#    ##chunk_len = 30  # Size of the chunk in bytes
+#    # print('Size of the chunk in bytes: %s' % chunk_len)
+#
+#    aux = float(file_len) / chunk_len
+#    packets = math.ceil(aux)
+#    # print('Number of packets: %s' % packets)
 
-    file_len = len(archivo.read())  # Size of the file in bytes
-    # print('Size of the file in bytes: %s' % file_len)
-    ##chunk_len = 30  # Size of the chunk in bytes
-    # print('Size of the chunk in bytes: %s' % chunk_len)
-
-    aux = float(file_len) / chunk_len
-    packets = math.ceil(aux)
-    # print('Number of packets: %s' % packets)
-
-    lista = []
-    for i in range(0, int(packets)):
-        archivo.seek(i * chunk_len)
-        chunk = archivo.read(chunk_len)
-        lista.append(chunk)
-
-    ##archivo.seek(PacketID * chunk_len)  # It moves the pointer to the starting point of the chunk number 'nPacket'
-    ##chunk = archivo.read(chunk_len)  # It reads 'cunk_len' bytes from the previous pointer
-
-    ##if PacketID > packets):
-    ##    print("That packet does not exist. EOF reached.")
-
-    return lista
+#    lista = []
+#    for i in range(0, int(packets)):
+#        archivo.seek(i * chunk_len)
+#        chunk = archivo.read(chunk_len)
+#        lista.append(chunk)
+#
+#    ##archivo.seek(PacketID * chunk_len)  # It moves the pointer to the starting point of the chunk number 'nPacket'
+#    ##chunk = archivo.read(chunk_len)  # It reads 'cunk_len' bytes from the previous pointer
+#
+#    ##if PacketID > packets):
+#    ##    print("That packet does not exist. EOF reached.")
+#
+#    return lista
