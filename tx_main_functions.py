@@ -199,7 +199,7 @@ def transmit(radio, radio2, archivo, pipe):
                 # print('%d we send last frame again')
                 radio.write(frame.__str__())
 
-    return id_last
+    #return id_last
 
 
 def synchronized(radio, radio2, pipe):
@@ -228,7 +228,7 @@ def synchronized(radio, radio2, pipe):
         #     # print('did not receive ack') 
 
 
-def end_connection(radio, radio2, pipe, last_id):
+def end_connection(radio):
     print("\n-end_connection-\n")  # Debbuging issues.
     #done = False
     #while not done:
@@ -261,7 +261,7 @@ def build_list(archivo, paysize):
     payload_list = []
     payload_list = p.splitData(archivo, paysize)
     print('Just after split data, I print first payload')
-    payload_list[0]
+    print(payload_list[0])
     # print('%s is the payload returned by carol' % payload)
     for i in range(0, int(len(payload_list)-1)):
         payload = payload_list[i]

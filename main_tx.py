@@ -5,8 +5,8 @@ def main_tx():
     radio, radio2=f.setup()
     pipe = [1]
     f.synchronized(radio, radio2, pipe)
-    id_last=f.transmit(radio, radio2, archivo, pipe)
-    f.end_connection(radio, radio2, pipe, id_last)
+    f.transmit(radio, radio2, archivo, pipe)
+    f.end_connection(radio)
     return 0
 
 if __name__ == "__main__":
