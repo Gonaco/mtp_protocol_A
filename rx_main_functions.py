@@ -174,7 +174,7 @@ def receive(radio, radio2, pipe, frame_received):
             original_frames_id[frame_received.getID()] = -1
             first_frame = False
 
-    return final_id
+    #return final_id
 
 
 def find_lost_frames(vector_id):
@@ -187,7 +187,7 @@ def find_lost_frames(vector_id):
     return lost_frames_id
 
 
-def handshake(radio, radio2, pipe, packet_id):
+def handshake(radio, radio2, pipe):
     print("\n-handshake-\n")
     done = False
     wait = False
@@ -201,7 +201,7 @@ def handshake(radio, radio2, pipe, packet_id):
             if wait:
                 timer = timer + 1
                 if timer == 400:  # TIMEOUT
-                    m.sendACK(packet_id, 0, radio2)
+                    m.sendACK(0, 0, radio2)
                     # print("Resend ACK")
                     timer = 0
 
@@ -212,7 +212,7 @@ def handshake(radio, radio2, pipe, packet_id):
         # print(rcv)
         if rcv.getTyp() == 0 and rcv.getID() == 0:
             # print("sync message received")
-            m.sendACK(packet_id, 0, radio2)
+            m.sendACK(0, 0, radio2)
             wait = True
         elif rcv.getTyp() == 1 and rcv.getID() == 0:
             # print("ACK message received")
