@@ -7,9 +7,12 @@ def main_rx():
     pipe = [0]
     frame_received = rx.handshake(radio, radio2, pipe, 0)
     final_id = rx.receive(radio, radio2, pipe, frame_received)
+    end1 = time.time()
+    diff = end1 - start
+    print("Done sending the file! Exiting! It took: ", diff, " seconds")
     rx.handshake(radio, radio2, pipe, final_id)
-    end = time.time()
-    diff = end - start
+    end2 = time.time()
+    diff = end2 - start
     print("Done sending the file! Exiting! It took: ", diff, " seconds")
     return 0
 
