@@ -87,7 +87,7 @@ def receive(radio, radio2, pipe, frame_received):
     storedFrames = {"-2N": "DEFAULT"}
     team = "A"
     window_id = 1
-    window_size = 50  # may change
+    window_size = 7  # may change
     original_frames_id = []
 
     while run:
@@ -132,7 +132,7 @@ def receive(radio, radio2, pipe, frame_received):
                     print("The entire message is received")
                     for j in range(0, 10, 1):
                         m.sendACK(window_id, 1, radio2)
-                        while timer3 < 400:
+                        while timer3 < 40:
                             time.sleep(1 / 1000.0)
                             timer3 = timer3 + 1
                         timer3 = 0
@@ -155,7 +155,7 @@ def receive(radio, radio2, pipe, frame_received):
                     print("The entire message is received the first time")
                     for j in range(0, 10, 1):
                         m.sendACK(window_id, 1, radio2)
-                        while timer4 < 400:
+                        while timer4 < 40:
                             time.sleep(1 / 1000.0)
                             timer4 = timer4 + 1
                         timer4 = 0
