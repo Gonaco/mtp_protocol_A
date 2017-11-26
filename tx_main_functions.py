@@ -232,7 +232,10 @@ def end_connection(radio, radio2, pipe, last_id):
     #while not done:
         # print('sending ack')
         #num = 0
-    m.sendACK(0, 0, radio)
+
+
+    for i in range(0, 10):
+        m.sendACK(0, 0, radio)
     GPIO.cleanup()
         #radio2.startListening()
         #while not radio2.available(pipe) and num < 400:
