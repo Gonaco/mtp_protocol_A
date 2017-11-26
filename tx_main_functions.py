@@ -152,7 +152,8 @@ def transmit(radio, radio2, archivo, pipe):
                 #print(rcv.getTyp())
                 #we recived something
                 if radio2.available(pipe):
-                    print('we have things to read')
+                    #print('we have things to read')
+                    time.sleep(0.5)
                     rcv_buffer = []
                     radio2.read(rcv_buffer, radio2.getDynamicPayloadSize())
                     rcv = m.Packet()
