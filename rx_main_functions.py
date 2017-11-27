@@ -86,7 +86,7 @@ def receive(radio, radio2, pipe, frame_received):
     storedFrames = {"-2N": "DEFAULT"}
     team = "A"
     window_id = 1
-    window_size = 10  # may change
+    window_size = 20  # may change
     original_frames_id = []
 
     while run:
@@ -119,7 +119,7 @@ def receive(radio, radio2, pipe, frame_received):
 
                 window_id = window_id + 1
 
-                for i in range((window_size*(window_id+28)), window_size*(window_id+29), 1):
+                for i in range((window_size*(window_id+98)), window_size*(window_id+99), 1):
                     original_frames_id.append(i)
 
             elif last_frame and count == num_frames_lost and count != 0:
@@ -162,7 +162,7 @@ def receive(radio, radio2, pipe, frame_received):
                     m.sendNACK(window_id, frames2resend_id, radio2)
 
         else:
-            for i in range(0, 30*window_size, 1):
+            for i in range(0, 100*window_size, 1):
                 original_frames_id.append(i)  # Generate the first 30 original frames ID windows
             storedFrames, last_w_id = pm.rebuildData(frame_received.getID(), frame_received.getPayload(), last_w_id, storedFrames, team)
             original_frames_id[frame_received.getID()] = -1
