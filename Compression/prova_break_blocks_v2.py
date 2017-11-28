@@ -19,18 +19,17 @@ def toc():
 
 #filename = "input - copia.txt"
 #filename = "SampleTextFile_1000kb.txt"
-filename = "input-short.txt"
+#filename = "input-short.txt"
 #filename = "input16.txt"
+filename = "Lorem ipsum.txt"
 filename_rx = "received.txt"
 
 tic()
 Compi_tx = compression.LZWCompressor()
 Compi_tx.loadText(filename)
-Compi_tx.num_blocks = 3
+Compi_tx.num_blocks = 100
 Compi_tx.compress()
-print(Compi_tx.uncompressed_text)
 compressed_data = Compi_tx.compressed_text
-print (compressed_data)
 toc()
 
 
@@ -39,6 +38,4 @@ Compi_rx = compression.LZWCompressor()
 Compi_rx.compressed_text = compressed_data
 Compi_rx.uncompress()
 Compi_rx.writeDisk(filename_rx)
-print('Checking file:')
-#print(Compi_rx.checkCompression(filename, filename_rx))
 toc()

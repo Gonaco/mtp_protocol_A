@@ -32,11 +32,11 @@ class Compressor:
         """Uncompress received data stream"""
         return
 
-    def loadText(self, archivo):
+    def loadText(self, filename):
         print('\n-loadText-\n')
-        #file = io.open(filename, 'rb')
-        self.uncompressed_text = archivo.read()
-        archivo.close()
+        file = io.open(filename, 'rb')
+        self.uncompressed_text = file.read()
+        file.close()
         return
 
 
@@ -200,14 +200,14 @@ class LZWCompressor(Compressor):
                 # entire_compression_data = entire_compression_data + block_text_compressed_size + block_text_compressed
 
             self.compressed_text = base64.b64encode(entire_compression_data)
-        print('Entire comp data: ' + entire_compression_data)
+        ##print('Entire comp data: ' + entire_compression_data)
         return self.compressed_text
 
     def uncompress(self):
         print('\n-uncompress-\n')
         received_data = base64.b64decode(self.compressed_text)
 
-        print('Received data: ' + received_data)
+        ##print('Received data: ' + received_data)
 
         for i in range(len(received_data)):
             received_text_block_compressed = received_data[i:]
@@ -222,5 +222,5 @@ class LZWCompressor(Compressor):
                 else:
                     self.uncompressed_text = self.uncompressed_text + received_text_block_uncompressed
 
-        print('Uncompressed text: ' + self.uncompressed_text)
+        ##print('Uncompressed text: ' + self.uncompressed_text)
         return self.uncompressed_text
