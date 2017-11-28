@@ -144,10 +144,10 @@ def transmit(radio, radio2, archivo, pipe):
         else:
             #print('if finished')
             num = 0
-            while not radio2.available(pipe) and num < 400:
+            while not radio2.available(pipe) and num < 300:
                 time.sleep(1 / 1000.0)
                 num = num + 1
-            if num < 400:
+            if num < 300:
                 # print('after if')
                 #print(rcv.getTyp())
                 #we recived something
@@ -210,10 +210,10 @@ def synchronized(radio, radio2, pipe):
     radio2.startListening()
     while not done:
         # print('sending sync')
-        while not radio2.available(pipe) and num < 400:
+        while not radio2.available(pipe) and num <300:
             time.sleep(1 / 1000.0)
             num = num + 1
-        if num < 400:
+        if num < 300:
             # print("we received something before time out")
             rcv_buffer = []
             radio2.read(rcv_buffer, radio2.getDynamicPayloadSize())
@@ -293,7 +293,7 @@ def send_window(frame_list, last_sent, window_size, radio, finished):
                 print('we send last window')
                 finished = True
                 radio.write(frame.__str__())
-                time.sleep(0.4)
+                time.sleep(0.3)
             #print('%d we send frame' % last_sent)
             else:
                 radio.write(frame.__str__())
@@ -306,7 +306,7 @@ def send_window(frame_list, last_sent, window_size, radio, finished):
             last_sent = last_sent+1
             finished = True
             #This is to leave time for the rx to answer
-            time.sleep(0.4)
+            time.sleep(0.3)
     #time.sleep(2)
     return last_sent, finished
 
