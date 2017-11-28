@@ -12,20 +12,26 @@ USING_COMPRESSION = True
 # Each last_w_id must be initialized at -1
 # The dictionary must be created outside the function, initialised as shown on this file
 # Team must be an string with the letter of the team in capital letter ("A", "B", "C", or "D")
-def rebuildData(p_id, string, last_w_id, storedFrames, team):
+def rebuildData(p_id, string, last_w_id, storedFrames, team, global_string):
     # print ("\n-rebuildData-\n")  ##Debbuging issues
 
     filename = "RXfile_" + team
     if (p_id == last_w_id + 1):  # The received packet is the one we should write.
-
-        writeFile(string, filename, p_id)  # We write 'string' in 'filename'
+        if (USING_COMPRESSION):
+            global_string = global_string + string
+        else:
+            writeFile(string, filename, p_id)  # We write 'string' in 'filename'
+            
         last_w_id = last_w_id + 1  # Update the last writen packet ID
 
         p_id = p_id + 1
-        while storedFrames.has_key(str(
-                p_id) + team):  # We check if the packet p_id+1 and the following consecutive ones are in the dictionary.
+        while storedFrames.has_key(str(p_id) + team):  # We check if the packet p_id+1 and the following consecutive ones are in the dictionary.
             string = storedFrames[str(p_id) + team]  # We extract the 'string' number 'p_id'
-            writeFile(string, filename, p_id)  # We write 'string' in 'filename'
+            if (USING_COMPRESSION):
+                global_string = global_string + string
+            else:
+                writeFile(string, filename, p_id)  # We write 'string' in 'filename'
+                
             del storedFrames[str(p_id) + team]  # Remove from the dictionary the string we have just writen
             last_w_id = last_w_id + 1  # Update the last writen packet ID
             p_id = p_id + 1  # Increase the packet ID to see in the next iteration if it is in diccionary
@@ -36,8 +42,18 @@ def rebuildData(p_id, string, last_w_id, storedFrames, team):
         storedFrames.update({str(p_id) + team: string})
         
     # print(storedFrames)
+    if (USING_COMPRESSION)
+        Compi_rx = compression.LZWCompressor()
+        Compi_rx.compressed_text = global_string
+        try:
+            uncompressed_string = Compi_rx.uncompress()
+            file = open(filename+ '.txt', 'wb')
+            file.write(uncompressed_string)
+        except:
+            pass
+        
     ## We return the dictionary and the last writen id (updated versions)
-    return storedFrames, last_w_id
+    return global_string, storedFrames, last_w_id
 
 
 def rebuildDataComp(p_id, string_comp, last_w_id, storedFrames, team, total_string, packets):
