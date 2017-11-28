@@ -12,7 +12,7 @@ import math
 GPIO.setmode(GPIO.BCM)
 
 RF_CH = [0x10, 0x40]
-BR = NRF24.BR_250KBPS
+BR = NRF24.BR_1MBPS
 PA = NRF24.PA_LOW
 
 def setup():
@@ -83,7 +83,7 @@ def transmit(radio, radio2, archivo, pipe):
     paysize = m.FRAME_PAYLOAD_BYTES_LENGTH  # may change
     repeat = False
     last_window = -1
-    window_size = 20  # may change
+    window_size = 10  # may change
     last_sent = -1
     # data = file.read()
     frame_list = build_list(archivo, paysize)
@@ -196,7 +196,7 @@ def transmit(radio, radio2, archivo, pipe):
             else:
                 #timeot
                 frame = frame_list[-1]
-                print('%d we send last frame again')
+                print('we send last frame again')
                 radio.write(frame.__str__())
 
     #return id_last
