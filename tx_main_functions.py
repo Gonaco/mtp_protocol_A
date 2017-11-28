@@ -12,7 +12,7 @@ import math
 GPIO.setmode(GPIO.BCM)
 
 RF_CH = [0x10, 0x40]
-BR = NRF24.BR_250KBPS
+BR = NRF24.BR_1MBPS
 PA = NRF24.PA_LOW
 
 def setup():
@@ -28,6 +28,8 @@ def setup():
     ears.begin(0, 17)  # Set spi-cs pin0, and rf24-CE pin 17 ¿?SURE¿? NOT AS IN THE QUICK MODE
 
     time.sleep(1)
+    ears.setCRCLength(8)
+    mouth.setCRCLength(8)
 
     mouth.setRetries(15, 15)
     mouth.setPayloadSize(32)
@@ -83,7 +85,7 @@ def transmit(radio, radio2, archivo, pipe):
     paysize = m.FRAME_PAYLOAD_BYTES_LENGTH  # may change
     repeat = False
     last_window = -1
-    window_size = 20  # may change
+    window_size = 10  # may change
     last_sent = -1
     # data = file.read()
     frame_list = build_list(archivo, paysize)
