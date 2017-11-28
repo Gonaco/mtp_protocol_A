@@ -4,6 +4,7 @@ import time
 import spidev
 import sys
 from os import listdir
+import nw_test
 
 TX_RX_SWITCH = 29
 NW_SWITCH = 31
@@ -47,10 +48,10 @@ def initPorts():
 
     
 # def loadFiles(argv):
-    # print("\n-loadFiles-\n")
+
     
 def loadFiles():
-
+    print("\n-loadFiles-\n")
     files = []
 
     # if len(argv) > 1:
@@ -109,6 +110,7 @@ def NT():
     print('\n-NT_mode-\n')
 
     # main_nt(tx_file_buffer)
+    main_nw()
 
 
 def run():
@@ -152,7 +154,7 @@ def main(argv):
     
     # Closing
     
-    GPIO.cleanup()
+    GPIO.cleanup()              # Sure this here???
         
 if __name__ == "__main__":
     
