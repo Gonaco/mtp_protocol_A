@@ -203,7 +203,7 @@ def handshake(radio, radio2, pipe):
         elif rcv.getTyp() == 1 and rcv.getID() == 0:
             GPIO.cleanup()
             done = True
-        elif rcv.getTyp() == 3 and rcv.getID() == 0:
+        elif rcv.getTyp() == 3:
             frame_received = rcv
             done = True
 
