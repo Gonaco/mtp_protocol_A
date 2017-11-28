@@ -7,7 +7,7 @@ import packetManagement as pm
 GPIO.setmode(GPIO.BCM)
 
 RF_CH = [0x10, 0x40]
-BR = NRF24.BR_250KBPS
+BR = NRF24.BR_1MBPS
 PA = NRF24.PA_LOW
 
 
@@ -30,6 +30,9 @@ def setup():
     mouth.setRetries(15, 15)
     mouth.setPayloadSize(32)
     mouth.setChannel(RF_CH[1])
+    
+    ears.setCRCLength(8)
+    mouth.setCRCLength(8)
 
     ears.setDataRate(BR)
     ears.setPALevel(PA)
@@ -86,7 +89,7 @@ def receive(radio, radio2, pipe, frame_received):
     storedFrames = {"-2N": "DEFAULT"}
     team = "A"
     window_id = 1
-    window_size = 20  # may change
+    window_size = 10  # may change
     original_frames_id = []
 
     while run:

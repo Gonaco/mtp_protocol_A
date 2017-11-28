@@ -4,7 +4,9 @@ import time
 import spidev
 import sys
 from os import listdir
-import nw_test
+from main_nw import main as main_nw
+from main_tx import main as main_tx
+from main_rx import main as main_rx
 
 TX_RX_SWITCH = 29
 NW_SWITCH = 31
@@ -29,8 +31,8 @@ def initPorts():
     GPIO.setup(NW_SWITCH, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
     
     GPIO.setup(ON_OFF_SWITCH, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-    GPIO.add_event_detect(ON_OFF_SWITCH, GPIO.RISING)
-    GPIO.add_event_callback(ON_OFF_SWITCH, run)
+    GPIO.add_event_detect(ON_OFF_SWITCH, GPIO.BOTH)
+    GPIO.add_event_callback(ON_OFF_SWITCH, on_off)
 
     GPIO.setup(IRQS, GPIO.IN)
 
@@ -117,30 +119,43 @@ def run():
 
     while GPIO.input(ON_OFF_SWITCH):
         print("\n-Running-\n")
-        # initInterruptions()
-        # options = {'tx':TX(files[1]),
-        #            'rx':RX(),
-        #            'network':NT(files)} 
-
+        
         if (GPIO.input(NW_SWITCH)):
 
             # NT(files)
+            GPIO.output(NW_LED, GPIO.HIGH)
             NT()
             
         elif GPIO.input(TX_RX_SWITCH):
-
             
+            GPIO.output(TX_LED, GPIO.HIGH)
             TX(files[0])
 
             
         else:
-            
-            RX()
 
-                
+            RX()
+            GPIO.output(TX_LED, GPIO.HIGH)
+
+
+
+def end():
+    # Closing
     print("\n-Closing-\n")
     GPIO.remove_event_detect(TX_RX_SWITCH)
     GPIO.remove_event_detect(NW_SWITCH)
+    # GPIO.cleanup()
+    
+
+def on_off():
+
+    if (GPIO.input(ON_OFF_SWITCH)):
+
+        run()
+            
+    else:
+        
+        end()
         
     
 def main(argv):
@@ -151,10 +166,8 @@ def main(argv):
 
     files = loadFiles()
 
-    
-    # Closing
-    
-    GPIO.cleanup()              # Sure this here???
+    GPIO.cleanup() # Sure this here???
+
         
 if __name__ == "__main__":
     
