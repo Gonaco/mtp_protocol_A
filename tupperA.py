@@ -44,32 +44,39 @@ def initPorts():
     # Just for being sure that there are no errors with the pins as input
     GPIO.setup(FREE_PINS, GPIO.OUT)
 
-def loadFiles(argv):
 
-    print("\n-loadFiles-\n")
+    
+# def loadFiles(argv):
+    # print("\n-loadFiles-\n")
+    
+def loadFiles():
 
     files = []
 
-    if len(argv) > 1:
+    # if len(argv) > 1:
         
-        # In case of using terminal to load te files
+    #     # In case of using terminal to load te files
 
-        for i in range(1,len(argv)-1):
+    #     for i in range(1,len(argv)-1):
 
-            filename = argv[i]
-            if ".txt" in filename:
-                files.append(open(filename, 'r'))
+    #         filename = argv[i]
+    #         if ".txt" in filename:
+    #             files.append(open(filename, 'r'))
             
 
-    else:
+    # else:
 
-        # In case of using the automatic moe to load the files
+    #     # In case of using the automatic moe to load the files
             
-        for filename in listdir("input_files"):
-            if ".txt" in filename:
-                files.append(open(filename, 'r'))
+    #     for filename in listdir("input_files"):
+    #         if ".txt" in filename:
+    #             files.append(open(filename, 'r'))
 
-    return files
+    # return files
+
+    for filename in listdir("input_files"):
+        if ".txt" in filename:
+            files.append(open(filename, 'r'))
 
 
 # def initInterruptions():
@@ -96,11 +103,12 @@ def RX():
     main_rx()
     
     
-def NT(tx_file_buffer):
+# def NT(tx_file_buffer):
+def NT():
 
     print('\n-NT_mode-\n')
 
-    main_nt(tx_file_buffer)
+    # main_nt(tx_file_buffer)
 
 
 def run():
@@ -114,7 +122,8 @@ def run():
 
         if (GPIO.input(NW_SWITCH)):
 
-            NT(files)
+            # NT(files)
+            NT()
             
         elif GPIO.input(TX_RX_SWITCH):
 
@@ -136,11 +145,9 @@ def main(argv):
 
     # cont = 1
 
-    files = []
-
     initPorts()
 
-    files = loadFiles(argv)
+    files = loadFiles()
 
     
     # Closing
