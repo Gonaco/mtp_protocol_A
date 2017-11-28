@@ -107,7 +107,7 @@ def receive(radio, radio2, pipe, frame_received):
             storedFrames, last_w_id = pm.rebuildData(rcv.getID(), rcv.getPayload(), last_w_id, storedFrames, team)
 
             # In each iteration set to -1 the value of this array located in the received frame ID position
-            if rcv.getID()>len(original_frames_id):
+            if rcv.getID() >= len(original_frames_id):
                 for i in range(len(original_frames_id), rcv.getID()+1):
                     original_frames_id.append(i)
             original_frames_id[rcv.getID()] = -1
