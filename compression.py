@@ -9,6 +9,12 @@ import numpy as np
 import io
 
 # Abstract class
+
+
+SEPA1 = chr(17)
+SEPA2 = chr(18)
+
+
 class Compressor:
     # meta class is used to define other classes
     __metaclass__ = abc.ABCMeta
@@ -40,18 +46,12 @@ class Compressor:
         return
 
 
-    def writeDisk(self, filename, p_id):
-        print("\n-writeDisk-\n")
+    def writeDisk(self, filename):
+        #print("\n-writeDisk-\n")
 
-        if p_id==0:
-            archivo = io.open(filename, 'wb')
-            archivo.write(self.uncompressed_text)
-            archivo.close()
-        else:
-            archivo = io.open(filename, 'a+b')
-            archivo.write(self.uncompressed_text)
-            archivo.close()
-
+        file = io.open(filename, 'wb')
+        file.write(self.uncompressed_text)
+        file.close()
         return
 
     def checkCompression(self,filename1,filename2):
@@ -88,7 +88,7 @@ class DifferentialCompressor(Compressor):
         ii = 0
         num_comp = 0
         lines = self.uncompressed_text.split('\n')
-        lines = lines[0:-1]
+        lines = lines[1:-1]
         line = lines[0]
         comps_res = np.array([], dtype=np.bool).reshape(0, len(line))
         for line in lines:
@@ -110,7 +110,7 @@ class DifferentialCompressor(Compressor):
         # optimitzar string?
         str_indices = ''
         for str in where_str:
-            str_indices = str_indices + str + u"¬"
+            str_indices = str_indices + str + SEPA1
         str_indices = str_indices[0:-1]
         str_send = ''
 
@@ -119,8 +119,8 @@ class DifferentialCompressor(Compressor):
             char_line_send = char_line[where]
             for elem in char_line_send:
                 str_send = str_send + elem
-            str_send = str_send + u'¬'
-        to_tx = lines[0] + '\n&' + str_indices + '&' + str_send
+            str_send = str_send + SEPA1
+        to_tx = lines[0] + '\n'+SEPA2 + str_indices + SEPA2 + str_send
         to_tx = to_tx[0:-1]
         self.compressed_text = to_tx
 
@@ -128,10 +128,10 @@ class DifferentialCompressor(Compressor):
 
     def uncompress(self):
         print('\n-uncompress-\n')
-        lines = self.compressed_text.split('&')
+        lines = self.compressed_text.split(SEPA2)
         original = lines[0]
-        positions = lines[1].split(u'¬')
-        lines = lines[2].split(u'¬')
+        positions = lines[1].split(SEPA1)
+        lines = lines[2].split(SEPA1)
         print("DECOMPRESSING!!!!")
         text_f = ''
         for line in lines:
@@ -142,7 +142,6 @@ class DifferentialCompressor(Compressor):
             for pos in positions:
                 intpos = int(pos)
                 computed_len = len(line)
-                print(computed_len)
                 if i>=computed_len or computed_len==0:
                     break
                 next_line[intpos] = line[i]
@@ -163,13 +162,16 @@ class DifferentialCompressor(Compressor):
 class LZWCompressor(Compressor):
     print("\n-LZWCompressor-\n")
 
+    rx_filename = "default_teceiver.txt"
+
     uncompressed_text = None
     compressed_text = None
 
     num_blocks = 100;
+    current_byte = 0;
 
     def compress(self):
-        print('\n-compress-\n')
+        #print('\n-compress-\n')
         lines = list(e + "\n" for e in self.uncompressed_text.split("\n")[:-1])
         num_lines = len(lines)
         num_lines_per_block = int(ceil(float(num_lines) / float(self.num_blocks)))
@@ -204,12 +206,13 @@ class LZWCompressor(Compressor):
         return self.compressed_text
 
     def uncompress(self):
-        print('\n-uncompress-\n')
+        #print('\n-uncompress-\n')
+
         received_data = base64.b64decode(self.compressed_text)
 
         ##print('Received data: ' + received_data)
 
-        for i in range(len(received_data)):
+        for i in range(self.current_byte, len(received_data)):
             received_text_block_compressed = received_data[i:]
             try:
                 received_text_block_uncompressed = zlib.decompress(received_text_block_compressed)
@@ -217,10 +220,13 @@ class LZWCompressor(Compressor):
                 if i == 0:
                     print ("Can't uncompress if value is: " + str(i))
             else:
-                if i == 0:
+                if self.uncompressed_text==None:
                     self.uncompressed_text = received_text_block_uncompressed
                 else:
+                    #print("i = " + str(i))
+                    self.current_byte = i
                     self.uncompressed_text = self.uncompressed_text + received_text_block_uncompressed
+                    self.writeDisk(self.rx_filename)
 
-        ##print('Uncompressed text: ' + self.uncompressed_text)
+        ###print('Uncompressed text: ' + self.uncompressed_text)
         return self.uncompressed_text

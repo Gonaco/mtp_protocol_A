@@ -3,6 +3,7 @@
 _minted-IMPORTANT_how_to_github
 *~
 *tramp_history
+.idea/
 Compression/.idea/*
 __pycache__/*
 *.pyc

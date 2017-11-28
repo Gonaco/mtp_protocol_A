@@ -6,7 +6,7 @@ import io
 ##storedFrames = {"-2N" : "DEFAULT"} ##Inicializamos el diccionario.
 
 USING_COMPRESSION = True
-
+NUM_PACKETS_TO_UNCOMPRESS = 64
 ## DISCLAIMER
 # In network mode, we will need a last_w_id diferent for each team (!)
 # Each last_w_id must be initialized at -1
@@ -53,7 +53,7 @@ def rebuildData(p_id, string, last_w_id, storedFrames, team, global_string):
             file = open(filename+ '.txt', 'wb')
             file.write(uncompressed_string)
             file.close()
-            print("Podem escriure!")
+            #print("Podem escriure!")
         except:
             pass
         
@@ -61,26 +61,28 @@ def rebuildData(p_id, string, last_w_id, storedFrames, team, global_string):
     return global_string, storedFrames, last_w_id
 
 
-def rebuildDataComp(p_id, string_comp, last_w_id, storedFrames, team, total_string, packets):
+def rebuildDataComp(p_id, string_comp, last_w_id, storedFrames, team, total_string, packets, current_byte):
 
     filename_rx = 'RX_decompressed_file_' + team + '.txt'
 
-    print('Packet ' + str(p_id+1) + '/' + str(packets))
+    #print('Packet ' + str(p_id+1) + '/' + str(packets))
 
     if total_string == None:
         total_string = string_comp
+
     else:
         total_string = total_string + string_comp
 
-    if p_id+1 == packets:
-        print('Total compressed string: ' + total_string)
-
+    if (p_id+1)%NUM_PACKETS_TO_UNCOMPRESS==0 or p_id+1==packets:
         Compi_rx = compression.LZWCompressor()
         Compi_rx.compressed_text = total_string
+        Compi_rx.current_byte = current_byte
+        Compi_rx.rx_filename = filename_rx
         Compi_rx.uncompress()
-        Compi_rx.writeDisk(filename_rx, p_id)
+        current_byte = Compi_rx.current_byte + 1
+        #Compi_rx.writeDisk(filename_rx)
 
-    return total_string, last_w_id, storedFrames
+    return total_string, last_w_id, storedFrames, current_byte
 
 
 ## This function appends a given string to a file saved as filename (without including the .txt)
@@ -107,7 +109,7 @@ def splitData(filename, chunk_len):
         Compi_tx.uncompressed_text = data_to_be_sent
         Compi_tx.compress()
         data_to_be_sent = Compi_tx.compressed_text
-    print("data: " + data_to_be_sent)
+    #print("data: " + data_to_be_sent)
     ### splitting the data in packets
     list_to_send = []
     for ite in xrange(0, len(data_to_be_sent), chunk_len):
