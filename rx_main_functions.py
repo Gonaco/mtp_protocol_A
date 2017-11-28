@@ -99,7 +99,7 @@ def receive(radio, radio2, pipe, frame_received):
                 time.sleep(1 / 1000.0)
                 if review:
                     timer = timer + 1
-                    if timer == 400:  # TIMEOUT (may change)
+                    if timer == 300:  # TIMEOUT (may change)
                         count = num_frames_lost
                         timer = 0
 
@@ -198,7 +198,7 @@ def handshake(radio, radio2, pipe):
             time.sleep(1/1000.0)
             if wait:
                 timer = timer + 1
-                if timer == 400:  # TIMEOUT (may change)
+                if timer == 300:  # TIMEOUT (may change)
                     m.sendACK(0, 0, radio2)
                     timer = 0
 
