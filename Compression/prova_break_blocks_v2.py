@@ -17,17 +17,20 @@ def toc():
     else:
         print( "Toc: start time not set")
 
-filename = "input - copia.txt"
+#filename = "input - copia.txt"
 #filename = "SampleTextFile_1000kb.txt"
-#filename = "input-short.txt"
+filename = "input-short.txt"
 #filename = "input16.txt"
 filename_rx = "received.txt"
 
 tic()
 Compi_tx = compression.LZWCompressor()
 Compi_tx.loadText(filename)
+Compi_tx.num_blocks = 3
 Compi_tx.compress()
+print(Compi_tx.uncompressed_text)
 compressed_data = Compi_tx.compressed_text
+print (compressed_data)
 toc()
 
 

@@ -161,10 +161,10 @@ class LZWCompressor(Compressor):
 
     num_blocks = 100;
 
-    def loadText(self, fileptr):
-        #file = io.open(filename, 'r')
-        self.uncompressed_text = fileptr.read()
-        #file.close()
+    def loadText(self, filename):
+        file = io.open(filename, 'r')
+        self.uncompressed_text = file.read()
+        file.close()
         return
 
     def setNumBlocks(self, num_blocks):
