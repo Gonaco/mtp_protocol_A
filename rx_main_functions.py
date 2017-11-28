@@ -6,7 +6,7 @@ import message_functions as m
 import packetManagement as pm
 GPIO.setmode(GPIO.BCM)
 
-RF_CH = [0x00, 0x32]
+RF_CH = [0x10, 0x40]
 BR = NRF24.BR_250KBPS
 PA = NRF24.PA_MIN
 
