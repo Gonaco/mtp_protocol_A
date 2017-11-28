@@ -1,0 +1,25 @@
+import packetManagement as pm
+import math
+
+archivo = open('RXfile_A.txt')
+
+file_len = len(archivo.read())
+chunk_len = 30
+packets = math.ceil(float(file_len)/chunk_len)
+
+################
+### COMPRESS ###
+################
+list_to_send = pm.splitData(archivo, chunk_len)
+print(list_to_send)
+
+##################
+### UNCOMPRESS ###
+##################
+last_w_id = -1
+storedFrames = storedFrames = {"-2N" : "DEFAULT"}
+team = 'A'
+total_string = None
+for p_id in range(0, int(packets)):
+    print(list_to_send[p_id])
+    #pm.rebuildDataComp(p_id, list_to_send[p_id], last_w_id, storedFrames, team, total_string, int(packets))

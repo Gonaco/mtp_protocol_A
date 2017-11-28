@@ -1,11 +1,11 @@
 import math
 ## ADDED AT RECENT REVIEW TO INCLUDE COMPRESSION
-import Compression.compression
+import compression
 
 ##This is initialized by Carlos:
 ##storedFrames = {"-2N" : "DEFAULT"} ##Inicializamos el diccionario.
 
-USING_COMPRESSION = False
+USING_COMPRESSION = True
 
 ## DISCLAIMER
 # In network mode, we will need a last_w_id diferent for each team (!)
@@ -38,6 +38,25 @@ def rebuildData(p_id, string, last_w_id, storedFrames, team):
     # print(storedFrames)
     ## We return the dictionary and the last writen id (updated versions)
     return storedFrames, last_w_id
+
+
+def rebuildDataComp(p_id, string_comp, last_w_id, storedFrames, team, total_string, packets):
+
+    filename_rx = 'RXfile_' + team + '.txt'
+
+
+    if total_string == None:
+        total_string = string_comp
+    else:
+        total_string = total_string + string_comp
+
+    if p_id == packets:
+        Compi_rx = compression.LZWCompressor()
+        Compi_rx.compressed_text = total_string
+        Compi_rx.uncompress()
+        Compi_rx.writeDisk(filename_rx)
+
+
 
 
 ## This function appends a given string to a file saved as filename (without including the .txt)
