@@ -23,7 +23,7 @@ packets = len(list_to_send)
 last_w_id = -1
 storedFrames = {"-2N" : "DEFAULT"}
 team = 'A'
-total_string = None
+global_string = None
 for p_id in range(0, int(packets)):
     chunk = list_to_send[p_id]
-    total_string, last_w_id, storedFrames = pm.rebuildDataComp(p_id, chunk, last_w_id, storedFrames, team, total_string, int(packets))
+    global_string, last_w_id, storedFrames = pm.rebuildData(p_id, chunk, last_w_id, storedFrames, team, global_string)
