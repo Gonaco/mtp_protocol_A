@@ -7,7 +7,7 @@ import packetManagement as pm
 GPIO.setmode(GPIO.BCM)
 
 RF_CH = [0x10, 0x40]
-BR = NRF24.BR_250KBPS
+BR = NRF24.BR_2MPS
 PA = NRF24.PA_LOW
 
 
@@ -30,6 +30,9 @@ def setup():
     mouth.setRetries(15, 15)
     mouth.setPayloadSize(32)
     mouth.setChannel(RF_CH[1])
+    
+    ears.setCRCLength(8)
+    mouth.setCRCLength(8)
 
     ears.setDataRate(BR)
     ears.setPALevel(PA)
