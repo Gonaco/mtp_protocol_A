@@ -33,25 +33,25 @@ class Compressor:
         return
 
     def loadText(self, filename):
-        file = io.open(filename, mode="r", encoding="utf-16")
+        file = io.open(filename, 'rb')
         self.uncompressed_text = file.read()
         file.close()
         return
 
 
     def writeDisk(self, filename):
-        file = io.open(filename, mode="w", encoding="utf-16")
+        file = io.open(filename, 'wb')
         file.write(self.uncompressed_text)
         file.close()
         return
 
     def checkCompression(self,filename1,filename2):
-        file = io.open(filename1, mode="r", encoding="utf-16")
+        file = io.open(filename1, 'rb')
         text1 = file.read()
         lines1 = text1.split('\n')
         lines1 = lines1[0:-1]
         file.close()
-        file = io.open(filename2, mode="r", encoding="utf-16")
+        file = io.open(filename2, 'rb')
         text2 = file.read()
         lines2 = text2.split('\n')
         lines2 = lines2[0:-1]
@@ -73,12 +73,6 @@ class Compressor:
 class DifferentialCompressor(Compressor):
     uncompressed_text = None
     compressed_text = None
-
-    def loadText(self, filename):
-        file = io.open(filename, mode="r", encoding="utf-16")
-        self.uncompressed_text = file.read()
-        file.close()
-        return
 
     def compress(self):
         i = 0
@@ -163,16 +157,6 @@ class LZWCompressor(Compressor):
 
     num_blocks = 100;
 
-    def loadText(self, filename):
-        file = io.open(filename, 'r')
-        self.uncompressed_text = file.read()
-        file.close()
-        return
-
-    def setNumBlocks(self, num_blocks):
-        self.num_blocks = num_blocks
-        return
-
     def compress(self):
         lines = list(e + "\n" for e in self.uncompressed_text.split("\n")[:-1])
         num_lines = len(lines)
@@ -190,7 +174,7 @@ class LZWCompressor(Compressor):
                 block_text = ''.join(lines[first_line_of_block:first_line_of_block + num_lines_per_block])
 
             # Compress block and get size
-            block_text_compressed = zlib.compress(block_text.encode('utf-16'))
+            block_text_compressed = zlib.compress(block_text)
             block_text_compressed_size = sys.getsizeof(block_text_compressed)
             # print ( "Size of block " + str(i) + ": " + str(sys.getsizeof(block_text_compressed)) )
 
@@ -212,7 +196,7 @@ class LZWCompressor(Compressor):
         for i in range(len(received_data)):
             received_text_block_compressed = received_data[i:]
             try:
-                received_text_block_uncompressed = zlib.decompress(received_text_block_compressed).decode('utf-16')
+                received_text_block_uncompressed = zlib.decompress(received_text_block_compressed)
             except:
                 if i == 0:
                     print ("Can't uncompress if value is: " + str(i))
