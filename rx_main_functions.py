@@ -8,7 +8,7 @@ GPIO.setmode(GPIO.BCM)
 
 RF_CH = [0x10, 0x40]
 BR = NRF24.BR_250KBPS
-PA = NRF24.PA_MIN
+PA = NRF24.PA_LOW
 
 
 def setup():
