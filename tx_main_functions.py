@@ -12,7 +12,7 @@ import math
 GPIO.setmode(GPIO.BCM)
 
 RF_CH = [0x10, 0x40]
-BR = NRF24.BR_2MBPS
+BR = NRF24.BR_250KBPS
 PA = NRF24.PA_LOW
 
 def setup():
@@ -35,9 +35,6 @@ def setup():
     ears.setRetries(15, 15)
     ears.setPayloadSize(32)
     ears.setChannel(RF_CH[1])
-    
-    ears.setsetCRCLength(8)
-    mouth.setsetCRCLength(8)
 
     ears.setDataRate(BR)
     ears.setPALevel(PA)

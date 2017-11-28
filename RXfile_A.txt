@@ -5204,6 +5204,7 @@ ellos gran multitud de lumbres, que no parecían sino estrellas que se
 movían. Pasmóse Sancho en viéndolas, y don Quijote no las tuvo todas
 consigo; tiró el uno del cabestro a su asno, y el otro de las riendas a su
 rocino, y estuvieron quedos, mirando atentamente lo que podía ser aquello,
+<<<<<<< HEAD
 y vieron que las lumbres se iban acercando a ellos, y mientras más se
 llegaban, mayores parecían; a cuya vista Sancho comenzó a temblar como un
 azogado, y los cabellos de la cabeza se le erizaron a don Quijote; el cual,
@@ -17440,3 +17441,6 @@ mi aldea en compañía destos señores, que su bien desean, y allí daremos
 orden de hacer otra salida que nos sea de más provecho y fama.
 
 -Bien dices, 
+=======
+y vieron que las lumbres se iban acercando a ellos, y
+>>>>>>> 5261662d353108b79057284cb44e83f8427d1c21
