@@ -49,6 +49,7 @@ def rebuildData(p_id, string, last_w_id, storedFrames, team, global_string):
             uncompressed_string = Compi_rx.uncompress()
             file = open(filename+ '.txt', 'wb')
             file.write(uncompressed_string)
+            file.close()
         except:
             pass
         
