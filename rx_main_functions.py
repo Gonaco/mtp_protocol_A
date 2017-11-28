@@ -31,8 +31,8 @@ def setup():
     mouth.setPayloadSize(32)
     mouth.setChannel(RF_CH[1])
     
-    ears.setCRCLength(8)
-    mouth.setCRCLength(8)
+   # ears.setCRCLength(8)
+    #mouth.setCRCLength(8)
 
     ears.setDataRate(BR)
     ears.setPALevel(PA)
