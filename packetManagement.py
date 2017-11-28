@@ -42,21 +42,24 @@ def rebuildData(p_id, string, last_w_id, storedFrames, team):
 
 def rebuildDataComp(p_id, string_comp, last_w_id, storedFrames, team, total_string, packets):
 
-    filename_rx = 'RXfile_' + team + '.txt'
+    filename_rx = 'RX_decompressed_file_' + team + '.txt'
 
+    print('Packet ' + str(p_id+1) + '/' + str(packets))
 
     if total_string == None:
         total_string = string_comp
     else:
         total_string = total_string + string_comp
 
-    if p_id == packets:
+    if p_id+1 == packets:
+        print('Total compressed string: ' + total_string)
+
         Compi_rx = compression.LZWCompressor()
         Compi_rx.compressed_text = total_string
         Compi_rx.uncompress()
-        Compi_rx.writeDisk(filename_rx)
+        Compi_rx.writeDisk(filename_rx, p_id)
 
-
+    return total_string, last_w_id, storedFrames
 
 
 ## This function appends a given string to a file saved as filename (without including the .txt)
@@ -94,7 +97,7 @@ def splitData(archivo, chunk_len):
     
     ### splitting the data in packets
     list_to_send = []
-    for ite in xrange(0,len(data_to_be_sent),chunk_len):
+    for ite in xrange(0, len(data_to_be_sent), chunk_len):
         list_to_send.append(data_to_be_sent[ite : ite + chunk_len])
     
     return list_to_send    
