@@ -80,7 +80,7 @@ def rebuildDataComp(p_id, string_comp, last_w_id, storedFrames, team, total_stri
         Compi_rx.rx_filename = filename_rx
         Compi_rx.uncompress()
         current_byte = Compi_rx.current_byte + 1
-        #Compi_rx.writeDisk(filename_rx)
+
 
     return total_string, last_w_id, storedFrames, current_byte
 

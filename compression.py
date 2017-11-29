@@ -162,7 +162,7 @@ class DifferentialCompressor(Compressor):
 class LZWCompressor(Compressor):
     print("\n-LZWCompressor-\n")
 
-    rx_filename = "default_teceiver.txt"
+    rx_filename = "default_receiver.txt"
 
     uncompressed_text = None
     compressed_text = None
@@ -212,7 +212,7 @@ class LZWCompressor(Compressor):
 
         ##print('Received data: ' + received_data)
 
-        for i in range(self.current_byte, len(received_data)):
+        for i in range(0, len(received_data)):
             received_text_block_compressed = received_data[i:]
             try:
                 received_text_block_uncompressed = zlib.decompress(received_text_block_compressed)
@@ -222,11 +222,15 @@ class LZWCompressor(Compressor):
             else:
                 if self.uncompressed_text==None:
                     self.uncompressed_text = received_text_block_uncompressed
+                    with open(self.rx_filename, 'wb') as myfile:
+                        myfile.write(received_text_block_uncompressed)
                 else:
-                    #print("i = " + str(i))
+                    print("i = " + str(i))
+                    #print("received_text_block_uncompressed = " + received_text_block_uncompressed)
                     self.current_byte = i
                     self.uncompressed_text = self.uncompressed_text + received_text_block_uncompressed
-                    self.writeDisk(self.rx_filename)
-
+                    with open(self.rx_filename, 'a+b') as myfile:
+                        myfile.write(received_text_block_uncompressed)
+                #break
         ###print('Uncompressed text: ' + self.uncompressed_text)
         return self.uncompressed_text

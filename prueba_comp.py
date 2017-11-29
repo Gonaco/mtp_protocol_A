@@ -14,7 +14,10 @@ def toc():
     else:
         print( "Toc: start time not set")
 
-archivo = open('Loremipsum.txt', 'rb')
+
+
+tx_filename = 'Loremipsum.txt'
+#tx_filename = 'input - copia.txt'
 
 ##file_len = len(archivo.read())
 chunk_len = 30
@@ -25,7 +28,7 @@ chunk_len = 30
 ################
 tic()
 
-list_to_send = pm.splitData('Loremipsum.txt', chunk_len)
+list_to_send = pm.splitData(tx_filename, chunk_len)
 packets = len(list_to_send)
 
 toc()
