@@ -8,21 +8,21 @@ from main_nw import main as main_nw
 from main_tx import main_tx
 from main_rx import main_rx
 
-TX_RX_SWITCH = 29
-NW_SWITCH = 31
-ON_OFF_SWITCH = 33
-ON_OFF_LED = 36
-NW_LED = 38
-TX_LED = 40
+TX_RX_SWITCH = 5  # 29
+NW_SWITCH = 6 # 31
+ON_OFF_SWITCH = 13 # 33
+ON_OFF_LED = 16 # 36
+NW_LED = 20 # 38
+TX_LED = 21 # 40
 
-IRQS = [35,37]                  # WE ARE NOT USING THEM, BUT JUST IN CASE
+IRQS = [10,26] # [19,37]                  # WE ARE NOT USING THEM, BUT JUST IN CASE
 
-FREE_PINS = [3,5,7,8,10,12,15,16,18,22,32] # IN ORDER TO SET THEM AS OUTPUT AND AVOID ERRORS
+FREE_PINS = [2,3,4,14,15,18,22,23,24,25,11] # [3,5,7,8,10,12,15,16,18,22,32] # IN ORDER TO SET THEM AS OUTPUT AND AVOID ERRORS
 
 
 def initPorts():
 
-    GPIO.setmode(GPIO.BOARD)
+    GPIO.setmode(GPIO.BCM)
 
     # INPUTS
 
