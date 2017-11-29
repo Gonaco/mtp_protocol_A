@@ -95,7 +95,7 @@ def receive(radio, radio2, pipe, frame_received):
     current_byte = 0
     storedFrames = ''
     total_uncompressed_string = None
-    global_string = None
+    total_string = None
 
     while run:
         count = count + 1
@@ -182,7 +182,7 @@ def receive(radio, radio2, pipe, frame_received):
                 storedFrames, last_w_id = pm.rebuildData(frame_received.getID(), frame_received.getPayload(), last_w_id, storedFrames, team)
             else:
                 total_string, current_byte, total_uncompressed_string = pm.rebuildDataComp(frame_received.getID(), frame_received.getPayload(), team, total_string, current_byte, total_uncompressed_string)
-                                                                                            
+
             original_frames_id[frame_received.getID()] = -1
             first_frame = False
 
