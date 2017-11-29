@@ -93,7 +93,6 @@ def receive(radio, radio2, pipe, frame_received):
     window_size = 10  # may change
     original_frames_id = []
     current_byte = 0
-    storedFrames = ''
     total_uncompressed_string = None
     total_string = None
 
