@@ -4,12 +4,16 @@ import time
 import spidev
 import message_functions as m
 import packetManagement as pm
+
+from threading import Thread
+
 GPIO.setmode(GPIO.BCM)
 
 RF_CH = [0x10, 0x40]
 BR = NRF24.BR_1MBPS
 PA = NRF24.PA_LOW
 
+COMPRESSION = False
 
 def setup():
 
@@ -17,7 +21,7 @@ def setup():
 
     pipes = [[0xe7, 0xe7, 0xe7, 0xe7, 0xe7], [0xc2, 0xc2, 0xc2, 0xc2, 0xc2]]  # addresses for TX/RX channels
 
-    GPIO.setup([0, 1, 17, 27], GPIO.OUT, initial=GPIO.LOW)
+    # GPIO.setup([0, 1, 17, 27], GPIO.OUT, initial=GPIO.LOW)
 
     ears = NRF24(GPIO, spidev.SpiDev())  # EARS
     mouth = NRF24(GPIO, spidev.SpiDev())  # MOUTH
@@ -73,6 +77,8 @@ def setup():
     ears.startListening()
     return ears, mouth
 
+def subSend(r,s):
+    r.write(s)
 
 def receive(radio, radio2, pipe, frame_received):
     print("\n-receive-\n")
@@ -91,6 +97,10 @@ def receive(radio, radio2, pipe, frame_received):
     window_id = 1
     window_size = 10  # may change
     original_frames_id = []
+    current_byte = 0
+    storedFrames = ''
+    total_uncompressed_string = None
+    total_string = None
 
     while run:
         count = count + 1
@@ -107,7 +117,7 @@ def receive(radio, radio2, pipe, frame_received):
             radio.read(recv_buffer, radio.getDynamicPayloadSize())
             rcv = m.Packet()
             rcv.mssg2Pckt(recv_buffer)
-            storedFrames, last_w_id = pm.rebuildData(rcv.getID(), rcv.getPayload(), last_w_id, storedFrames, team)
+            storedFrames, last_w_id, current_byte, total_uncompressed_string = pm.rebuildData(rcv.getID(), rcv.getPayload(), last_w_id, storedFrames, team, current_byte, total_uncompressed_string)
 
             # In each iteration set to -1 the value of this array located in the received frame ID position
             if rcv.getID() >= len(original_frames_id):
@@ -172,8 +182,12 @@ def receive(radio, radio2, pipe, frame_received):
                 #original_frames_id.append(i)  # Generate the first 30 original frames ID windows
             for i in range(0, frame_received.getID()+1):
                 original_frames_id.append(i)
-            
-            storedFrames, last_w_id = pm.rebuildData(frame_received.getID(), frame_received.getPayload(), last_w_id, storedFrames, team)
+
+            if COMPRESSION:
+                storedFrames, last_w_id = pm.rebuildData(frame_received.getID(), frame_received.getPayload(), last_w_id, storedFrames, team)
+            else:
+                total_string, current_byte, total_uncompressed_string = pm.rebuildDataComp(frame_received.getID(), frame_received.getPayload(), team, total_string, current_byte, total_uncompressed_string)
+
             original_frames_id[frame_received.getID()] = -1
             first_frame = False
 

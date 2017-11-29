@@ -9,6 +9,9 @@ import message_functions as m
 import packetManagement as p
 import re
 import math
+
+from threading import Thread
+
 GPIO.setmode(GPIO.BCM)
 
 RF_CH = [0x10, 0x40]
@@ -20,7 +23,7 @@ def setup():
     pipes = [[0xe7, 0xe7, 0xe7, 0xe7, 0xe7], [0xc2, 0xc2, 0xc2, 0xc2, 0xc2]]  # addresses for TX/RX channels
 
 
-    GPIO.setup([0, 1, 17, 27], GPIO.OUT, initial=GPIO.LOW)
+    # GPIO.setup([0, 1, 17, 27], GPIO.OUT, initial=GPIO.LOW)
 
     ears = NRF24(GPIO, spidev.SpiDev())
     mouth = NRF24(GPIO, spidev.SpiDev())
@@ -112,7 +115,9 @@ def transmit(radio, radio2, archivo, pipe):
                         next_id = nack_list[0]
                         frame = frame_list[int(next_id)]
                         # print('%s we send frame' % next_id)
-                        radio.write(frame.__str__())
+                        # radio.write(frame.__str__())
+                        send_thrd = Thread (target = subSend, args = (radio,frame.__str__()))
+                        send_thrd.start()
                         nack_list.pop(0)
                     # we send the rest of the window
                     repeat = False
@@ -126,7 +131,9 @@ def transmit(radio, radio2, archivo, pipe):
                         next_id = nack_list[0]
                         frame = frame_list[int(next_id)]
                         #print('%s we send frame' % next_id)
-                        radio.write(frame.__str__())
+                        # radio.write(frame.__str__())
+                        send_thrd = Thread (target = subSend, args = (radio,frame.__str__()))
+                        send_thrd.start()
                         nack_list.pop(0)
             last_window = last_window+1
             # after we send, we look for nacks
@@ -173,7 +180,9 @@ def transmit(radio, radio2, archivo, pipe):
                                 next_id = nack_list[0]
                                 frame = frame_list[int(next_id)]
                                 #print('%s we send frame' % next_id)
-                                radio.write(frame.__str__())
+                                # radio.write(frame.__str__())
+                                send_thrd = Thread (target = subSend, args = (radio,frame.__str__()))
+                                send_thrd.start()
                         else:
                             #print('we send full window')
                             for i in range(0, window_size):
@@ -181,7 +190,9 @@ def transmit(radio, radio2, archivo, pipe):
                                 next_id = nack_list[0]
                                 frame = frame_list[int(next_id)]
                                 #print('%s we send frame' % next_id)
-                                radio.write(frame.__str__())
+                                # radio.write(frame.__str__())
+                                send_thrd = Thread (target = subSend, args = (radio,frame.__str__()))
+                                send_thrd.start()
                                 nack_list.pop(0)
                     print('I sent last so I will check for ack')
                     #time.sleep(2)
