@@ -10,7 +10,7 @@ RF_CH = [0x10, 0x40]
 BR = NRF24.BR_1MBPS
 PA = NRF24.PA_LOW
 
-COMPRESSION = False
+COMPRESSION = True
 
 def setup():
 

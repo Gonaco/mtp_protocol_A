@@ -6,7 +6,7 @@ import io
 ##This is initialized by Carlos:
 ##storedFrames = {"-2N" : "DEFAULT"} ##Inicializamos el diccionario.
 
-USING_COMPRESSION = False
+USING_COMPRESSION = True
 NUM_PACKETS_TO_UNCOMPRESS = 64
 
 
