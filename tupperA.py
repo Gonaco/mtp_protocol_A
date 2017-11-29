@@ -5,8 +5,8 @@ import spidev
 import sys
 from os import listdir
 from main_nw import main as main_nw
-from main_tx import main as main_tx
-from main_rx import main as main_rx
+from main_tx import main_tx
+from main_rx import main_rx
 
 TX_RX_SWITCH = 29
 NW_SWITCH = 31
