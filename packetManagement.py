@@ -54,9 +54,9 @@ def rebuildData(p_id, string, last_w_id, storedFrames, team, global_string):
         Compi_rx.compressed_text = global_string
         try:
             uncompressed_string = Compi_rx.uncompress()
-            file = open(filename + '.txt', 'wb')
-            file.write(uncompressed_string)
-            file.close()
+            archivo = open(filename + '.txt', 'wb')
+            archivo.write(uncompressed_string)
+            archivo.close()
             # print("Podem escriure!")
         except:
             pass
@@ -106,9 +106,8 @@ def writeFile(chunk, filename, p_id):
 
 
 ## SPLIT DATA NOW COMPRESSES THE WHOLE FILE.
-def splitData(filename, chunk_len):
-    file = io.open(filename, 'rb')
-    data_to_be_sent = file.read()
+def splitData(archivo, chunk_len):
+    data_to_be_sent = archivo.read()
     if USING_COMPRESSION:
         Compi_tx = compression.LZWCompressor()
         Compi_tx.uncompressed_text = data_to_be_sent
