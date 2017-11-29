@@ -25,8 +25,7 @@ def rebuildData(p_id, string, last_w_id, storedFrames, team):
         last_w_id = last_w_id + 1  # Update the last writen packet ID
 
         p_id = p_id + 1
-        while storedFrames.has_key(str(
-                p_id) + team):  # We check if the packet p_id+1 and the following consecutive ones are in the dictionary.
+        while storedFrames.has_key(str(p_id) + team):  # We check if the packet p_id+1 and the following consecutive ones are in the dictionary.
             string = storedFrames[str(p_id) + team]  # We extract the 'string' number 'p_id'
             writeFile(string, filename, p_id)  # We write 'string' in 'filename'
 
