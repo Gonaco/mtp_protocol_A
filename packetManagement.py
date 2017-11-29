@@ -55,7 +55,7 @@ def rebuildDataComp(p_id, string_comp, team, total_string, current_byte,
     else:
         total_string = total_string + string_comp
 
-    if (p_id + 1) % NUM_PACKETS_TO_UNCOMPRESS == 0 or p_id + 1 == packets:
+    if (p_id + 1) % NUM_PACKETS_TO_UNCOMPRESS == 0:
         Compi_rx = compression.LZWCompressor()
         Compi_rx.uncompressed_text = total_uncompressed_string
         Compi_rx.compressed_text = total_string
