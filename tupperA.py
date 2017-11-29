@@ -77,7 +77,7 @@ def loadFiles():
 
     # return files
 
-    for filename in listdir("input_files"):
+    for filename in listdir("~/mtp_protocol_A/input_files"):
         if ".txt" in filename:
             files.append(open(filename, 'r'))
 
