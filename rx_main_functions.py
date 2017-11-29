@@ -112,7 +112,16 @@ def receive(radio, radio2, pipe, frame_received):
             radio.read(recv_buffer, radio.getDynamicPayloadSize())
             rcv = m.Packet()
             rcv.mssg2Pckt(recv_buffer)
-            storedFrames, last_w_id, current_byte, total_uncompressed_string = pm.rebuildData(rcv.getID(), rcv.getPayload(), last_w_id, storedFrames, team, current_byte, total_uncompressed_string)
+
+            if COMPRESSION:
+                total_string, current_byte, total_uncompressed_string = pm.rebuildDataComp(frame_received.getID(),
+                                                                                           frame_received.getPayload(),
+                                                                                           team, total_string,
+                                                                                           current_byte,
+                                                                                           total_uncompressed_string)
+            else:
+                storedFrames, last_w_id = pm.rebuildData(frame_received.getID(), frame_received.getPayload(), last_w_id,
+                                                         storedFrames, team)
 
             # In each iteration set to -1 the value of this array located in the received frame ID position
             if rcv.getID() >= len(original_frames_id):
@@ -179,9 +188,14 @@ def receive(radio, radio2, pipe, frame_received):
                 original_frames_id.append(i)
 
             if COMPRESSION:
-                storedFrames, last_w_id = pm.rebuildData(frame_received.getID(), frame_received.getPayload(), last_w_id, storedFrames, team)
+                total_string, current_byte, total_uncompressed_string = pm.rebuildDataComp(frame_received.getID(),
+                                                                                           frame_received.getPayload(),
+                                                                                           team, total_string,
+                                                                                           current_byte,
+                                                                                           total_uncompressed_string)
             else:
-                total_string, current_byte, total_uncompressed_string = pm.rebuildDataComp(frame_received.getID(), frame_received.getPayload(), team, total_string, current_byte, total_uncompressed_string)
+                storedFrames, last_w_id = pm.rebuildData(frame_received.getID(), frame_received.getPayload(), last_w_id,
+                                                         storedFrames, team)
 
             original_frames_id[frame_received.getID()] = -1
             first_frame = False

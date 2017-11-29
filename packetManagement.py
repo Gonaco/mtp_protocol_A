@@ -43,8 +43,7 @@ def rebuildData(p_id, string, last_w_id, storedFrames, team):
     return storedFrames, last_w_id
 
 
-def rebuildDataComp(p_id, string_comp, team, total_string, current_byte,
-                    total_uncompressed_string):
+def rebuildDataComp(p_id, string_comp, team, total_string, current_byte, total_uncompressed_string):
     filename_rx = 'RX_decompressed_file_' + team + '.txt'
 
     # print('Packet ' + str(p_id+1) + '/' + str(packets))
