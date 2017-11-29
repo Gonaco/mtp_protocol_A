@@ -212,7 +212,7 @@ class LZWCompressor(Compressor):
 
         ##print('Received data: ' + received_data)
 
-        for i in range(0, len(received_data)):
+        for i in range(self.current_byte, len(received_data)):
             received_text_block_compressed = received_data[i:]
             try:
                 received_text_block_uncompressed = zlib.decompress(received_text_block_compressed)
@@ -221,12 +221,13 @@ class LZWCompressor(Compressor):
                     print ("Can't uncompress if value is: " + str(i))
             else:
                 if self.uncompressed_text==None:
+                    #print("NONE")
                     self.uncompressed_text = received_text_block_uncompressed
                     with open(self.rx_filename, 'wb') as myfile:
-                        myfile.write(received_text_block_uncompressed)
+                        myfile.write(self.uncompressed_text)
                 else:
-                    print("i = " + str(i))
-                    #print("received_text_block_uncompressed = " + received_text_block_uncompressed)
+                    #print("i = " + str(i))
+                    #print("received_text_block_uncompressed = " + received_text_block_uncompressed[:10])
                     self.current_byte = i
                     self.uncompressed_text = self.uncompressed_text + received_text_block_uncompressed
                     with open(self.rx_filename, 'a+b') as myfile:

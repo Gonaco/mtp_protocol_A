@@ -61,7 +61,7 @@ def rebuildData(p_id, string, last_w_id, storedFrames, team, global_string):
     return global_string, storedFrames, last_w_id
 
 
-def rebuildDataComp(p_id, string_comp, last_w_id, storedFrames, team, total_string, packets, current_byte):
+def rebuildDataComp(p_id, string_comp, last_w_id, storedFrames, team, total_string, packets, current_byte, total_uncompressed_string):
 
     filename_rx = 'RX_decompressed_file_' + team + '.txt'
 
@@ -75,14 +75,16 @@ def rebuildDataComp(p_id, string_comp, last_w_id, storedFrames, team, total_stri
 
     if (p_id+1)%NUM_PACKETS_TO_UNCOMPRESS==0 or p_id+1==packets:
         Compi_rx = compression.LZWCompressor()
+        Compi_rx.uncompressed_text = total_uncompressed_string
         Compi_rx.compressed_text = total_string
         Compi_rx.current_byte = current_byte
         Compi_rx.rx_filename = filename_rx
         Compi_rx.uncompress()
         current_byte = Compi_rx.current_byte + 1
+        total_uncompressed_string = Compi_rx.uncompressed_text
 
 
-    return total_string, last_w_id, storedFrames, current_byte
+    return total_string, last_w_id, storedFrames, current_byte, total_uncompressed_string
 
 
 ## This function appends a given string to a file saved as filename (without including the .txt)

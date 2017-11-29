@@ -16,8 +16,8 @@ def toc():
 
 
 
-tx_filename = 'Loremipsum.txt'
-#tx_filename = 'input - copia.txt'
+#tx_filename = 'Loremipsum.txt'
+tx_filename = 'input - copia.txt'
 
 ##file_len = len(archivo.read())
 chunk_len = 30
@@ -46,11 +46,12 @@ team = 'A'
 global_string = None
 current_byte = 0
 total_string = ''
+total_uncompressed_string = None
 
 tic()
 
 for p_id in range(0, int(packets)):
     chunk = list_to_send[p_id]
-    total_string, last_w_id, storedFrames, current_byte = pm.rebuildDataComp(p_id, chunk, last_w_id, storedFrames, team, total_string, packets, current_byte)
+    total_string, last_w_id, storedFrames, current_byte, total_uncompressed_string = pm.rebuildDataComp(p_id, chunk, last_w_id, storedFrames, team, total_string, packets, current_byte, total_uncompressed_string)
 
 toc()
