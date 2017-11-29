@@ -79,7 +79,7 @@ def loadFiles():
 
     for filename in listdir("/home/pi/mtp_protocol_A/input_files"):
         if ".txt" in filename:
-            files.append(open(filename, 'r'))
+            files.append(open("/home/pi/mtp_protocol_A/input_files/"+filename, 'r'))
 
 
 # def initInterruptions():
