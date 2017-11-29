@@ -15,18 +15,12 @@ NUM_PACKETS_TO_UNCOMPRESS = 64
 # Each last_w_id must be initialized at -1
 # The dictionary must be created outside the function, initialised as shown on this file
 # Team must be an string with the letter of the team in capital letter ("A", "B", "C", or "D")
-def rebuildData(p_id, string, last_w_id, storedFrames, team, global_string):
+def rebuildData(p_id, string, last_w_id, storedFrames, team):
     ##print ("\n-rebuildData-\n")  ##Debbuging issues
 
     filename = "RXfile_" + team
     if (p_id == last_w_id + 1):  # The received packet is the one we should write.
-        if (USING_COMPRESSION):
-            if (p_id == 0):
-                global_string = string
-            else:
-                global_string = global_string + string
-        else:
-            writeFile(string, filename, p_id)  # We write 'string' in 'filename'
+        writeFile(string, filename, p_id)  # We write 'string' in 'filename'
 
         last_w_id = last_w_id + 1  # Update the last writen packet ID
 
@@ -34,10 +28,7 @@ def rebuildData(p_id, string, last_w_id, storedFrames, team, global_string):
         while storedFrames.has_key(str(
                 p_id) + team):  # We check if the packet p_id+1 and the following consecutive ones are in the dictionary.
             string = storedFrames[str(p_id) + team]  # We extract the 'string' number 'p_id'
-            if (USING_COMPRESSION):
-                global_string = global_string + string
-            else:
-                writeFile(string, filename, p_id)  # We write 'string' in 'filename'
+            writeFile(string, filename, p_id)  # We write 'string' in 'filename'
 
             del storedFrames[str(p_id) + team]  # Remove from the dictionary the string we have just writen
             last_w_id = last_w_id + 1  # Update the last writen packet ID
@@ -48,24 +39,11 @@ def rebuildData(p_id, string, last_w_id, storedFrames, team, global_string):
         ## -> We add it to the dictionary
         storedFrames.update({str(p_id) + team: string})
 
-    # print(storedFrames)
-    if (USING_COMPRESSION):
-        Compi_rx = compression.LZWCompressor()
-        Compi_rx.compressed_text = global_string
-        try:
-            uncompressed_string = Compi_rx.uncompress()
-            archivo = open(filename + '.txt', 'wb')
-            archivo.write(uncompressed_string)
-            archivo.close()
-            # print("Podem escriure!")
-        except:
-            pass
-
     ## We return the dictionary and the last writen id (updated versions)
-    return global_string, storedFrames, last_w_id
+    return storedFrames, last_w_id
 
 
-def rebuildDataComp(p_id, string_comp, last_w_id, storedFrames, team, total_string, packets, current_byte,
+def rebuildDataComp(p_id, string_comp, team, total_string, current_byte,
                     total_uncompressed_string):
     filename_rx = 'RX_decompressed_file_' + team + '.txt'
 
@@ -87,7 +65,7 @@ def rebuildDataComp(p_id, string_comp, last_w_id, storedFrames, team, total_stri
         current_byte = Compi_rx.current_byte + 1
         total_uncompressed_string = Compi_rx.uncompressed_text
 
-    return total_string, last_w_id, storedFrames, current_byte, total_uncompressed_string
+    return total_string, current_byte, total_uncompressed_string
 
 
 ## This function appends a given string to a file saved as filename (without including the .txt)
