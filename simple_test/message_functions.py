@@ -1,6 +1,8 @@
 
 from lib_nrf24 import NRF24
 
+from threading import Thread
+
 byte_length = 8
 # signature_length = byte_length
 ID_length = 16
@@ -17,6 +19,11 @@ FRAME_PAYLOAD_BYTES_LENGTH = 29
 
 # A_TEAM_SIGN = 97                # The ASCII code of 'a'
 
+
+def subSend(r,s):
+    r.write(s)
+
+    
 def string2bits(s=''):
     return [bin(ord(x))[2:].zfill(8) for x in s]
 
@@ -190,7 +197,9 @@ def sendSYNC(ID, radio):
     sync = SYNC(ID)
 
     # print(sync)
-    radio.write(sync.__str__())
+    # radio.write(sync.__str__())
+    send_thrd = Thread (target = subSend, args = (radio,sync.__str__()))
+    send_thrd.start()
 
 def sendACK(ID, end, radio):
 
@@ -198,7 +207,9 @@ def sendACK(ID, end, radio):
     ack = ACK(ID, end)
 
     # print(ack)
-    radio.write(ack.__str__())
+    # radio.write(ack.__str__())
+    send_thrd = Thread (target = subSend, args = (radio,ack.__str__()))
+    send_thrd.start()
 
 def sendNACK(ID, lost_IDs_array, radio):
 
@@ -223,7 +234,9 @@ def sendNACK(ID, lost_IDs_array, radio):
     # print(nack.getPayload())
     #print(nack)
 
-    radio.write(nack.__str__())
+    # radio.write(nack.__str__())
+    send_thrd = Thread (target = subSend, args = (radio,nack.__str__()))
+    send_thrd.start()
 
     return overload
 

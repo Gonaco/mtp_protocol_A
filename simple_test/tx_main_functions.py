@@ -79,6 +79,10 @@ def setup():
     return mouth, ears
 
 
+def subSend(r,s):
+    r.write(s)
+
+
 # #################DEBUG CODE BELOW############################
 def transmit(radio, radio2, archivo, pipe):
     print("\n-transmit-\n")  # Debbuging issues.
@@ -208,7 +212,9 @@ def transmit(radio, radio2, archivo, pipe):
                 #timeot
                 frame = frame_list[-1]
                 print('we send last frame again')
-                radio.write(frame.__str__())
+                # radio.write(frame.__str__())
+                send_thrd = Thread (target = subSend, args = (radio,frame.__str__()))
+                send_thrd.start()
 
     #return id_last
 
@@ -303,17 +309,23 @@ def send_window(frame_list, last_sent, window_size, radio, finished):
             if frame.getEnd() == 1:
                 print('we send last window')
                 finished = True
-                radio.write(frame.__str__())
+                # radio.write(frame.__str__())
+                send_thrd = Thread (target = subSend, args = (radio,frame.__str__()))
+                send_thrd.start()
                 time.sleep(0.3)
             #print('%d we send frame' % last_sent)
             else:
-                radio.write(frame.__str__())
+                # radio.write(frame.__str__())
+                send_thrd = Thread (target = subSend, args = (radio,frame.__str__()))
+                send_thrd.start()
             last_sent = last_sent+1
     else:
         print('we send last window')
         for i in range(last_sent + 1, len(frame_list)):
             frame = frame_list[last_sent + 1]
-            radio.write(frame.__str__())
+            # radio.write(frame.__str__())
+            send_thrd = Thread (target = subSend, args = (radio,frame.__str__()))
+            send_thrd.start()
             last_sent = last_sent+1
             finished = True
             #This is to leave time for the rx to answer
