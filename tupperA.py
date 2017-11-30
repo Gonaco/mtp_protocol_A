@@ -45,6 +45,8 @@ def initPorts():
     # GPIO.add_event_detect(ON_OFF_SWITCH, GPIO.BOTH)
     # GPIO.add_event_callback(ON_OFF_SWITCH, on_off())
 
+    GPIO.add_event_detect(ON_OFF_SWITCH, GPIO.BOTH, callback=on_off())
+
     GPIO.setup(IRQS, GPIO.IN)
 
     # OUTPUTS
@@ -203,7 +205,7 @@ def main(argv):
         
 
     loadFiles()
-    on_off()
+    # on_off()
 
         
 if __name__ == "__main__":
