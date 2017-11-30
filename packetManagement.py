@@ -80,8 +80,16 @@ def splitData(archivo, chunk_len):
     data_to_be_sent = archivo.read()
     if USING_COMPRESSION:
         tic()
-        Compi_tx = compression2.LZWCompressor()
-        data_to_be_sent = Compi_tx.compress(data_to_be_sent)
+        try:
+            Compi_tx = compression2.DifferentialCompressor()
+            data_ori = data_to_be_sent
+            data_to_be_sent = Compi_tx.compress(data_to_be_sent)
+            data_uncompressed = Compi_tx.uncompress(data_to_be_sent)
+            if data_ori!=data_to_be_sent or (len(data_ori)/len(data_to_be_sent))<10:
+                raise ValueError('A very specific bad thing happened.')
+        except:
+            Compi_tx = compression2.LZWCompressor()
+            data_to_be_sent = Compi_tx.compress(data_to_be_sent)
         toc()
 
     ### splitting the data in packets

@@ -9,6 +9,10 @@ import numpy as np
 import io
 COMPRESSION_LEVEL = 9
 # Abstract class
+
+SEPA1 = chr(17)
+SEPA2 = chr(18)
+
 class Compressor:
     # meta class is used to define other classes
     __metaclass__ = abc.ABCMeta
@@ -68,6 +72,16 @@ class Compressor:
     def getCompressionRatio(self):
        return float(len(self.uncompressed_text))/len(self.compressed_text)
 
+    def checkUncompressmethod(self,filename_origin):
+        print "Opening " + filename_origin
+        file_rx = open(filename_origin, 'rb')
+        compressed_text_rx = file_rx.read()
+        self.compressed_text = compressed_text_rx
+        file_rx.close()
+        return SEPA2 in compressed_text_rx[0:10]
+
+
+
 
 # Inheriting from the above abstract class
 class DifferentialCompressor(Compressor):
@@ -75,13 +89,21 @@ class DifferentialCompressor(Compressor):
     compressed_text = None
 
     def compress(self):
+        header_lenght = 0
         i = 0
         ii = 0
         num_comp = 0
         lines = self.uncompressed_text.split('\n')
-        lines = lines[0:-1]
-        line = lines[0]
-        comps_res = np.array([], dtype=np.bool).reshape(0, len(line))
+        char_left = lines[-1]
+        line_ori = lines[0]
+        lines = lines[1:-1]
+        header_lenght = len(line_ori)-len(lines[1])+1
+        if char_left =="":
+            print "no char left"
+            header_lenght = header_lenght-1
+        header = line_ori[0:header_lenght]
+        line_ori = line_ori[header_lenght:]
+        comps_res = np.array([], dtype=np.bool).reshape(0, len(lines[0]))
         for line in lines:
             char_line = np.array(list(line))
             i = i + 1
@@ -96,12 +118,16 @@ class DifferentialCompressor(Compressor):
         print(num_comp)
         results = np.mean(comps_res, axis=0)
         where = np.where(results < 0.3)[0]
-        where_str = where.astype(np.str)
+        wherest = where-1
+        if char_left =="":
+            print "no char left"
+            wherest = wherest+1
+        where_str = wherest.astype(np.str)
         # enviar numericament millor?
         # optimitzar string?
         str_indices = ''
         for str in where_str:
-            str_indices = str_indices + str + u"¬"
+            str_indices = str_indices + str + SEPA1
         str_indices = str_indices[0:-1]
         str_send = ''
 
@@ -110,18 +136,20 @@ class DifferentialCompressor(Compressor):
             char_line_send = char_line[where]
             for elem in char_line_send:
                 str_send = str_send + elem
-            str_send = str_send + u'¬'
-        to_tx = lines[0] + '\n&' + str_indices + '&' + str_send
+            str_send = str_send + SEPA1
+        to_tx = header+SEPA2+line_ori+'\n'+char_left+SEPA2 + str_indices + SEPA2 + str_send
         to_tx = to_tx[0:-1]
         self.compressed_text = to_tx
 
         return self.compressed_text
 
     def uncompress(self):
-        lines = self.compressed_text.split('&')
-        original = lines[0]
-        positions = lines[1].split(u'¬')
-        lines = lines[2].split(u'¬')
+        print('\n-uncompress-\n')
+        lines = self.compressed_text.split(SEPA2)
+        header = lines[0]
+        original = lines[1]
+        positions = lines[2].split(SEPA1)
+        lines = lines[3].split(SEPA1)
         print("DECOMPRESSING!!!!")
         text_f = ''
         for line in lines:
@@ -132,13 +160,13 @@ class DifferentialCompressor(Compressor):
             for pos in positions:
                 intpos = int(pos)
                 computed_len = len(line)
-                print(computed_len)
                 if i>=computed_len or computed_len==0:
                     break
                 next_line[intpos] = line[i]
                 i = i + 1
             next_line = "".join(next_line)
             text_f = text_f + (next_line)
+        text_f = header +original + text_f
         print("Decompression ended!")
         self.uncompressed_text = text_f
         return self.uncompressed_text
