@@ -28,6 +28,8 @@ global files
 
 files = []
 
+time_stamp = time.time()
+
 
 def initPorts():
 
