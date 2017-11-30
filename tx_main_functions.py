@@ -9,10 +9,10 @@ import message_functions as m
 import packetManagement as p
 import re
 import math
-GPIO.setmode(GPIO.BCM)
+# GPIO.setmode(GPIO.BCM)
 
 RF_CH = [0x10, 0x40]
-BR = NRF24.BR_1MBPS
+BR = NRF24.BR_2MBPS
 PA = NRF24.PA_LOW
 
 def setup():
@@ -20,7 +20,7 @@ def setup():
     pipes = [[0xe7, 0xe7, 0xe7, 0xe7, 0xe7], [0xc2, 0xc2, 0xc2, 0xc2, 0xc2]]  # addresses for TX/RX channels
 
 
-    GPIO.setup([0, 1, 17, 27], GPIO.OUT, initial=GPIO.LOW)
+    # GPIO.setup([0, 1, 17, 27], GPIO.OUT, initial=GPIO.LOW)
 
     ears = NRF24(GPIO, spidev.SpiDev())
     mouth = NRF24(GPIO, spidev.SpiDev())
