@@ -201,10 +201,10 @@ def on_off(channel):
     
 def main(argv):
 
-    # if not GPIO.input(ON_OFF_SWITCH):
-        
+    if not GPIO.input(ON_OFF_SWITCH):
+        loadFiles()
 
-    loadFiles()
+    # loadFiles()
     # on_off()
 
         
