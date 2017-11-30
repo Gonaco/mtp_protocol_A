@@ -45,7 +45,7 @@ def initPorts():
     # GPIO.add_event_detect(ON_OFF_SWITCH, GPIO.BOTH)
     # GPIO.add_event_callback(ON_OFF_SWITCH, on_off())
 
-    GPIO.add_event_detect(ON_OFF_SWITCH, GPIO.BOTH, callback=on_off())
+    GPIO.add_event_detect(ON_OFF_SWITCH, GPIO.BOTH, callback=on_off)
 
     GPIO.setup(IRQS, GPIO.IN)
 
@@ -186,7 +186,7 @@ def end():
     # GPIO.cleanup()
     
 
-def on_off():
+def on_off(channel):
 
     print("\n-ON/OFF-\n")
 
