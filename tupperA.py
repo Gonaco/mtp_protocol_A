@@ -21,7 +21,7 @@ FREE_PINS = [2,3,4,6,14,15,18,22,23,24,25] # [3,5,7,8,10,12,15,16,18,22,31] # IN
 
 LAST_PACKET = 1
 
-INIT = TRUE
+INIT = True
 
 
 def initPorts():
