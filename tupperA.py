@@ -21,7 +21,10 @@ TRANSCEIVERS = [0,1,17,27]
 
 # FREE_PINS = [2,3,4,6,14,15,18,22,23,24,25] # [3,5,7,8,10,12,15,16,18,22,31] # IN ORDER TO SET THEM AS OUTPUT AND AVOID ERRORS
 
+global LAST_PACKET
 LAST_PACKET = 0
+
+global files
 
 
 def initPorts():
@@ -67,7 +70,7 @@ def initPorts():
 def loadFiles():
     print("\n-loadFiles-\n")
     
-    global files
+    # global files
     files = []
 
     # if len(argv) > 1:
@@ -186,7 +189,7 @@ def main(argv):
 
     if not GPIO.input(ON_OFF_SWITCH):        
 
-        files = loadFiles()
+        loadFiles()
 
         
 if __name__ == "__main__":
