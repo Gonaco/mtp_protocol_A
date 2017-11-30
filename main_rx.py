@@ -2,6 +2,18 @@ import rx_main_functions as rx
 import time
 import compression2
 
+def tic():
+    #Homemade version of matlab tic and toc functions
+    import time
+    global startTime_for_tictoc
+    startTime_for_tictoc = time.time()
+def toc():
+    import time
+    if 'startTime_for_tictoc' in globals():
+        print( "Elapsed time is " + str(time.time() - startTime_for_tictoc) + " seconds.")
+    else:
+        print( "Toc: start time not set")
+
 COMPRESSION = True
 
 def main_rx():
@@ -19,10 +31,12 @@ def main_rx():
     print("Done sending the file! Exiting! It took: ", diff, " seconds")
 
     if COMPRESSION:
+        tic()
         filename_origin = "RXfile_A.txt"
         filename_dest = "RXfile_A_uncomp.txt"
         Compi_rx = compression2.LZWCompressor()
         Compi_rx.uncompressFromFile(filename_origin, filename_dest)
+        toc()
 
     return 0
 

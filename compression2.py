@@ -7,7 +7,7 @@ import base64
 import abc
 import numpy as np
 import io
-
+COMPRESSION_LEVEL = 9
 # Abstract class
 class Compressor:
     # meta class is used to define other classes
@@ -174,7 +174,7 @@ class LZWCompressor(Compressor):
                 block_text = ''.join(lines[first_line_of_block:first_line_of_block + num_lines_per_block])
 
             # Compress block and get size
-            block_text_compressed = zlib.compress(block_text)
+            block_text_compressed = zlib.compress(block_text,COMPRESSION_LEVEL)
             block_text_compressed_size = sys.getsizeof(block_text_compressed)
             # print ( "Size of block " + str(i) + ": " + str(sys.getsizeof(block_text_compressed)) )
 
@@ -196,7 +196,7 @@ class LZWCompressor(Compressor):
         for i in range(len(received_data)):
             received_text_block_compressed = received_data[i:]
             try:
-                received_text_block_uncompressed = zlib.decompress(received_text_block_compressed)
+                received_text_block_uncompressed = zlib.decompress(received_text_block_compressed,COMPRESSION_LEVEL)
             except:
                 if i == 0:
                     print ("Can't uncompress if value is: " + str(i))

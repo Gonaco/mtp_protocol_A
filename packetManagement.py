@@ -2,6 +2,18 @@ import math
 ## ADDED AT RECENT REVIEW TO INCLUDE COMPRESSION
 import compression2
 
+def tic():
+    #Homemade version of matlab tic and toc functions
+    import time
+    global startTime_for_tictoc
+    startTime_for_tictoc = time.time()
+def toc():
+    import time
+    if 'startTime_for_tictoc' in globals():
+        print( "Elapsed time is " + str(time.time() - startTime_for_tictoc) + " seconds.")
+    else:
+        print( "Toc: start time not set")
+
 ##This is initialized by Carlos:
 ##storedFrames = {"-2N" : "DEFAULT"} ##Inicializamos el diccionario.
 
@@ -67,8 +79,10 @@ def writeFile(chunk, filename, p_id):
 def splitData(archivo, chunk_len):
     data_to_be_sent = archivo.read()
     if USING_COMPRESSION:
+        tic()
         Compi_tx = compression2.LZWCompressor()
         data_to_be_sent = Compi_tx.compress(data_to_be_sent)
+        toc()
 
     ### splitting the data in packets
     list_to_send = []
