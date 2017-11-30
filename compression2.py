@@ -209,14 +209,18 @@ class LZWCompressor(Compressor):
 
     def uncompressFromFile(self, filename_origin, filename_dest):
 
+        print "Opening " + filename_origin
         file_rx = open(filename_origin, 'rb')
         compressed_text_rx = file_rx.read()
         file_rx.close()
 
+        print "Uncompressing..."
         uncompressed_text_rx = self.uncompress(compressed_text_rx)
 
+        print "Opening " + filename_dest
         file_rx2 = open(filename_dest, 'wb')
         file_rx2.write(uncompressed_text_rx)
         file_rx2.close()
 
+        print "Uncompression finished."
         return

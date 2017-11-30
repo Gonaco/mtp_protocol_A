@@ -5,7 +5,7 @@ import compression2
 ##This is initialized by Carlos:
 ##storedFrames = {"-2N" : "DEFAULT"} ##Inicializamos el diccionario.
 
-USING_COMPRESSION = False
+USING_COMPRESSION = True
 
 ## DISCLAIMER
 # In network mode, we will need a last_w_id diferent for each team (!)
