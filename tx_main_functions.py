@@ -145,7 +145,7 @@ def transmit(radio, radio2, archivo, pipe):
             else:
                 # every time we send something without answer we add to this counter
                 no_answer = no_answer + 1
-                if no_answer == 10:
+                if no_answer == 5:
                     while not radio2.available(pipe):
                         # we will wait until we receive something (nack or ack we do not care)
                         time.sleep(0.5)
