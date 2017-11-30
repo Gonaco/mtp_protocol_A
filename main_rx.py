@@ -19,8 +19,8 @@ def main_rx():
     print("Done sending the file! Exiting! It took: ", diff, " seconds")
 
     if COMPRESSION:
-        filename_origin = "something.txt"
-        filename_dest = "something_else.txt"
+        filename_origin = "RXfile_A.txt"
+        filename_dest = "RXfile_A.txt"
         Compi_rx = compression2.LZWCompressor()
         Compi_rx.uncompressFromFile(filename_origin, filename_dest)
 
