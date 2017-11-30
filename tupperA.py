@@ -56,13 +56,13 @@ def initPorts():
     # LEDS
 
     GPIO.setup(ON_OFF_LED, GPIO.OUT)
-    GPIO.output(ON_OFF_LED, 1)
+    # GPIO.output(ON_OFF_LED, 1)
     
     GPIO.setup(NW_LED, GPIO.OUT)
-    GPIO.output(NW_LED, 1)
+    # GPIO.output(NW_LED, 1)
     
     GPIO.setup(TX_LED, GPIO.OUT)
-    GPIO.output(TX_LED, 1)
+    # GPIO.output(TX_LED, 1)
 
     # Just for being sure that there are no errors with the pins as input
     # GPIO.setup(FREE_PINS, GPIO.OUT)
@@ -145,19 +145,21 @@ def run():
         if (GPIO.input(NW_SWITCH)):
 
             # NT(files)
-            # GPIO.output(NW_LED, GPIO.HIGH)
+            GPIO.output(NW_LED, GPIO.HIGH)
             NT()
+            GPIO.output(NW_LED, GPIO.LOW)
             
         elif GPIO.input(TX_RX_SWITCH):
             
-            # GPIO.output(TX_LED, GPIO.HIGH)
+            GPIO.output(TX_LED, GPIO.HIGH)
             TX(files[0])
-
+            GPIO.output(TX_LED, GPIO.LOW)
             
         else:
 
+            GPIO.output(TX_LED, GPIO.LOW)
             LAST_PACKET = RX()
-            # GPIO.output(TX_LED, GPIO.HIGH)
+            GPIO.output(TX_LED, GPIO.HIGH)
 
 
 
