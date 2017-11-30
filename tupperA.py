@@ -24,7 +24,7 @@ TRANSCEIVERS = [0,1,17,27]
 global LAST_PACKET
 LAST_PACKET = 0
 
-global files
+# global files
 
 files = []
 
@@ -80,7 +80,7 @@ def initPorts():
 def loadFiles():
     print("\n-loadFiles-\n")
     
-    # global files
+    global files
     files = []
 
     # if len(argv) > 1:
@@ -159,6 +159,7 @@ def run():
         elif GPIO.input(TX_RX_SWITCH):
             
             GPIO.output(TX_LED, GPIO.HIGH)
+            GPIO.output(ON_OFF_LED, GPIO.HIGH)            
             
             if files:
                 TX(files[0])
@@ -214,8 +215,8 @@ def on_off():
     
 def main(argv):
 
+    loadFiles()
     if GPIO.input(ON_OFF_SWITCH):
-        loadFiles()
         run()
         
 
