@@ -196,7 +196,7 @@ class LZWCompressor(Compressor):
         for i in range(len(received_data)):
             received_text_block_compressed = received_data[i:]
             try:
-                received_text_block_uncompressed = zlib.decompress(received_text_block_compressed,COMPRESSION_LEVEL)
+                received_text_block_uncompressed = zlib.decompress(received_text_block_compressed)
             except:
                 if i == 0:
                     print ("Can't uncompress if value is: " + str(i))
