@@ -26,6 +26,8 @@ LAST_PACKET = 0
 
 global files
 
+files = []
+
 
 def initPorts():
 
