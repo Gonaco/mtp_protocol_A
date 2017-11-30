@@ -24,7 +24,7 @@ LAST_PACKET = 1
 INIT = True
 
 
-def initPorts():
+def initPorts(init):
 
     GPIO.setmode(GPIO.BCM)
 
@@ -36,10 +36,10 @@ def initPorts():
     
     GPIO.setup(ON_OFF_SWITCH, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
-    if INIT:
+    if init:
         GPIO.add_event_detect(ON_OFF_SWITCH, GPIO.BOTH)
         GPIO.add_event_callback(ON_OFF_SWITCH, on_off)
-        INIT = False
+        init = False
 
     GPIO.setup(IRQS, GPIO.IN)
 
@@ -53,6 +53,8 @@ def initPorts():
 
     # Just for being sure that there are no errors with the pins as input
     GPIO.setup(FREE_PINS, GPIO.OUT)
+
+    return init
 
 
     
@@ -177,7 +179,7 @@ def on_off():
     
 def main(argv):
 
-    initPorts()
+    INIT = initPorts(INIT)
 
     if not GPIO.input(ON_OFF_SWITCH):        
 
@@ -188,7 +190,7 @@ def main(argv):
         
 if __name__ == "__main__":
 
-    INIT = True
+    # INIT = True
     
     while(True):
         main(sys.argv)
