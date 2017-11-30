@@ -17,6 +17,8 @@ TX_LED = 21 # 40
 
 IRQS = [19,26] # [35,37]                  # WE ARE NOT USING THEM, BUT JUST IN CASE
 
+TRANSCEIVERS = [0,1,17,27]
+
 # FREE_PINS = [2,3,4,6,14,15,18,22,23,24,25] # [3,5,7,8,10,12,15,16,18,22,31] # IN ORDER TO SET THEM AS OUTPUT AND AVOID ERRORS
 
 LAST_PACKET = 0
@@ -41,6 +43,12 @@ def initPorts():
     GPIO.setup(IRQS, GPIO.IN)
 
     # OUTPUTS
+
+    # Tx/Rx
+
+    GPIO.setup(TRANSCEIVERS, GPIO.OUT, initial=GPIO.LOW)
+
+    # LEDS
 
     GPIO.setup(ON_OFF_LED, GPIO.OUT)
     
