@@ -154,8 +154,10 @@ def run():
         elif GPIO.input(TX_RX_SWITCH):
             
             GPIO.output(TX_LED, GPIO.HIGH)
+            
             if files:
                 TX(files[0])
+                
             GPIO.output(TX_LED, GPIO.LOW)
             
         else:
