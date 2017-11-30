@@ -66,6 +66,8 @@ def initPorts():
     
 def loadFiles():
     print("\n-loadFiles-\n")
+    
+    global files
     files = []
 
     # if len(argv) > 1:
