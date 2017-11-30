@@ -45,6 +45,8 @@ def initPorts():
     GPIO.setup(ON_OFF_LED, GPIO.OUT)
     
     GPIO.setup(NW_LED, GPIO.OUT)
+
+    GPIO.output(NW_LED, GPIO.HIGH)
     
     GPIO.setup(TX_LED, GPIO.OUT)
 
