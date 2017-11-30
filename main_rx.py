@@ -20,7 +20,7 @@ def main_rx():
 
     if COMPRESSION:
         filename_origin = "RXfile_A.txt"
-        filename_dest = "RXfile_A.txt"
+        filename_dest = "RXfile_A_uncomp.txt"
         Compi_rx = compression2.LZWCompressor()
         Compi_rx.uncompressFromFile(filename_origin, filename_dest)
 
