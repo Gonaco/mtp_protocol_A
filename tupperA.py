@@ -181,9 +181,9 @@ def end():
         c = comp.LZWCompressor()
         c.uncompressFromFile('RXfile_A.txt', 'RXfile_A.txt')
         
-    # GPIO.remove_event_detect(TX_RX_SWITCH)
-    # GPIO.remove_event_detect(NW_SWITCH)
-    # GPIO.cleanup()
+    GPIO.remove_event_detect(TX_RX_SWITCH)
+    GPIO.remove_event_detect(NW_SWITCH)
+    GPIO.cleanup()
     
 
 def on_off(channel):
@@ -203,6 +203,7 @@ def main(argv):
 
     if not GPIO.input(ON_OFF_SWITCH):
         loadFiles()
+        on_off()
 
     # loadFiles()
     # on_off()
