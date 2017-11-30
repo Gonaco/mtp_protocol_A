@@ -187,9 +187,10 @@ def on_off():
     
 def main(argv):
 
-    if not GPIO.input(ON_OFF_SWITCH):        
+    # if not GPIO.input(ON_OFF_SWITCH):
+        
 
-        loadFiles()
+    loadFiles()
 
         
 if __name__ == "__main__":
