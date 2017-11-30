@@ -137,19 +137,19 @@ def run():
         if (GPIO.input(NW_SWITCH)):
 
             # NT(files)
-            GPIO.output(NW_LED, GPIO.HIGH)
+            # GPIO.output(NW_LED, GPIO.HIGH)
             NT()
             
         elif GPIO.input(TX_RX_SWITCH):
             
-            GPIO.output(TX_LED, GPIO.HIGH)
+            # GPIO.output(TX_LED, GPIO.HIGH)
             TX(files[0])
 
             
         else:
 
             LAST_PACKET = RX()
-            GPIO.output(TX_LED, GPIO.HIGH)
+            # GPIO.output(TX_LED, GPIO.HIGH)
 
 
 
