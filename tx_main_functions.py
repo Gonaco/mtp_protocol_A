@@ -132,6 +132,7 @@ def transmit(radio, radio2, archivo, pipe):
             last_window = last_window+1
             # after we send, we look for nacks
             if radio2.available(pipe):
+                no_answer = 0
                 # print('we have things to read')
                 rcv_buffer = []
                 radio2.read(rcv_buffer, radio2.getDynamicPayloadSize())
@@ -145,10 +146,17 @@ def transmit(radio, radio2, archivo, pipe):
             else:
                 # every time we send something without answer we add to this counter
                 no_answer = no_answer + 1
+                # we resend the first window where we started to not have answers
                 if no_answer == 5:
-                    while not radio2.available(pipe):
-                        # we will wait until we receive something (nack or ack we do not care)
-                        time.sleep(0.5)
+                    last_sent = last_sent - 50
+                    last_sent, finished = send_window(frame_list, last_sent, window_size, radio, finished)
+                    time.sleep(0.3)
+                elif no_answer > 5:
+                    last_sent = last_sent - 10
+                    last_sent, finished = send_window(frame_list, last_sent, window_size, radio, finished)
+                    time.sleep(0.3)
+
+
         else:
             # print('if finished')
             num = 0
