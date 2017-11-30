@@ -8,18 +8,6 @@ import abc
 import numpy as np
 import io
 
-def tic():
-    #Homemade version of matlab tic and toc functions
-    import time
-    global startTime_for_tictoc
-    startTime_for_tictoc = time.time()
-def toc():
-    import time
-    if 'startTime_for_tictoc' in globals():
-        print( "Elapsed time is " + str(time.time() - startTime_for_tictoc) + " seconds.")
-    else:
-        print( "Toc: start time not set")
-
 # Abstract class
 class Compressor:
     # meta class is used to define other classes
@@ -50,13 +38,14 @@ class Compressor:
         file.close()
         return
 
+
     def writeDisk(self, filename):
         file = io.open(filename, 'wb')
         file.write(self.uncompressed_text)
         file.close()
         return
 
-    def checkCompression(self, filename1, filename2):
+    def checkCompression(self,filename1,filename2):
         file = io.open(filename1, 'rb')
         text1 = file.read()
         lines1 = text1.split('\n')
@@ -67,17 +56,17 @@ class Compressor:
         lines2 = text2.split('\n')
         lines2 = lines2[0:-1]
         file.close()
-        i = 0
+        i=0
         samelines = 0
         for line in lines1:
-            if line != lines2[i]:
+            if line !=lines2[i]:
                 break
-            i = i + 1
+            i = i+1
         lines_equal = i
-        return text1 == text2, lines_equal
+        return text1==text2,lines_equal
 
     def getCompressionRatio(self):
-        return float(len(self.uncompressed_text)) / len(self.compressed_text)
+       return float(len(self.uncompressed_text))/len(self.compressed_text)
 
 
 # Inheriting from the above abstract class
@@ -144,7 +133,7 @@ class DifferentialCompressor(Compressor):
                 intpos = int(pos)
                 computed_len = len(line)
                 print(computed_len)
-                if i >= computed_len or computed_len == 0:
+                if i>=computed_len or computed_len==0:
                     break
                 next_line[intpos] = line[i]
                 i = i + 1
@@ -154,6 +143,7 @@ class DifferentialCompressor(Compressor):
         self.uncompressed_text = text_f
         return self.uncompressed_text
 
+
     def loadCompressedData(self, received_data):
         self.compressed_text = received_data
         return
@@ -161,6 +151,7 @@ class DifferentialCompressor(Compressor):
 
 # Inheriting from the above abstract class
 class LZWCompressor(Compressor):
+
     uncompressed_text = None
     compressed_text = None
 
@@ -218,20 +209,14 @@ class LZWCompressor(Compressor):
 
     def uncompressFromFile(self, filename_origin, filename_dest):
 
-        tic()
         file_rx = open(filename_origin, 'rb')
         compressed_text_rx = file_rx.read()
         file_rx.close()
-        toc()
 
-        tic()
         uncompressed_text_rx = self.uncompress(compressed_text_rx)
-        toc()
 
-        tic()
         file_rx2 = open(filename_dest, 'wb')
         file_rx2.write(uncompressed_text_rx)
         file_rx2.close()
-        toc()
 
         return

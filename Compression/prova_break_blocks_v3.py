@@ -18,6 +18,7 @@ def toc():
         print( "Toc: start time not set")
 
 filename_tx = "input - copia.txt"
+filename_tx_comp =  "input - copia_comp.txt"
 #filename = "SampleTextFile_1000kb.txt"
 #filename = "input-short.txt"
 #filename = "input16.txt"
@@ -30,6 +31,10 @@ file_tx.close()
 
 Compi_tx = compression.LZWCompressor()
 data2tx = Compi_tx.compress(uncompressed_text_tx)
+
+file_tx = open(filename_tx_comp, 'wb')
+file_tx.write(data2tx)
+file_tx.close()
 toc()
 
 print( "Text comprimit en bytes:  " + str(sys.getsizeof(data2tx)) + "B  cr(" + str(float(sys.getsizeof(uncompressed_text_tx))/float(sys.getsizeof(data2tx)))+ ")")
@@ -37,13 +42,13 @@ print( "Text comprimit en bytes:  " + str(sys.getsizeof(data2tx)) + "B  cr(" + s
 
 tic()
 Compi_rx = compression.LZWCompressor()
-uncompressed_text_rx = Compi_rx.uncompress(data2tx)
+uncompressed_text_rx = Compi_rx.uncompressFromFile(filename_tx_comp, filename_rx)
 
-file_rx = open(filename_tx, 'wb')
-file_rx.write(uncompressed_text_rx)
-file_rx.close()
+#file_rx = open(filename_rx, 'wb')
+#file_rx.write(uncompressed_text_rx)
+#file_rx.close()
 toc()
 
 print('Checking file:')
-print(Compi_rx.checkCompression(filename_tx, filename_rx))
+# print(Compi_rx.checkCompression(filename_tx, filename_rx))
 

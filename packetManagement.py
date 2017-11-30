@@ -1,6 +1,6 @@
 import math
 ## ADDED AT RECENT REVIEW TO INCLUDE COMPRESSION
-import Compression.compression
+import compression2
 
 ##This is initialized by Carlos:
 ##storedFrames = {"-2N" : "DEFAULT"} ##Inicializamos el diccionario.
@@ -65,14 +65,11 @@ def writeFile(chunk, filename, p_id):
 
 ## SPLIT DATA NOW COMPRESSES THE WHOLE FILE.        
 def splitData(archivo, chunk_len):
+    data_to_be_sent = archivo.read()
     if USING_COMPRESSION:
-        Compi_tx = compression.LZWCompressor()
-        Compi_tx.loadText(archivo)
-        Compi_tx.compress()
-        data_to_be_sent = Compi_tx.compressed_text
-    else:
-        data_to_be_sent = archivo.read()
-    
+        Compi_tx = compression2.LZWCompressor()
+        data_to_be_sent = Compi_tx.compress(data_to_be_sent)
+
     ### splitting the data in packets
     list_to_send = []
     for ite in xrange(0,len(data_to_be_sent),chunk_len):

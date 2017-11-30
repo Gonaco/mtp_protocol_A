@@ -1,5 +1,6 @@
 import rx_main_functions as rx
 import time
+import compression2
 
 def main_rx():
     start = time.time()
@@ -14,6 +15,12 @@ def main_rx():
     end2 = time.time()
     diff = end2 - start
     print("Done sending the file! Exiting! It took: ", diff, " seconds")
+
+    filename_origin = "something.txt"
+    filename_dest = "something_else.txt"
+    Compi_rx = compression2.LZWCompressor()
+    Compi_rx.uncompressFromFile(filename_origin, filename_dest)
+
     return 0
 
 if __name__ == "__main__":

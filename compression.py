@@ -170,9 +170,9 @@ class LZWCompressor(Compressor):
     num_blocks = 100;
     current_byte = 0;
 
-    def compress(self):
+    def compress(self, uncompressed):
         #print('\n-compress-\n')
-        lines = list(e + "\n" for e in self.uncompressed_text.split("\n")[:-1])
+        lines = list(e + "\n" for e in uncompressed.split("\n")[:-1])
         num_lines = len(lines)
         num_lines_per_block = int(ceil(float(num_lines) / float(self.num_blocks)))
         num_lines_last_block = num_lines - (self.num_blocks - 1) * num_lines_per_block
@@ -205,10 +205,10 @@ class LZWCompressor(Compressor):
         ##print('Entire comp data: ' + entire_compression_data)
         return self.compressed_text
 
-    def uncompress(self):
+    def uncompress(self, compressed):
         #print('\n-uncompress-\n')
 
-        received_data = base64.b64decode(self.compressed_text)
+        received_data = base64.b64decode(compressed)
 
         ##print('Received data: ' + received_data)
 
