@@ -187,6 +187,8 @@ def main(argv):
 
         
 if __name__ == "__main__":
+
+    INIT = True
     
     while(True):
         main(sys.argv)
