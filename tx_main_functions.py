@@ -20,7 +20,7 @@ def setup():
     pipes = [[0xe7, 0xe7, 0xe7, 0xe7, 0xe7], [0xc2, 0xc2, 0xc2, 0xc2, 0xc2]]  # addresses for TX/RX channels
 
 
-    GPIO.setup([0, 1, 17, 27], GPIO.OUT, initial=GPIO.LOW)
+    # GPIO.setup([0, 1, 17, 27], GPIO.OUT, initial=GPIO.LOW)
 
     ears = NRF24(GPIO, spidev.SpiDev())
     mouth = NRF24(GPIO, spidev.SpiDev())
