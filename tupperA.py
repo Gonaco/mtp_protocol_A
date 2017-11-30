@@ -172,9 +172,9 @@ def on_off():
     
 def main(argv):
 
-    if not GPIO.input(ON_OFF_SWITCH):
+    initPorts()
 
-        initPorts()
+    if not GPIO.input(ON_OFF_SWITCH):        
 
         files = loadFiles()
 
