@@ -101,7 +101,7 @@ def loadFiles():
 
     for filename in listdir("/home/pi/mtp_protocol_A/input_files"):
         if ".txt" in filename:
-            files.append(open("/home/pi/mtp_protocol_A/input_files/"+filename, 'r'))
+            files.append(open("/home/pi/mtp_protocol_A/input_files/"+filename, 'rb'))
 
 
 # def initInterruptions():
@@ -154,7 +154,8 @@ def run():
         elif GPIO.input(TX_RX_SWITCH):
             
             GPIO.output(TX_LED, GPIO.HIGH)
-            TX(files[0])
+            if files:
+                TX(files[0])
             GPIO.output(TX_LED, GPIO.LOW)
             
         else:
