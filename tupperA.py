@@ -34,7 +34,7 @@ def initPorts():
     
     GPIO.setup(ON_OFF_SWITCH, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
     GPIO.add_event_detect(ON_OFF_SWITCH, GPIO.BOTH)
-    GPIO.add_event_callback(ON_OFF_SWITCH, on_off)
+    GPIO.add_event_callback(ON_OFF_SWITCH, on_off())
 
     GPIO.setup(IRQS, GPIO.IN)
 
