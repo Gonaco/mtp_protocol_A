@@ -130,7 +130,7 @@ def RX():
 
     print('\n-RX_mode-\n')
 
-    main_rx()
+    return main_rx()
     
     
 # def NT(tx_file_buffer):
