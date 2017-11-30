@@ -19,6 +19,8 @@ IRQS = [10,26] # [19,37]                  # WE ARE NOT USING THEM, BUT JUST IN C
 
 FREE_PINS = [2,3,4,14,15,18,22,23,24,25,11] # [3,5,7,8,10,12,15,16,18,22,32] # IN ORDER TO SET THEM AS OUTPUT AND AVOID ERRORS
 
+LAST_PACKET = 1
+
 
 def initPorts():
 
@@ -134,7 +136,7 @@ def run():
             
         else:
 
-            RX()
+            LAST_PACKET = RX()
             GPIO.output(TX_LED, GPIO.HIGH)
 
 
@@ -142,6 +144,14 @@ def run():
 def end():
     # Closing
     print("\n-Closing-\n")
+
+    if LAST_PACKET != 0:
+
+        import compression2 as comp
+
+        c = comp.LZWCompressor()
+        c.uncompressFromFile('RXfile_A.txt', 'RXfile_A.txt')
+        
     GPIO.remove_event_detect(TX_RX_SWITCH)
     GPIO.remove_event_detect(NW_SWITCH)
     # GPIO.cleanup()
@@ -160,13 +170,13 @@ def on_off():
     
 def main(argv):
 
-    # cont = 1
+    if not GPIO.input(ON_OFF_SWITCH):
 
-    initPorts()
+        initPorts()
 
-    files = loadFiles()
+        files = loadFiles()
 
-    GPIO.cleanup() # Sure this here???
+        GPIO.cleanup() # Sure this here???
 
         
 if __name__ == "__main__":
