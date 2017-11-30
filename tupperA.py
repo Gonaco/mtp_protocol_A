@@ -21,6 +21,8 @@ FREE_PINS = [2,3,4,6,14,15,18,22,23,24,25] # [3,5,7,8,10,12,15,16,18,22,31] # IN
 
 LAST_PACKET = 1
 
+INIT = TRUE
+
 
 def initPorts():
 
@@ -33,8 +35,11 @@ def initPorts():
     GPIO.setup(NW_SWITCH, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
     
     GPIO.setup(ON_OFF_SWITCH, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-    GPIO.add_event_detect(ON_OFF_SWITCH, GPIO.BOTH)
-    GPIO.add_event_callback(ON_OFF_SWITCH, on_off)
+
+    if INIT:
+        GPIO.add_event_detect(ON_OFF_SWITCH, GPIO.BOTH)
+        GPIO.add_event_callback(ON_OFF_SWITCH, on_off)
+        INIT = False
 
     GPIO.setup(IRQS, GPIO.IN)
 
@@ -178,7 +183,7 @@ def main(argv):
 
         files = loadFiles()
 
-        GPIO.cleanup() # Sure this here???
+    GPIO.cleanup() # Sure this here???
 
         
 if __name__ == "__main__":
