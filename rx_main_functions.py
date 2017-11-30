@@ -7,7 +7,7 @@ import packetManagement as pm
 GPIO.setmode(GPIO.BCM)
 
 RF_CH = [0x10, 0x40]
-BR = NRF24.BR_2MBPS
+BR = NRF24.BR_1MBPS
 PA = NRF24.PA_LOW
 
 
@@ -17,7 +17,7 @@ def setup():
 
     pipes = [[0xe7, 0xe7, 0xe7, 0xe7, 0xe7], [0xc2, 0xc2, 0xc2, 0xc2, 0xc2]]  # addresses for TX/RX channels
 
-   #  GPIO.setup([0, 1, 17, 27], GPIO.OUT, initial=GPIO.LOW)
+    GPIO.setup([0, 1, 17, 27], GPIO.OUT, initial=GPIO.LOW)
 
     ears = NRF24(GPIO, spidev.SpiDev())  # EARS
     mouth = NRF24(GPIO, spidev.SpiDev())  # MOUTH
@@ -31,8 +31,8 @@ def setup():
     mouth.setPayloadSize(32)
     mouth.setChannel(RF_CH[1])
     
-    # ears.setCRCLength(8)
-    # mouth.setCRCLength(8)
+   # ears.setCRCLength(8)
+    #mouth.setCRCLength(8)
 
     ears.setDataRate(BR)
     ears.setPALevel(PA)
@@ -79,7 +79,6 @@ def receive(radio, radio2, pipe, frame_received):
     first_frame = True
     last_frame = False
     review = False
-    timeout = False
     run = True
     timer = 0
     timer2 = 0
@@ -96,27 +95,25 @@ def receive(radio, radio2, pipe, frame_received):
     while run:
         count = count + 1
         if not first_frame:
-            while not radio.available(pipe) or not timeout:
+            while not radio.available(pipe):
                 time.sleep(1 / 1000.0)
                 if review:
                     timer = timer + 1
                     if timer == 300:  # TIMEOUT (may change)
                         count = num_frames_lost
                         timer = 0
-                        timeout = True
 
-            if not timeout:
-                recv_buffer = []
-                radio.read(recv_buffer, radio.getDynamicPayloadSize())
-                rcv = m.Packet()
-                rcv.mssg2Pckt(recv_buffer)
-                storedFrames, last_w_id = pm.rebuildData(rcv.getID(), rcv.getPayload(), last_w_id, storedFrames, team)
+            recv_buffer = []
+            radio.read(recv_buffer, radio.getDynamicPayloadSize())
+            rcv = m.Packet()
+            rcv.mssg2Pckt(recv_buffer)
+            storedFrames, last_w_id = pm.rebuildData(rcv.getID(), rcv.getPayload(), last_w_id, storedFrames, team)
 
-                # In each iteration set to -1 the value of this array located in the received frame ID position
-                if rcv.getID() >= len(original_frames_id):
-                    for i in range(len(original_frames_id), rcv.getID()+1):
-                        original_frames_id.append(i)
-                original_frames_id[rcv.getID()] = -1
+            # In each iteration set to -1 the value of this array located in the received frame ID position
+            if rcv.getID() >= len(original_frames_id):
+                for i in range(len(original_frames_id), rcv.getID()+1):
+                    original_frames_id.append(i)
+            original_frames_id[rcv.getID()] = -1
 
             if count % window_size == 0 and count != 0 and rcv.getEnd() != 1 and not last_frame:
                 frames2resend_id = []
@@ -145,7 +142,6 @@ def receive(radio, radio2, pipe, frame_received):
                 else:
                     print('last received and ask to resend')
                     count = 0
-                    timeout = False
                     num_frames_lost = len(frames2resend_id)
                     m.sendNACK(window_id, frames2resend_id, radio2)
 
@@ -180,17 +176,6 @@ def receive(radio, radio2, pipe, frame_received):
             storedFrames, last_w_id = pm.rebuildData(frame_received.getID(), frame_received.getPayload(), last_w_id, storedFrames, team)
             original_frames_id[frame_received.getID()] = -1
             first_frame = False
-
-            if frame_received.getEnd() == 1:
-                final_id = frame_received.getID()
-                original_frames_id = original_frames_id[0: final_id+1]  # Set the length of original_frames_id
-                last_frame = True
-                review = True
-                frames2resend_id = find_lost_frames(original_frames_id)
-                print('the first received is the last')
-                count = 0
-                num_frames_lost = len(frames2resend_id)
-                m.sendNACK(window_id, frames2resend_id, radio2)
 
 
 def find_lost_frames(vector_id):
