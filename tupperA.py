@@ -187,7 +187,9 @@ def end(channel):
 
             c = comp.LZWCompressor()
             c.uncompressFromFile('RXfile_A.txt', 'RXfile_A.txt')
-
+            
+        GPIO.output(ON_OFF_LED, 0)    
+            
         print("Quitting")
         quit()
     time_stamp = time_now  
