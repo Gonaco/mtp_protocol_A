@@ -211,11 +211,6 @@ def main(argv):
     if GPIO.input(ON_OFF_SWITCH):
         loadFiles()
         run()
-
-
-    try:
-
-        GPIO.wait_for_edge(,)
         
 
     # loadFiles()
