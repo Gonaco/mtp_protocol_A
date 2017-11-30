@@ -56,14 +56,16 @@ def initPorts():
     # LEDS
 
     GPIO.setup(ON_OFF_LED, GPIO.OUT)
+    GPIO.output(ON_OFF_LED, GPIO.HIGH)
     
     GPIO.setup(NW_LED, GPIO.OUT)
     GPIO.output(NW_LED, GPIO.HIGH)
     
     GPIO.setup(TX_LED, GPIO.OUT)
+    GPIO.output(TX_LED, GPIO.HIGH)
 
     # Just for being sure that there are no errors with the pins as input
-    GPIO.setup(FREE_PINS, GPIO.OUT)
+    # GPIO.setup(FREE_PINS, GPIO.OUT)
 
 
     
