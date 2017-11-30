@@ -210,7 +210,7 @@ def transmit(radio, radio2, archivo, pipe):
                         time.sleep(10)
                     rcv = ''
             else:
-                # timeot
+                # timeout
                 frame = frame_list[-1]
                 print('we send last frame again')
                 radio.write(frame.__str__())
