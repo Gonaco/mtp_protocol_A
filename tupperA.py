@@ -42,8 +42,8 @@ def initPorts():
     GPIO.setup(NW_SWITCH, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
     
     GPIO.setup(ON_OFF_SWITCH, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-    GPIO.add_event_detect(ON_OFF_SWITCH, GPIO.BOTH)
-    GPIO.add_event_callback(ON_OFF_SWITCH, on_off())
+    # GPIO.add_event_detect(ON_OFF_SWITCH, GPIO.BOTH)
+    # GPIO.add_event_callback(ON_OFF_SWITCH, on_off())
 
     GPIO.setup(IRQS, GPIO.IN)
 
@@ -56,13 +56,13 @@ def initPorts():
     # LEDS
 
     GPIO.setup(ON_OFF_LED, GPIO.OUT)
-    GPIO.output(ON_OFF_LED, GPIO.HIGH)
+    GPIO.output(ON_OFF_LED, 1)
     
     GPIO.setup(NW_LED, GPIO.OUT)
-    GPIO.output(NW_LED, GPIO.HIGH)
+    GPIO.output(NW_LED, 1)
     
     GPIO.setup(TX_LED, GPIO.OUT)
-    GPIO.output(TX_LED, GPIO.HIGH)
+    GPIO.output(TX_LED, 1)
 
     # Just for being sure that there are no errors with the pins as input
     # GPIO.setup(FREE_PINS, GPIO.OUT)
@@ -172,8 +172,8 @@ def end():
         c = comp.LZWCompressor()
         c.uncompressFromFile('RXfile_A.txt', 'RXfile_A.txt')
         
-    GPIO.remove_event_detect(TX_RX_SWITCH)
-    GPIO.remove_event_detect(NW_SWITCH)
+    # GPIO.remove_event_detect(TX_RX_SWITCH)
+    # GPIO.remove_event_detect(NW_SWITCH)
     # GPIO.cleanup()
     
 
@@ -196,6 +196,7 @@ def main(argv):
         
 
     loadFiles()
+    on_off()
 
         
 if __name__ == "__main__":
