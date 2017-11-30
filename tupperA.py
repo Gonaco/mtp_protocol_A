@@ -43,7 +43,7 @@ def initPorts():
     
     GPIO.setup(ON_OFF_SWITCH, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
     # GPIO.add_event_detect(ON_OFF_SWITCH, GPIO.BOTH)
-    # GPIO.add_event_callback(ON_OFF_SWITCH, on_off())
+    # GPIO.add_event_callback(ON_OFF_SWITCH, on_off)
 
     # GPIO.add_event_detect(ON_OFF_SWITCH, GPIO.RISING, callback=run)
     GPIO.add_event_detect(ON_OFF_SWITCH, GPIO.FALLING, callback=end)
@@ -175,14 +175,18 @@ def end(channel):
     # Closing
     print("\n-Closing-\n")
 
-    if LAST_PACKET != 0:
+    global time_stamp       # put in to debounce  
+    time_now = time.time()  
+    if (time_now - time_stamp)  >= 0.3 and not GPIO.input(ON_OFF_SWITCH):  
+        if LAST_PACKET != 0:
 
-        import compression2 as comp
+            import compression2 as comp
 
-        c = comp.LZWCompressor()
-        c.uncompressFromFile('RXfile_A.txt', 'RXfile_A.txt')
+            c = comp.LZWCompressor()
+            c.uncompressFromFile('RXfile_A.txt', 'RXfile_A.txt')
 
-    quit()
+        quit()
+    time_stamp = time_now  
         
     # GPIO.remove_event_detect(TX_RX_SWITCH)
     # GPIO.remove_event_detect(NW_SWITCH)
@@ -207,6 +211,11 @@ def main(argv):
     if GPIO.input(ON_OFF_SWITCH):
         loadFiles()
         run()
+
+
+    try:
+
+        GPIO.wait_for_edge(,)
         
 
     # loadFiles()
