@@ -171,6 +171,8 @@ def run():
             GPIO.output(TX_LED, GPIO.LOW)
             LAST_PACKET = RX()
             GPIO.output(TX_LED, GPIO.HIGH)
+            if LAST_PACKET == 0:
+                quit()
 
 
 
