@@ -2,7 +2,7 @@ import rx_main_functions as rx
 import time
 import compression2
 
-COMPRESSION = True
+COMPRESSION = False
 
 def main_rx():
     start = time.time()
