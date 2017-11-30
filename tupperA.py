@@ -139,6 +139,8 @@ def NT():
 
 def run():
 
+    GPIO.output(ON_OFF_LED, GPIO.HIGH)
+
     while GPIO.input(ON_OFF_SWITCH):
         print("\n-Running-\n")
         
