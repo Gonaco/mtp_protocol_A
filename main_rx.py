@@ -2,6 +2,8 @@ import rx_main_functions as rx
 import time
 import compression2
 
+COMPRESSION = False
+
 def main_rx():
     start = time.time()
     radio, radio2 = rx.setup()
@@ -16,10 +18,11 @@ def main_rx():
     diff = end2 - start
     print("Done sending the file! Exiting! It took: ", diff, " seconds")
 
-    filename_origin = "something.txt"
-    filename_dest = "something_else.txt"
-    Compi_rx = compression2.LZWCompressor()
-    Compi_rx.uncompressFromFile(filename_origin, filename_dest)
+    if COMPRESSION:
+        filename_origin = "something.txt"
+        filename_dest = "something_else.txt"
+        Compi_rx = compression2.LZWCompressor()
+        Compi_rx.uncompressFromFile(filename_origin, filename_dest)
 
     return 0
 

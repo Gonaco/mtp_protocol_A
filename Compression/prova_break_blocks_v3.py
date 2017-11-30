@@ -18,10 +18,8 @@ def toc():
         print( "Toc: start time not set")
 
 filename_tx = "input - copia.txt"
+#filename_tx = "Lorem ipsum.txt"
 filename_tx_comp =  "input - copia_comp.txt"
-#filename = "SampleTextFile_1000kb.txt"
-#filename = "input-short.txt"
-#filename = "input16.txt"
 filename_rx = "received.txt"
 
 tic()
