@@ -24,6 +24,8 @@ LAST_PACKET = 0
 
 def initPorts():
 
+    print("\n-initPorts-\n")
+
     GPIO.setmode(GPIO.BCM)
 
     # INPUTS
@@ -178,10 +180,10 @@ def main(argv):
 
         
 if __name__ == "__main__":
-
-    GPIO.cleanup() # Sure this here???
     
     initPorts()
     
     while(True):
         main(sys.argv)
+        
+    GPIO.cleanup() # Sure this here???
