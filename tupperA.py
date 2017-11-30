@@ -179,7 +179,8 @@ def end(channel):
 
     global time_stamp       # put in to debounce  
     time_now = time.time()  
-    if (time_now - time_stamp)  >= 0.3 and not GPIO.input(ON_OFF_SWITCH):  
+    if (time_now - time_stamp)  >= 0.3 and not GPIO.input(ON_OFF_SWITCH):
+        
         if LAST_PACKET != 0:
 
             import compression2 as comp
@@ -187,6 +188,7 @@ def end(channel):
             c = comp.LZWCompressor()
             c.uncompressFromFile('RXfile_A.txt', 'RXfile_A.txt')
 
+        print("Quitting")
         quit()
     time_stamp = time_now  
         
