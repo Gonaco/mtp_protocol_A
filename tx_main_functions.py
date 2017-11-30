@@ -183,14 +183,14 @@ def transmit(radio, radio2, archivo, pipe):
                                 #print('%s we send frame' % next_id)
                                 radio.write(frame.__str__())
                                 nack_list.pop(0)
-                    print('I sent last so I will check for ack')
+                    # print('I sent last so I will check for ack')
                     #time.sleep(2)
                     # if I don't have nacks, I only care if I finished
                     # if rx send ack we stop running, if we didn't finish, just write next window
-                    if rcv.getTyp() == 1 and rcv.getEnd() == 1:
+                    elif rcv.getTyp() == 1 and rcv.getEnd() == 1:
                         print('there is ack')
                         run = False
-                    if rcv.getTyp() == 0:
+                    elif rcv.getTyp() == 0:
                         time.sleep(10)
                     rcv = ''
             else:
