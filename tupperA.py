@@ -206,6 +206,7 @@ def main(argv):
         if not GPIO.input(ON_OFF_SWITCH):
             # run()
             loadFiles()
+            time.sleep(200)
 
 
         # loadFiles()
