@@ -7,7 +7,7 @@ import time
 def main():
     # Network variables
     dilationFactor = 7
-    networkSize = 4
+    networkSize = 2
 
     print("Hello from the Network Mode")
     transmission_init = True
