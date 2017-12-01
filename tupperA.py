@@ -44,7 +44,7 @@ def initPorts():
     GPIO.setup(NW_SWITCH, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
     
     GPIO.setup(ON_OFF_SWITCH, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-    GPIO.add_event_detect(ON_OFF_SWITCH, GPIO.BOTH, callback=on_off)
+    GPIO.add_event_detect(ON_OFF_SWITCH, GPIO.BOTH, callback=on_off, bouncetime=200)
     # GPIO.add_event_callback(ON_OFF_SWITCH, on_off)
 
     # GPIO.add_event_detect(ON_OFF_SWITCH, GPIO.RISING, callback=run)
@@ -202,13 +202,19 @@ def on_off(channel):
     
 def main(argv):
 
-    if not GPIO.input(ON_OFF_SWITCH):
-        # run()
-        loadFiles()
-        
+    GPIO.add_event_detect(ON_OFF_SWITCH, GPIO.BOTH, callback=on_off, bouncetime=200)
+    
+    try:
+        if not GPIO.input(ON_OFF_SWITCH):
+            # run()
+            loadFiles()
 
-    # loadFiles()
-    # on_off()
+
+        # loadFiles()
+        # on_off()
+
+    except KeyboardInterrupt:  
+        GPIO.cleanup()       # clean up GPIO on CTRL+C exit 
 
         
 if __name__ == "__main__":
