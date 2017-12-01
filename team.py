@@ -22,9 +22,9 @@ class Team(object):
         self.senderFiles = [0]*self.networkSize
         for i in range(self.networkSize):
             if i != self.teamID:
-                savingFilePath = os.path.join("./savingFiles" + str(self.teamID), "team" + str(i), "received_file.txt")
+                savingFilePath = os.path.join("/home/pi/mtp_protocol_A/savingFiles" + str(self.teamID), "team" + str(i), "received_file.txt")
                 self.savingFiles[i] = FileClass(reader=False, path=savingFilePath)
-                senderFolder = os.path.join("./sendFiles" + str(self.teamID), "team" + str(i))
+                senderFolder = os.path.join("/home/pi/mtp_protocol_A/sendFiles" + str(self.teamID), "team" + str(i))
                 senderFilePath = os.path.join(senderFolder, os.listdir(senderFolder)[0])
                 self.senderFiles[i] = FileClass(reader=True, path=senderFilePath)
 
