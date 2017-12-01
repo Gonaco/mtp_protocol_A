@@ -173,8 +173,8 @@ def end():
 
     GPIO.output(ON_OFF_LED, 0)    
 
-    # print("Quitting")
-    # quit()
+    print("Quitting")
+    quit()
     # time_stamp = time_now  
         
     # GPIO.remove_event_detect(TX_RX_SWITCH)
