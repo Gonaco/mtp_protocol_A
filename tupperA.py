@@ -171,8 +171,8 @@ def run():
         GPIO.output(TX_LED, GPIO.LOW)
         LAST_PACKET = RX()
         GPIO.output(TX_LED, GPIO.HIGH)
-        if LAST_PACKET == 0:
-            quit()
+        # if LAST_PACKET == 0:
+        #     quit()
 
 
 
@@ -180,22 +180,22 @@ def end():
     # Closing
     print("\n-Closing-\n")
 
-    global time_stamp       # put in to debounce  
-    time_now = time.time()  
-    if (time_now - time_stamp)  >= 0.3 and not GPIO.input(ON_OFF_SWITCH):
+    # global time_stamp       # put in to debounce  
+    # time_now = time.time()  
+    # if (time_now - time_stamp)  >= 0.3 and not GPIO.input(ON_OFF_SWITCH):
         
-        if LAST_PACKET != 0:
+    if LAST_PACKET != 0:
 
-            import compression2 as comp
+        import compression2 as comp
 
-            c = comp.LZWCompressor()
-            c.uncompressFromFile('RXfile_A.txt', 'RXfile_A.txt')
-            
-        GPIO.output(ON_OFF_LED, 0)    
-            
-        print("Quitting")
-        # quit()
-    time_stamp = time_now  
+        c = comp.LZWCompressor()
+        c.uncompressFromFile('RXfile_A.txt', 'RXfile_A.txt')
+
+    GPIO.output(ON_OFF_LED, 0)    
+
+        # print("Quitting")
+    # quit()
+    # time_stamp = time_now  
         
     # GPIO.remove_event_detect(TX_RX_SWITCH)
     # GPIO.remove_event_detect(NW_SWITCH)
@@ -223,8 +223,8 @@ def on_off(channel):
 def main(argv):
 
     loadFiles()
-    if GPIO.input(ON_OFF_SWITCH):
-        run()
+    # if GPIO.input(ON_OFF_SWITCH):
+    #     run()
         
 
     # loadFiles()
