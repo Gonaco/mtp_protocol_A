@@ -21,7 +21,7 @@ TRANSCEIVERS = [0,1,17,27]
 
 # FREE_PINS = [2,3,4,6,14,15,18,22,23,24,25] # [3,5,7,8,10,12,15,16,18,22,31] # IN ORDER TO SET THEM AS OUTPUT AND AVOID ERRORS
 
-
+global LAST_PACKET
 LAST_PACKET = 0
 
 # global files
@@ -44,11 +44,11 @@ def initPorts():
     GPIO.setup(NW_SWITCH, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
     
     GPIO.setup(ON_OFF_SWITCH, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-    GPIO.add_event_detect(ON_OFF_SWITCH, GPIO.BOTH, callback=on_off, bouncetime=200)
+    # GPIO.add_event_detect(ON_OFF_SWITCH, GPIO.BOTH)
     # GPIO.add_event_callback(ON_OFF_SWITCH, on_off)
 
     # GPIO.add_event_detect(ON_OFF_SWITCH, GPIO.RISING, callback=run)
-    # GPIO.add_event_detect(ON_OFF_SWITCH, GPIO.FALLING, callback=end)
+    GPIO.add_event_detect(ON_OFF_SWITCH, GPIO.FALLING, callback=end)
 
     GPIO.setup(IRQS, GPIO.IN)
 
@@ -82,6 +82,27 @@ def loadFiles():
     
     global files
     files = []
+
+    # if len(argv) > 1:
+        
+    #     # In case of using terminal to load te files
+
+    #     for i in range(1,len(argv)-1):
+
+    #         filename = argv[i]
+    #         if ".txt" in filename:
+    #             files.append(open(filename, 'r'))
+            
+
+    # else:
+
+    #     # In case of using the automatic moe to load the files
+            
+    #     for filename in listdir("input_files"):
+    #         if ".txt" in filename:
+    #             files.append(open(filename, 'r'))
+
+    # return files
 
     for filename in listdir("/home/pi/mtp_protocol_A/input_files"):
         if ".txt" in filename:
@@ -125,95 +146,84 @@ def run():
 
     GPIO.output(ON_OFF_LED, GPIO.HIGH)
 
-    # while GPIO.input(ON_OFF_SWITCH):
-    print("\n-Running-\n")
+    while GPIO.input(ON_OFF_SWITCH):
+        print("\n-Running-\n")
+        
+        if (GPIO.input(NW_SWITCH)):
 
-    if (GPIO.input(NW_SWITCH)):
+            # NT(files)
+            GPIO.output(NW_LED, GPIO.HIGH)
+            NT()
+            GPIO.output(NW_LED, GPIO.LOW)
+            
+        elif GPIO.input(TX_RX_SWITCH):
+            
+            GPIO.output(TX_LED, GPIO.HIGH)
+            GPIO.output(ON_OFF_LED, GPIO.HIGH)            
+            
+            if files:
+                TX(files[0])
+                
+            GPIO.output(TX_LED, GPIO.LOW)
+            
+        else:
 
-        # NT(files)
-        GPIO.output(NW_LED, GPIO.HIGH)
-        NT()
-        GPIO.output(NW_LED, GPIO.LOW)
-
-    elif GPIO.input(TX_RX_SWITCH):
-
-        GPIO.output(TX_LED, GPIO.HIGH)
-        GPIO.output(ON_OFF_LED, GPIO.HIGH)            
-
-        if files:
-            TX(files[0])
-
-        GPIO.output(TX_LED, GPIO.LOW)
-
-    else:
-
-        GPIO.output(TX_LED, GPIO.LOW)
-        global LAST_PACKET
-        LAST_PACKET = RX()
-        GPIO.output(TX_LED, GPIO.HIGH)
-        # if LAST_PACKET == 0:
-        #     quit()
-
+            GPIO.output(TX_LED, GPIO.LOW)
+            LAST_PACKET = RX()
+            GPIO.output(TX_LED, GPIO.HIGH)
+            if LAST_PACKET == 0:
+                quit()
 
 
-def end():
+
+def end(channel):
     # Closing
     print("\n-Closing-\n")
 
-    # global time_stamp       # put in to debounce  
-    # time_now = time.time()  
-    # if (time_now - time_stamp)  >= 0.3 and not GPIO.input(ON_OFF_SWITCH):
+    global time_stamp       # put in to debounce  
+    time_now = time.time()  
+    if (time_now - time_stamp)  >= 0.3 and not GPIO.input(ON_OFF_SWITCH):
         
-    if LAST_PACKET != 0:
+        if LAST_PACKET != 0:
 
-        import compression2 as comp
+            import compression2 as comp
 
-        c = comp.LZWCompressor()
-        c.uncompressFromFile('RXfile_A.txt', 'RXfile_A.txt')
-
-    GPIO.output(ON_OFF_LED, 0)    
-
-    print("Quitting")
-    quit()
-    # time_stamp = time_now  
+            c = comp.LZWCompressor()
+            c.uncompressFromFile('RXfile_A.txt', 'RXfile_A.txt')
+            
+        GPIO.output(ON_OFF_LED, 0)    
+            
+        print("Quitting")
+        quit()
+    time_stamp = time_now  
         
     # GPIO.remove_event_detect(TX_RX_SWITCH)
     # GPIO.remove_event_detect(NW_SWITCH)
     # GPIO.cleanup()
     
 
-def on_off(channel):
+def on_off():
 
     print("\n-ON/OFF-\n")
 
-    global time_stamp       # put in to debounce  
-    time_now = time.time()  
-    if (time_now - time_stamp)  >= 0.3:
+    if (GPIO.input(ON_OFF_SWITCH)):
 
-        if (GPIO.input(ON_OFF_SWITCH)):
-
-            run()
-
-        else:
-
-            end()
-
-    time_stamp = time_now
+        run()
+            
+    else:
+        
+        end()
+        
     
 def main(argv):
-    
-    try:
-        if not GPIO.input(ON_OFF_SWITCH):
-            # run()
-            loadFiles()
-            time.sleep(200)
 
+    loadFiles()
+    if GPIO.input(ON_OFF_SWITCH):
+        run()
+        
 
-        # loadFiles()
-        # on_off()
-
-    except KeyboardInterrupt:  
-        GPIO.cleanup()       # clean up GPIO on CTRL+C exit 
+    # loadFiles()
+    # on_off()
 
         
 if __name__ == "__main__":
