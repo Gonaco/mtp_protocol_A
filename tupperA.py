@@ -190,6 +190,8 @@ def on_off(channel):
     time_now = time.time()  
     if (time_now - time_stamp)  >= 0.3:
 
+        GPIO.add_event_detect(ON_OFF_SWITCH, GPIO.BOTH, callback=on_off, bouncetime=200)
+
         if (GPIO.input(ON_OFF_SWITCH)):
 
             run()
@@ -201,8 +203,6 @@ def on_off(channel):
     time_stamp = time_now
     
 def main(argv):
-
-    GPIO.add_event_detect(ON_OFF_SWITCH, GPIO.BOTH, callback=on_off, bouncetime=200)
     
     try:
         if not GPIO.input(ON_OFF_SWITCH):
