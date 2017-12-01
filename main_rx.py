@@ -16,7 +16,7 @@ def toc():
     else:
         print( "Toc: start time not set")
 
-COMPRESSION = True
+COMPRESSION = False
 
 
 def main_rx():
