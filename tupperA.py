@@ -44,11 +44,11 @@ def initPorts():
     GPIO.setup(NW_SWITCH, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
     
     GPIO.setup(ON_OFF_SWITCH, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-    # GPIO.add_event_detect(ON_OFF_SWITCH, GPIO.BOTH)
-    # GPIO.add_event_callback(ON_OFF_SWITCH, on_off)
+    GPIO.add_event_detect(ON_OFF_SWITCH, GPIO.BOTH)
+    GPIO.add_event_callback(ON_OFF_SWITCH, on_off)
 
     # GPIO.add_event_detect(ON_OFF_SWITCH, GPIO.RISING, callback=run)
-    GPIO.add_event_detect(ON_OFF_SWITCH, GPIO.FALLING, callback=end)
+    # GPIO.add_event_detect(ON_OFF_SWITCH, GPIO.FALLING, callback=end)
 
     GPIO.setup(IRQS, GPIO.IN)
 
@@ -176,7 +176,7 @@ def run():
 
 
 
-def end(channel):
+def end():
     # Closing
     print("\n-Closing-\n")
 
@@ -194,7 +194,7 @@ def end(channel):
         GPIO.output(ON_OFF_LED, 0)    
             
         print("Quitting")
-        quit()
+        # quit()
     time_stamp = time_now  
         
     # GPIO.remove_event_detect(TX_RX_SWITCH)
@@ -202,18 +202,23 @@ def end(channel):
     # GPIO.cleanup()
     
 
-def on_off():
+def on_off(channel):
 
     print("\n-ON/OFF-\n")
 
-    if (GPIO.input(ON_OFF_SWITCH)):
+    global time_stamp       # put in to debounce  
+    time_now = time.time()  
+    if (time_now - time_stamp)  >= 0.3:
 
-        run()
-            
-    else:
-        
-        end()
-        
+        if (GPIO.input(ON_OFF_SWITCH)):
+
+            run()
+
+        else:
+
+            end()
+
+    time_stamp = time_now
     
 def main(argv):
 
