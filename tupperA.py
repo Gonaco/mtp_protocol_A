@@ -21,7 +21,7 @@ TRANSCEIVERS = [0,1,17,27]
 
 # FREE_PINS = [2,3,4,6,14,15,18,22,23,24,25] # [3,5,7,8,10,12,15,16,18,22,31] # IN ORDER TO SET THEM AS OUTPUT AND AVOID ERRORS
 
-global LAST_PACKET
+
 LAST_PACKET = 0
 
 # global files
@@ -44,8 +44,8 @@ def initPorts():
     GPIO.setup(NW_SWITCH, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
     
     GPIO.setup(ON_OFF_SWITCH, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-    GPIO.add_event_detect(ON_OFF_SWITCH, GPIO.BOTH)
-    GPIO.add_event_callback(ON_OFF_SWITCH, on_off)
+    GPIO.add_event_detect(ON_OFF_SWITCH, GPIO.BOTH, callback=on_off)
+    # GPIO.add_event_callback(ON_OFF_SWITCH, on_off)
 
     # GPIO.add_event_detect(ON_OFF_SWITCH, GPIO.RISING, callback=run)
     # GPIO.add_event_detect(ON_OFF_SWITCH, GPIO.FALLING, callback=end)
@@ -82,27 +82,6 @@ def loadFiles():
     
     global files
     files = []
-
-    # if len(argv) > 1:
-        
-    #     # In case of using terminal to load te files
-
-    #     for i in range(1,len(argv)-1):
-
-    #         filename = argv[i]
-    #         if ".txt" in filename:
-    #             files.append(open(filename, 'r'))
-            
-
-    # else:
-
-    #     # In case of using the automatic moe to load the files
-            
-    #     for filename in listdir("input_files"):
-    #         if ".txt" in filename:
-    #             files.append(open(filename, 'r'))
-
-    # return files
 
     for filename in listdir("/home/pi/mtp_protocol_A/input_files"):
         if ".txt" in filename:
@@ -169,6 +148,7 @@ def run():
     else:
 
         GPIO.output(TX_LED, GPIO.LOW)
+        global LAST_PACKET
         LAST_PACKET = RX()
         GPIO.output(TX_LED, GPIO.HIGH)
         # if LAST_PACKET == 0:
@@ -222,9 +202,9 @@ def on_off(channel):
     
 def main(argv):
 
-    loadFiles()
-    # if GPIO.input(ON_OFF_SWITCH):
-    #     run()
+    if not GPIO.input(ON_OFF_SWITCH):
+        # run()
+        loadFiles()
         
 
     # loadFiles()
