@@ -146,33 +146,33 @@ def run():
 
     GPIO.output(ON_OFF_LED, GPIO.HIGH)
 
-    while GPIO.input(ON_OFF_SWITCH):
-        print("\n-Running-\n")
-        
-        if (GPIO.input(NW_SWITCH)):
+    # while GPIO.input(ON_OFF_SWITCH):
+    print("\n-Running-\n")
 
-            # NT(files)
-            GPIO.output(NW_LED, GPIO.HIGH)
-            NT()
-            GPIO.output(NW_LED, GPIO.LOW)
-            
-        elif GPIO.input(TX_RX_SWITCH):
-            
-            GPIO.output(TX_LED, GPIO.HIGH)
-            GPIO.output(ON_OFF_LED, GPIO.HIGH)            
-            
-            if files:
-                TX(files[0])
-                
-            GPIO.output(TX_LED, GPIO.LOW)
-            
-        else:
+    if (GPIO.input(NW_SWITCH)):
 
-            GPIO.output(TX_LED, GPIO.LOW)
-            LAST_PACKET = RX()
-            GPIO.output(TX_LED, GPIO.HIGH)
-            if LAST_PACKET == 0:
-                quit()
+        # NT(files)
+        GPIO.output(NW_LED, GPIO.HIGH)
+        NT()
+        GPIO.output(NW_LED, GPIO.LOW)
+
+    elif GPIO.input(TX_RX_SWITCH):
+
+        GPIO.output(TX_LED, GPIO.HIGH)
+        GPIO.output(ON_OFF_LED, GPIO.HIGH)            
+
+        if files:
+            TX(files[0])
+
+        GPIO.output(TX_LED, GPIO.LOW)
+
+    else:
+
+        GPIO.output(TX_LED, GPIO.LOW)
+        LAST_PACKET = RX()
+        GPIO.output(TX_LED, GPIO.HIGH)
+        if LAST_PACKET == 0:
+            quit()
 
 
 
