@@ -11,7 +11,7 @@ import re
 import math
 # GPIO.setmode(GPIO.BCM)
 
-RF_CH = [0x10, 0x40]
+RF_CH = [0x00, 0x20]
 BR = NRF24.BR_2MBPS
 PA = NRF24.PA_LOW
 
