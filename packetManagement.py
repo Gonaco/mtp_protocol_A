@@ -79,17 +79,22 @@ def writeFile(chunk, filename, p_id):
 def splitData(archivo, chunk_len):
     data_to_be_sent = archivo.read()
     if USING_COMPRESSION:
-        tic()
         try:
+            tic()
             Compi_tx = compression2.DifferentialCompressor()
             data_ori = data_to_be_sent
             data_to_be_sent = Compi_tx.compress(data_to_be_sent)
             data_uncompressed = Compi_tx.uncompress(data_to_be_sent)
+            toc()
             if data_ori!=data_to_be_sent or (len(data_ori)/len(data_to_be_sent))<10:
+                print('differential compressor failed without crashing')
                 raise ValueError('A very specific bad thing happened.')
         except:
+            print('compressing with LZW')
+            tic()
             Compi_tx = compression2.LZWCompressor()
             data_to_be_sent = Compi_tx.compress(data_to_be_sent)
+            toc()
         toc()
 
     ### splitting the data in packets

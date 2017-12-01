@@ -187,9 +187,11 @@ def end(channel):
 
             c = comp.DifferentialCompressor()
             if c.checkUncompressmethod():
+                print('using diferentail decompression')
                 c.uncompress()
                 c.writeDisk('RXfile_A.txt')
             else:
+                print('using LWS decompression')
                 c = comp.LZWCompressor()
                 c.uncompressFromFile('RXfile_A.txt', 'RXfile_A.txt')
             
