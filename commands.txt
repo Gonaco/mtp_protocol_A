@@ -1,0 +1,14 @@
+# SINGLE MODE
+
+scp <file> pi@raspberrypiA< 1 / 2 >.local:/home/pi/mtp_protocol_A/input_files/
+
+scp pi@raspberrypiA< 1 / 2 >.local:/home/pi/mtp_protocol_A/RXfile_A_<uncomp?>.txt .
+
+# NETWORK MODE
+
+scp <file to B> pi@raspberrypiA< 1 / 2 >.local:/home/pi/mtp_protocol_A/sendFiles0/team1/
+scp <file to C> pi@raspberrypiA< 1 / 2 >.local:/home/pi/mtp_protocol_A/sendFiles0/team2/
+scp <file to D> pi@raspberrypiA< 1 / 2 >.local:/home/pi/mtp_protocol_A/sendFiles0/team3/
+
+scp -r pi@raspberrypiA< 1 / 2 >.local:/home/pi/mtp_protocol_A/savingFiles0 .
+
