@@ -2,7 +2,7 @@
 
 scp <file> pi@raspberrypiA< 1 / 2 >.local:/home/pi/mtp_protocol_A/input_files/
 
-scp pi@raspberrypiA< 1 / 2 >.local:/home/pi/mtp_protocol_A/RXfile_A_<uncomp?>.txt .
+scp pi@raspberrypiA< 1 / 2 >.local:/home/pi/mtp_protocol_A/RXfile_A_uncomp.txt .
 
 # NETWORK MODE
 

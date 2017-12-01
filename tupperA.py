@@ -153,8 +153,10 @@ def run():
 
             # NT(files)
             GPIO.output(NW_LED, GPIO.HIGH)
-            NT()
+            nt = NT()
             GPIO.output(NW_LED, GPIO.LOW)
+            if nt == 0:
+                quit()
             
         elif GPIO.input(TX_RX_SWITCH):
             
@@ -189,7 +191,7 @@ def end(channel):
             import compression2 as comp
 
             c = comp.LZWCompressor()
-            c.uncompressFromFile('RXfile_A.txt', 'RXfile_A.txt')
+            c.uncompressFromFile('RXfile_A.txt', 'RXfile_A_uncomp.txt')
             
         GPIO.output(ON_OFF_LED, 0)    
             

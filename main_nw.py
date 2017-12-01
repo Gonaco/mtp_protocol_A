@@ -39,6 +39,8 @@ def main():
     else:
         print("Transmission complete. Time elapsed: {}".format(timePassed))
 
+    return 0
+
 
 if __name__ == "__main__":
     main()
