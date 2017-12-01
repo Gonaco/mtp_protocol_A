@@ -139,7 +139,7 @@ def NT():
     print('\n-NT_mode-\n')
 
     # main_nt(tx_file_buffer)
-    main_nw()
+    return main_nw()
 
 
 def run():
@@ -152,9 +152,9 @@ def run():
         if (GPIO.input(NW_SWITCH)):
 
             # NT(files)
-            GPIO.output(NW_LED, GPIO.HIGH)
+            GPIO.output(TX_LED, GPIO.HIGH)
             nt = NT()
-            GPIO.output(NW_LED, GPIO.LOW)
+            GPIO.output(TX_LED, GPIO.LOW)
             if nt == 0:
                 quit()
             
